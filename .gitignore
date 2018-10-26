@@ -2,3 +2,4 @@
 spaceship/spaceship_app/migrations/
 spaceship/spaceship/settings.py
 venv/
+spaceship/db.sqlite3
