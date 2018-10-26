@@ -1,0 +1,25 @@
+<html>
+    <head>
+    </head>
+    <body>
+    </body>
+    <script>
+    window.addEventListener('load', function() {
+    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+        if (typeof web3 === 'undefined') {
+            window.alert("Please install MetaMask");
+        }
+        else {
+            if (web3.currentProvider.isMetaMask !== true) {
+                window.alert("Please install MetaMask");
+            }
+            else {
+                web3.version.getNetwork(function(error,network) {
+                    if (!error)
+                        window.location = '/ui/' + network.toString() + '/ships/';
+                });
+            }
+        }
+    });
+    </script>
+</html>

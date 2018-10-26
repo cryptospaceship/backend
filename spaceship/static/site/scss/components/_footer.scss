@@ -1,0 +1,134 @@
+/* ******************************************************
+   Footer
+   ****************************************************** */
+
+footer { 
+    color: $color-invert;
+
+
+    .image-footer {
+        clear:both;
+        img {
+            width:100%;
+        }
+    }
+
+    .footer-content {
+        padding: 0 0 40px 0;
+        background-color: $color-base;
+
+
+        @media (min-width: $bp-m) {
+            padding: 0 0 100px 0;
+        }
+    }
+
+
+    .layout-invert {
+        @media (max-width: $bp-sw-max) {
+            width:100%;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+    }
+}
+
+
+
+//Footer Navigation
+.footer-nav {
+    margin: 40px 0;
+    padding: 0;
+    list-style-type: none;
+    float: left;
+    width: 50%;
+    max-width: 300px;
+
+    @media (min-width: $bp-m) {
+        margin:0 0 40px;
+    }
+
+    li {
+        margin: 0 0 15px;
+
+        &:last-child {
+            margin: 0;
+        }
+        a {
+            color: $color-invert;
+            @include x-rem(font-size,
+            14px);
+
+            @media (min-width: $bp-m) {
+                @include x-rem(font-size, 16px);
+            }
+        }
+    }
+
+
+}
+
+//Social icons footer
+.social-icons {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style-type: none;
+
+    @media (min-width: $bp-m) {
+        float:right;
+    }
+
+    li {
+        margin: 0 30px 0 0;
+        float: left;
+
+        &:last-child {
+            margin: 0;
+        }
+
+        @media (min-width: $bp-mw) {
+            margin: 0 40px 0 0;
+        }
+
+        a {
+            float: left;
+
+            &:hover,
+            &:focus {
+                svg {
+                    fill: $color-invert;
+                }
+            }
+
+            svg {
+                fill: $color-primary;
+                height: 26px;
+                width: 26px;
+
+                @media (min-width: $bp-mw) {
+                    height: 36px;
+                    width: 36px;
+                }
+            }
+        }
+    }
+}
+
+//Copyright
+.copy {
+    float: left;
+    width: 100%;
+
+    p {
+        color: $color-primary;
+        margin: 0;
+        @include x-rem(font-size,
+        14px);
+        font-family: $font-familiy;
+
+        @media (min-width: $bp-mw) {
+            @include x-rem(font-size, 16px);
+        }
+    }
+}

@@ -1,0 +1,90 @@
+/* ================================================================
+   Main styles
+   ================================================================ */
+
+
+body {
+    background-image: url('../images/fullbg.png');
+    background-color: $color-base;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: repeat-x;
+}
+
+main {
+    min-height: 100px;
+}
+
+.interior {
+    padding:20px 0;
+}
+
+
+/* ================================================================
+   Page Title
+   ================================================================ */
+
+.main-title {
+    //width: calc(100% - 3em);
+    //position:fixed;
+    width:100%;
+    text-align: center;
+
+    h1 {
+        
+        text-transform:uppercase; 
+        display: inline-block;
+        text-align: center;
+        font-weight: $fontWeight-light;
+        @include x-rem(font-size,
+        22px);
+        line-height: 28px;
+        margin: 0;
+        background-color: rgba($color-primary, 0.25);
+        padding: 5px 25px;
+        margin-top: -1px;
+        border-bottom: 1px solid $color-primary;
+        border-top: 1px solid $color-primary;
+        position: relative;
+
+        @media (min-width: $bp-mw) { 
+            @include x-rem(font-size, 32px);
+            line-height: 40px;
+        }
+
+        &:before {
+            content: '';
+            position: absolute;
+            background-image: url('../images/title-bf-mobile.svg');
+            height: 40px;
+            width: 24px;
+            left: -24px;
+            top: -1px;
+
+            @media (min-width: $bp-mw) {
+                background-image:url('../images/title-bf-desktop.svg');
+                height: 52px;
+                width: 31px;
+                left: -31px;
+            }
+        }
+
+        &:after {
+            content: '';
+            position: absolute;
+            background-image: url('../images/title-af-mobile.svg');
+            height: 40px;
+            width: 24px;
+            right: -24px;
+            top: -1px;
+
+            @media (min-width: $bp-mw) {
+                background-image:url('../images/title-af-desktop.svg');
+                height: 52px;
+                width: 31px;
+                right: -31px;
+            }
+        }
+    }
+}
+

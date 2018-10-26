@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="454" height="461" viewBox="0 0 454 461">
+  <defs>
+    <polygon id="alianzas-text-bg-a" points="0 93 78 93 78 0 0 0"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(0 1)">
+    <rect width="214" height="406" x="24" y="11" fill="#E50E32" opacity=".161"/>
+    <g transform="translate(116 137)">
+      <polygon fill="#E50E32" points="0 41.898 41.898 41.898 41.898 0 0 0" opacity=".505"/>
+      <path stroke="#F4F4F4" d="M45.8978 45.3902L3.2538 2.7462M3.2538 45.3902L45.8978 2.7462"/>
+    </g>
+    <rect width="20" height="20" x="40" y="25" fill="#E50E32"/>
+    <rect width="20" height="20" x="68" y="25" fill="#E50E32" opacity=".261"/>
+    <rect width="20" height="20" x="96" y="25" fill="#E50E32" opacity=".261"/>
+    <rect width="20" height="20" x="124" y="25" fill="#E50E32" opacity=".261"/>
+    <rect width="65" height="5" x="40" y="63" fill="#E50E32"/>
+    <rect width="26" height="5" x="40" y="75" fill="#E50E32"/>
+    <rect width="26" height="5" x="184" y="75" fill="#E50E32"/>
+    <rect width="26" height="5" x="428" y="137" fill="#E50E32"/>
+    <rect width="26" height="3" x="83" y="218" fill="#E50E32"/>
+    <rect width="26" height="3" x="83" y="226" fill="#E50E32"/>
+    <rect width="26" height="3" x="83" y="233" fill="#E50E32"/>
+    <rect width="26" height="3" x="83" y="283" fill="#E50E32"/>
+    <g transform="translate(0 75)">
+      <polygon fill="#F4F4F4" points="25.13 34 1 9.87 1.867 9 26 33.13"/>
+      <polygon fill="#F4F4F4" points="51.87 34 51 33.13 75.133 9 76 9.87"/>
+      <polygon fill="#F4F4F4" points="75.13 84 51 59.87 51.867 59 76 83.13"/>
+      <polygon fill="#F4F4F4" points="1.87 84 1 83.13 25.133 59 26 59.87"/>
+      <mask id="alianzas-text-bg-b" fill="#fff">
+        <use xlink:href="#alianzas-text-bg-a"/>
+      </mask>
+      <path fill="#F4F4F4" d="M32.6015531,52.3960311 L45.3936152,52.3960311 L45.3936152,39.6039689 L32.6015531,39.6039689 L32.6015531,52.3960311 Z M32,53 L46,53 L46,39 L32,39 L32,53 Z" mask="url(#alianzas-text-bg-b)"/>
+      <polygon fill="#F4F4F4" points="18 47.5 21 47.5 21 47 18 47" mask="url(#alianzas-text-bg-b)"/>
+      <polygon fill="#F4F4F4" points="55 47.5 58 47.5 58 47 55 47" mask="url(#alianzas-text-bg-b)"/>
+      <polygon fill="#F4F4F4" points="64.425 13 64 12.572 76.577 0 77 .428" mask="url(#alianzas-text-bg-b)"/>
+      <polygon fill="#F4F4F4" points="12.568 13 2 2.435 2.432 2 13 12.565" mask="url(#alianzas-text-bg-b)"/>
+      <polygon fill="#F4F4F4" points=".425 93 0 92.572 12.577 80 13 80.428" mask="url(#alianzas-text-bg-b)"/>
+      <polygon fill="#F4F4F4" points="74.568 91 64 80.435 64.432 80 75 90.565" mask="url(#alianzas-text-bg-b)"/>
+    </g>
+    <polyline stroke="#E50E32" points="24 0 13 0 13 261 24 261"/>
+    <polyline stroke="#E50E32" points="72 198 61 198 61 459 72 459"/>
+    <rect width="65" height="2" x="24" y="9" fill="#E50E32"/>
+  </g>
+</svg>

@@ -1,0 +1,104 @@
+{% extends "site/tpl_base.html" %}
+{% block content %}
+{% load js %}
+<main id="site-main" role="main" class="interior">
+    <div class="container">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="title-left">
+                <h1>My CSS Tokens</h1>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="actual-network">
+                <p>Actual Network : <span>{{ game_network_name }}</span></p>
+                <p class="change">Change it with metask</p>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="fleet-slider">
+                {% for ship in ship_list %}
+                <a href="/ui/{{gameNetwork}}/ship/{{ship.id}}" class="ship-slide">
+                    <div class="ship-title">
+                        <h2>{{ ship.name }}</h2>
+                        <p>NFT #{{ ship.id }}</p>
+                    </div>
+                    <div class="ship-image">
+                        <img src="/static/site/images/capa0.png" alt="Ship"/>
+                        <canvas id="{{ ship.id }}" width="640px" height="320px"/></canvas>
+                    </div>
+                    <div class="ship-info">
+                        <div class="info">
+                            <p class="info-title">Level :</p>
+                            <p class="number">{{ ship.level }}</p>
+                        </div>
+                        <div class="info">
+                            <p class="info-title">Gen :</p>
+                            <p class="number">0</p>
+                        </div>
+                        <div class="info">
+                            <p class="info-title">Victories :</p>
+                            <p class="number">2<span>/5</span></p>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <form action="javascript:void(0);" method="post" class="buy-new-ship">
+                <div class="buy">
+                    <h3>BUY A NEW SHIP</h3>
+                    <div class="sheep-input">
+                        <label>Enter ship Name</label>
+                        <input type="text" name="name" id="buy_ship_name_input" placeholder="Enter ship name">
+                        <label>Choose color</label>
+                        <input type="color" id="choosed_color">
+                    </div>
+                    <p>Price <span>{{ ship_price }} Eth</span></p>
+                </div>
+                <input type="submit" id="buy_new_ship_button" class="buy-button" value="BUY NOW">
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- Waiting Confirmation Modal-->
+<div style="display:none">
+    <div id="waiting-confirmation" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
+            <div class="form-modal">
+                <h5>Waiting confirmation</h5>
+                <p>_waiting for transaction confirmation</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+window.layer_1 = "/static/site/images/capa1.png";
+
+{% if ship_price is not None %}
+    window.shipPrice = {{ship_price}};
+{% endif %}
+
+{% if contract_abi is not None %}
+    window.gameAbi = {{contract_abi | js}};
+{% endif %}
+
+{% if contract_address is not None %}
+    window.gameAddress = "{{contract_address}}";
+{% endif %}
+
+{% if gameNetwork is not None %}
+    window.gameNetwork = "{{gameNetwork}}";
+{% endif %}
+
+{% if player_address is not None %}
+    window.player_address = "{{ player_address }}"
+{% endif %}
+{% if ship_colors is not None %}
+    window.shipColors = {{ ship_colors | js }};
+{% endif %}
+
+</script>
+{% endblock %}

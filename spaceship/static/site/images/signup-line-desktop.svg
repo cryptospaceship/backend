@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="359" viewBox="0 0 24 359">
+  <g fill="none" fill-rule="evenodd" transform="translate(0 1)">
+    <polygon fill="#E50E32" points=".209 230.266 5.519 233.468 .209 236.529"/>
+    <polygon fill="#E50E32" points=".209 270.48 5.519 273.683 .209 276.744"/>
+    <polygon fill="#E50E32" points=".209 310.694 5.519 313.897 .209 316.958"/>
+    <polygon fill="#E50E32" points=".209 350.909 5.519 354.111 .209 357.173"/>
+    <polyline stroke="#FFF" points="23.504 0 13 0 13 261.088 23.504 261.088"/>
+  </g>
+</svg>

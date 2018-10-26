@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="40" viewBox="0 0 24 40">
+  <defs>
+    <rect id="title-af-mobile-fixed-a" width="24" height="40"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="matrix(-1 0 0 1 24 0)">
+    <mask id="title-af-mobile-fixed-b" fill="#fff">
+      <use xlink:href="#title-af-mobile-fixed-a"/>
+    </mask>
+    <path fill="#E50E32" fill-opacity=".6" stroke="#E50E32" d="M1.15054581,0.5 L29.2576931,0.5 L29.2576931,39.5 L22.8013006,39.5 L1.15054581,0.5 Z" mask="url(#title-af-mobile-fixed-b)"/>
+  </g>
+</svg>

@@ -1,0 +1,69 @@
+{% extends "site/tpl_base.html" %}
+{% block content %}
+{% load js %}
+    <div class="fix-element">
+    </div>
+    <!-- MAIN CONTENT -->
+    <main id="site-main" role="main">
+        <div class="fix-element title"></div>
+        <div class="main-title about-page">
+            <h1 id="actual">Resources</h1>
+            <ul class="about-menu resources">
+                <li id="resources"><a href="#" class="anchor">Resources</a></li>
+                <li id="buildings"><a href="#" class="anchor">Buildings</a></li>
+                <li id="map"><a href="#" class="anchor">Map</a></li>
+                <li></li>
+                <li><a href="#" class="anchor">Messages</a></li>
+                <li><a href="#" class="anchor">Events</a></li>
+                <li><a href="#" class="anchor">Stats</a></li>
+            </ul>
+        </div>
+
+         <!-- ACA PONER CONTENIDO-->
+        <iframe 
+            id="game-frame" 
+            name="Game Frame"
+            sandbox="allow-same-origin allow-scripts" 
+            src="" 
+            style="width: 100%; border: 0; height: 750px;">
+        </iframe>
+    </main>
+    <style>
+        @media(max-width:1600px) {
+            #game-frame {
+                height: 600px;    
+            }
+        }
+    </style>
+    <script>
+        window.default = "resources";
+        window.actual = "resources";
+    
+        window.onload = ()=> {
+            window.frame = document.getElementById("game-frame");
+            window.frame.src = window.location.pathname + window.default;
+    
+    
+            let change_frame = (view) => {
+                if ( (view == "resources" || view == "map" || view == "buildings") && window.actual != view) {
+                    window.frame.src = window.location.pathname + view;
+                    window.actual = view;
+                    document.getElementById("actual").textContent = view;
+                }
+            }
+    
+            document.getElementById("resources").addEventListener("click",()=> {
+                change_frame("resources");
+            });
+    
+            document.getElementById("map").addEventListener("click",()=>{
+                change_frame("map");
+            });
+    
+            document.getElementById("buildings").addEventListener("click",()=>{
+                change_frame("buildings");
+            });
+    
+        }
+    </script>
+{% endblock %}

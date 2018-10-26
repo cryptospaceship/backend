@@ -1,0 +1,105 @@
+/* ================================================================
+   Sign in / Sign up pages
+   ================================================================ */
+
+.form-page {
+    background-image: url('../images/bg-forms.svg');
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: flex;
+    padding: 50px 0;
+    justify-content: center;
+    min-height:280px;
+    @media (min-width: $bp-m) {
+        min-height: 400px;
+    }
+}
+
+
+.log-in {
+    &:before {
+        content: '';
+        position: absolute;
+        width: 24px;
+        background-size: auto;
+        background-repeat: no-repeat;
+        background-position: top center;
+        top: -12px;
+        left: -20px;
+        height: 211px;
+        background-image: url('../images/login-line-mobile.svg');
+
+        @media (min-width: $bp-m) {
+            height: 263px;
+            background-image: url('../images/login-line-desktop.svg');
+        }
+    }
+
+    .content-inputs {
+        background: rgba(132, 141, 196, 0.2);
+        background: -moz-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+        background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(132, 141, 196, 0.2)), color-stop(56%, rgba(132, 141, 196, 0.19)), color-stop(100%, rgba(212, 222, 238, 0.19)));
+        background: -webkit-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+        background: -o-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+        background: -ms-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+        background: linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#848dc4', endColorstr='#d4deee', GradientType=1);
+        border: 1px solid $form-border;
+    }
+}
+
+.metamask {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+        margin: 0 0 40px;
+        width: 150px;
+        @media (min-width: $bp-m) {
+            width:auto;
+        }
+    }
+
+    h2 {
+        @include x-rem(font-size,
+        35px);
+        margin: 0 0 35px;
+        line-height: 35px;
+        text-align: center;
+
+        @media (min-width: $bp-m) {
+            @include x-rem(font-size, 40px);
+        }
+    }
+}
+
+
+.sign-up {
+
+    &:before {
+        content: '';
+        position: absolute;
+        width: 24px;
+        background-size: auto;
+        background-repeat: no-repeat;
+        background-position: top center;
+        top:35px;
+        z-index:2;
+        left: -20px;
+        height: 281px;
+        background-image: url('../images/signup-line-mobile.svg');
+
+        @media (min-width: $bp-m) {
+            height: 359px;
+            background-image: url('../images/signup-line-desktop.svg');
+        }
+    }
+
+
+    .content-inputs {
+        background-color: rgba($color-primary, 0.6);
+        border: 1px solid rgba($color-primary, 0.6);
+    }
+}

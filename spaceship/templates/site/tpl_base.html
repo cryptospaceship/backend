@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Mobile-friendly viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRYPTOSPACESHIP</title>
+    <!-- Style sheet link -->
+    {% for css in inject_css %}
+        <link href="{{ css }}" rel="stylesheet" media="all"></script>
+    {% endfor %}
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/site/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/site/images/favicon-16x16.png">
+    <link href="https://fonts.googleapis.com/css?family=Rajdhani:300,400,500,600" rel="stylesheet">
+</head>
+
+<body>
+    <div class="svg-legend" aria-hidden="true">
+        <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <symbol id="icon-twitter" viewBox="0 0 40 32">
+                    <title>twitter</title>
+                    <path d="M39.922 3.811c-1.475 0.638-3.050 1.073-4.708 1.271 1.69-1.002 2.99-2.582 3.605-4.467-1.585 0.91-3.342 1.573-5.211 1.942-1.493-1.573-3.622-2.557-5.985-2.557-4.528 0-8.2 3.614-8.2 8.066 0 0.64 0.075 1.255 0.212 1.844-6.816-0.317-12.858-3.538-16.901-8.409-0.712 1.184-1.11 2.561-1.11 4.060 0 2.805 1.45 5.271 3.647 6.719-1.345-0.043-2.61-0.407-3.713-1.011v0.1c0 3.912 2.822 7.175 6.576 7.918-0.688 0.182-1.415 0.28-2.16 0.28-0.523 0-1.025-0.049-1.527-0.141 1.052 3.204 4.075 5.54 7.673 5.605-2.8 2.164-6.348 3.453-10.17 3.453-0.65 0-1.298-0.038-1.95-0.11 3.648 2.287 7.946 3.624 12.594 3.624 15.089 0 23.331-12.297 23.331-22.943 0-0.343 0-0.689-0.025-1.033 1.602-1.13 3-2.559 4.1-4.18l-0.078-0.033z"></path>
+                </symbol>
+                <symbol id="icon-facebook" viewBox="0 0 32 32">
+                    <title>facebook</title>
+                    <path d="M30.235 0h-28.469c-0.975 0-1.765 0.791-1.765 1.765v28.469c0 0.976 0.791 1.765 1.765 1.765h15.325v-12.392h-4.172v-4.828h4.172v-3.567c0-4.132 2.525-6.38 6.212-6.38 1.767 0 3.285 0.129 3.728 0.188v4.32h-2.561c-2 0-2.389 0.961-2.389 2.361v3.081h4.779l-0.62 4.84h-4.159v12.376h8.153c0.977 0 1.767-0.789 1.767-1.765v-28.469c0-0.975-0.789-1.765-1.765-1.765z"></path>
+                </symbol>
+                <symbol id="icon-discord" viewBox="0 0 32 32">
+                    <title>discord</title>
+                    <path d="M26.963 0c1.875 0 3.387 1.516 3.476 3.3v28.7l-3.569-3.031-1.96-1.784-2.139-1.864 0.893 2.94h-18.717c-1.869 0-3.387-1.42-3.387-3.301v-21.653c0-1.784 1.52-3.303 3.393-3.303l22.009-0.004zM18.805 7.577h-0.040l-0.269 0.267c2.764 0.8 4.101 2.049 4.101 2.049-1.781-0.891-3.387-1.336-4.992-1.516-1.16-0.18-2.32-0.085-3.3 0h-0.267c-0.627 0-1.96 0.267-3.747 0.98-0.623 0.271-0.98 0.448-0.98 0.448s1.336-1.336 4.28-2.049l-0.18-0.18s-2.229-0.085-4.636 1.693c0 0-2.407 4.192-2.407 9.36 0 0 1.333 2.32 4.991 2.408 0 0 0.533-0.711 1.073-1.336-2.053-0.624-2.853-1.872-2.853-1.872s0.179 0.088 0.447 0.267h0.080c0.040 0 0.059 0.020 0.080 0.040v0.008c0.021 0.021 0.040 0.040 0.080 0.040 0.44 0.181 0.88 0.36 1.24 0.533 0.621 0.269 1.42 0.537 2.4 0.715 1.24 0.18 2.661 0.267 4.28 0 0.8-0.18 1.6-0.356 2.4-0.713 0.52-0.267 1.16-0.533 1.863-0.983 0 0-0.8 1.248-2.94 1.872 0.44 0.621 1.060 1.333 1.060 1.333 3.659-0.080 5.080-2.4 5.16-2.301 0-5.16-2.42-9.36-2.42-9.36-2.18-1.619-4.22-1.68-4.58-1.68l0.075-0.027zM19.029 13.461c0.937 0 1.693 0.8 1.693 1.78 0 0.987-0.76 1.787-1.693 1.787s-1.693-0.8-1.693-1.779c0.003-0.987 0.764-1.784 1.693-1.784zM12.972 13.461c0.933 0 1.688 0.8 1.688 1.78 0 0.987-0.76 1.787-1.693 1.787s-1.693-0.8-1.693-1.779c0-0.987 0.76-1.784 1.693-1.784z"></path>
+                </symbol>
+                <symbol id="icon-medium" viewBox="0 0 32 32">
+                    <title>medium</title>
+                    <path d="M3.795 8.48c0.040-0.393-0.111-0.781-0.404-1.045l-2.987-3.6v-0.537h9.276l7.171 15.727 6.304-15.727h8.845v0.537l-2.556 2.449c-0.22 0.168-0.329 0.444-0.284 0.717v18c-0.045 0.272 0.064 0.547 0.284 0.716l2.493 2.449v0.537h-12.547v-0.537l2.583-2.509c0.253-0.253 0.253-0.328 0.253-0.717v-14.548l-7.187 18.251h-0.969l-8.367-18.251v12.232c-0.069 0.515 0.101 1.032 0.463 1.404l3.36 4.080v0.536h-9.527v-0.537l3.36-4.080c0.36-0.371 0.52-0.893 0.435-1.403v-14.144z"></path>
+                </symbol>
+            </defs>
+        </svg>
+    </div>
+    <!-- HEADER -->
+    <header id="site-header" role="banner">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/static/site/images/cryptospaceship.svg" alt="CRYPTOSPACESHIP">
+                </a>
+            </div>
+            <div class="toggle-menu">
+                <button type="button" role="button" aria-label="Toggle Navigation" class="menu-hamburger">
+                    <span class="lines"></span>
+                </button>
+            </div>
+            <div class="navigation">
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="/">HOME</a></li>
+                        <!--li><a href="about.html">ABOUT</a>
+                            <ul>
+                                <li><a href="about.html#crew">CREW</a></li>
+                                <li><a href="about.html#thegame">THE GAME</a></li>
+                                <li><a href="about.html#whitepaper">WHITE PAPER</a></li>
+                                <li><a href="about.html#faqs">FAQs</a></li>
+                            </ul>
+                        </li-->
+                    </ul>
+                </nav>
+            </div>
+            <div class="sign-menu">
+                <ul>
+                {% if user.is_authenticated %}
+                    <li><a href="/signout/">SIGN OUT</a></li>
+                {% else %}
+                    <li><a href="/signin/">SIGN IN</a></li>
+                    <li><a href="/signup/">SIGN UP</a></li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div class="fix-element"></div>
+    {% block content %}
+    {% endblock %}
+    <!-- FOOTER -->
+    <footer role="contentinfo">
+        <div class="image-footer">
+            <img src="/static/site/images/footer-mobile.png" alt="" class="mobile">
+            <img src="/static/site/images/footer-desktop.png" alt="" class="desktop">
+        </div>
+        <div class="footer-content">
+            <div class="container">
+                <div class="layout-invert">
+                    <div class="col-xs-12 col-sm-6 col-md-6">
+                        <ul class="footer-nav">
+                            <li><a href="index.html">Home</a></li>
+                            <!--li><a href="about.html">About</a></li-->
+                        </ul>
+                        <ul class="footer-nav desktop">
+                                {% if user.is_authenticated %}
+                                <li><a href="/signout/">SIGN OUT</a></li>
+                            {% else %}
+                                <li><a href="/signin/">SIGN IN</a></li>
+                                <li><a href="/signup/">SIGN UP</a></li>
+                            {% endif %}
+                        </ul>
+                        <div class="copy">
+                            <p>Copyright © 2018 <a target="_blank" href="https://cexar.io/">Cexar.io</a></p>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6">
+                        <ul class="social-icons">
+                            <li>
+                                <a href="https://www.facebook.com/cryptospaceship/" target="_blank">
+                                    <svg class="icon icon-facebook">
+                                        <use xlink:href="#icon-facebook"></use>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://discord.gg/GMD2kTy" target="_blank">
+                                    <svg class="icon icon-discord"><use xlink:href="#icon-discord"></use></svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://medium.com/@cryptospaceship" target="_blank">
+                                    <svg class="icon icon-medium"><use xlink:href="#icon-medium"></use></svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    {% for js in inject_js %}
+        <script src="{{ js }}"></script>
+    {% endfor %}
+</body>
+
+</html>

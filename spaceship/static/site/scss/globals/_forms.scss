@@ -1,0 +1,243 @@
+/* ================================================================
+   Forms
+   ================================================================ */
+
+form {
+    position: relative;
+    label,
+    input,
+    textarea,
+    select {
+        float: left;
+        font-family: $font-familiy;
+        width: 230px;
+
+        @media (min-width: $bp-m) {
+            width: 350px;
+        }
+    }
+
+     ::-webkit-input-placeholder {
+        /* Chrome */
+        color: rgba($color-secondary, 0.5);
+    }
+     :-ms-input-placeholder {
+        /* IE 10+ */
+        color: rgba($color-secondary, 0.5);
+    }
+     ::-moz-placeholder {
+        /* Firefox 19+ */
+        color: rgba($color-secondary, 0.5);
+    }
+     :-moz-placeholder {
+        /* Firefox 4 - 18 */
+        color: rgba($color-secondary, 0.5);
+    }
+
+    .group-input {
+        float: left;
+        width: 100%;
+        clear: both;
+        margin: 0 0 15px;
+
+        input, label {
+            clear:both;
+        }
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    .content-inputs {
+        float: left;
+        position: relative;
+        padding: 30px 15px;
+        margin: 0 0 10px;
+
+        @media (min-width: $bp-m) {
+            @include x-rem(font-size, 24px);
+            padding: 40px 25px;
+        }
+
+        .form-title {
+            position: absolute;
+            height: 20px;
+            padding: 0px 10px;
+            top: -10px;
+
+            border-bottom: 20px solid $color-invert;
+            border-right: 15px solid transparent;
+
+            h2 {
+                @include x-rem(font-size, 16px);
+                color: $color-secondary;
+                line-height: 21px;
+                margin: 0;
+                text-transform: uppercase;
+                font-weight: $fontWeight-medium;
+            }
+        }
+    }
+}
+
+label {
+    margin: 0 0 5px;
+    text-transform: uppercase;
+    font-weight: $fontWeight-light;
+    color: $color-invert;
+
+    @include x-rem(font-size, 20px);
+    line-height: 20px;
+
+    @media (min-width: $bp-m) {
+        @include x-rem(font-size, 24px);
+        line-height: 26px;
+    }
+}
+
+input[type="text"],
+input[type="search"] {
+    -webkit-appearance: none !important;
+    border-radius: 0 !important;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="tel"],
+input[type="email"],
+input[type="color"] {
+    padding: 5px 10px;
+    box-shadow: none;
+    border: 0;
+    background: #FFFFFF;
+    transition: right 0.2s ease-out;
+    @include x-rem(font-size, 18px);
+    height: 35px;
+    border-radius: 0 !important;
+
+    &:last-child {
+        margin: 0;
+    }
+
+    &:focus,
+    &:hover {
+        outline: 2px solid $color-secondary;
+    }
+
+    @media (min-width: $bp-m) {
+        @include x-rem(font-size, 24px);
+        height: 40px;
+    }
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    margin-right: 2px;
+    border-radius: 0;
+    background: none;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    padding:0;
+  }
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+
+input[type="submit"] {
+    background-color: $color-primary;
+    color: $color-invert;
+    text-transform: uppercase;
+    padding: 0;
+    border: 0;
+    clear: both;
+    border-radius: 0 !important;
+
+    @include x-rem(font-size, 20px);
+    width: 262px;
+    height: 50px;
+
+    @media (min-width: $bp-m) {
+        width: 402px;
+        height: 60px;
+        @include x-rem(font-size, 24px);
+    }
+
+
+    &:focus,
+    &:hover {
+        background-color: #A80621;
+        outline: 0;
+        cursor: pointer;
+    }
+}
+
+select {
+    height: 35px;
+    border: 0;
+    @include x-rem(font-size, 18px);
+    background: $color-invert;
+    box-shadow: none;
+    padding: 5px 10px;
+
+    color: rgba($color-secondary, 0.5);
+
+    border-radius: 0;
+    -webkit-appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -webkit-border-radius: 0px;
+    background-image: url('../images/select-arrow.svg');
+    background-position: 97% 13px;
+    background-repeat: no-repeat;
+        background-size: 18px;
+    
+
+    @media (min-width: $bp-m) {
+        @include x-rem(font-size, 24px);
+        height: 40px;
+        background-size: auto;
+    }
+    &:focus,
+    &:hover {
+        outline: 2px solid $color-secondary;
+    }
+}
+
+
+textarea {
+    padding: 10px;
+    @include x-rem(font-size,
+    24px);
+    box-shadow: none;
+    border: 0;
+    background: #FFFFFF;
+    transition: right 0.2s ease-out;
+
+
+    &:focus,
+    &:hover {
+        outline: 2px solid $color-secondary;
+    }
+}
+
+.error-message {
+    clear: both;
+    width: 100%;
+    float: left;
+    color: $color-invert;
+    @include x-rem(font-size,
+    16px);
+    margin: 10px 0 0 0;
+    padding: 0 0 0 20px;
+    background: url('../images/error-icon.svg') no-repeat top left;
+    background-size: 15px;
+    line-height: 20px;
+    display: none;
+}

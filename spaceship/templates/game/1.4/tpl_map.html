@@ -1,0 +1,2252 @@
+{% load js %}
+{% load boolean %}
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <meta charset="utf-8">
+                <title>CSS Resources</title>
+                <meta name="description" content="Crypto SpaceShip - Map View">
+                <meta name="author" content="Emiliano Alejandro Billi" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet">
+                <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+                <link rel="stylesheet" media="screen" href="/static/css/style.css">
+                <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+                <script src="/static/js/popper.min.js"></script>
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+              </head>
+<body>
+
+
+
+<!-- particles.js container -->
+<div id="particles-js">
+    <canvas class="particles-js-canvas-el" width="1898" height="1113" style="width: 100%; height: 100%;"></canvas>
+</div>
+    
+    <div class="container-fluid grid">
+        <div class="row">
+            <div class="col-xs-12 col-lg-12" id="header">
+                <div class="row">
+                    <div class="col-md-2 col-lg-2">
+                        <h1 id="conquest-message" class="conquest-message">The planet has been conquered. The game could end in <span id="blocks-to-end" class="end-message"></span> Blocks. YOU ARE <span class="end-message" id="win-condition"></span></h1>
+                    </div>
+                    <div class="col-md-8 col-lg-8">
+                    <div class="resources-general">
+                   
+                  <!-- GUAGE COMBO ENERGY-->
+                  <div class="resource-general" id="general-energy" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
+
+                        <div class="resource-title">
+                            <div class="icon-ratio ic-energy"></div>
+                            <div class="title-text">energy</div>
+                            <div class="stopper"></div>
+                        </div>
+
+                        <div class="gauge">
+                            <div class="gauge-reflex"></div>
+                            <div class="gauge-bar energy" id="bar-energy" style="width: 100%;"></div>
+                            <div class="gauge-background"></div>
+                            <div class="stopper"></div>
+                        </div>
+                        <div class="amount">
+                                <div class="repair-list" id="repair-button" style="display: none;">
+                                        <div class="repair-item can-repair pointer" >
+                                            <div class="icon-ratio ic-repair"></div>
+                                            <div class="title-text fL repair-text">Repair</div>
+                                        </div>
+                                    </div>
+                                <span class="amount-current" id="energy-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                        </div>
+                            <div class="stopper"></div>
+
+                </div>
+            <!-- GUAGE COMBO END -->
+            
+            <!-- GUAGE COMBO GRAPHENE -->
+                <div class="resource-general" id="general-graphene" data-toggle="tooltip" data-placement="bottom" title="Total units of graphene you gathered so far">
+
+                        <div class="resource-title">
+                            <div class="icon-ratio ic-graphene"></div>
+                            <div class="title-text">graphene</div>
+                            <div class="stopper"></div>
+                        </div>
+
+                        <div class="gauge">
+                            <div class="gauge-reflex"></div>
+                            <div class="gauge-bar graphene" id="bar-graphene" style="width: 100%;"></div>
+                            <div class="gauge-background"></div>
+                            <div class="stopper"></div>
+                        </div>
+                        <div class="amount">
+                                <span class="amount-current" id="graphene-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                        </div>
+                            <div class="stopper"></div>
+
+                </div>
+            <!-- GUAGE COMBO END -->
+            
+            <!-- GUAGE COMBO METALS-->
+                <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Total units of metals you gathered so far">
+
+                        <div class="resource-title">
+                            <div class="icon-ratio ic-metals"></div>
+                            <div class="title-text">metals</div>
+                            <div class="stopper"></div>
+                        </div>
+
+                        <div class="gauge">
+                            <div class="gauge-reflex"></div>
+                            <div class="gauge-bar metals" id="bar-metals" style="width: 100%;"></div>
+                            <div class="gauge-background"></div>
+                            <div class="stopper"></div>
+                        </div>
+                        <div class="amount">
+                                <span class="amount-current" id="metals-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                        </div>
+                            <div class="stopper"></div>
+
+                </div>
+               <!-- GUAGE COMBO END -->
+                   <!-- GAUGE COMBO STATUS -->
+                   <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Ship Status">
+
+                        <div class="resource-title">
+                            <div class="icon-ratio ic-status"></div>
+                            <div class="title-text">ship status</div>
+                            <div class="stopper"></div>
+                        </div>
+
+                        <div class="gauge">
+                            <div class="gauge-reflex"></div>
+                            <div class="gauge-bar ship-status" id="bar-ship-status" style="width: 100%;"></div>
+                            <div class="gauge-background"></div>
+                            <div class="stopper"></div>
+                        </div>
+                        <div class="amount">
+                                <span class="status-current"><span id="ship-status-value"></span> %</span> 
+                        </div>
+                            <div class="stopper"></div>
+
+                    </div>
+                    <!-- GAUGE COMBO END-->
+                       
+                    </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2">
+                        <div class="game-info">
+                            <p>Game Age: <span id="game-age"></span></p>
+                            <p>Reward: <span id="reward"></span> eth</p>
+                            <p>Players:</p>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="row last-row">
+            <div class="col-xs-12 col-md-3-et">
+                <div class="resources-container" id="resources" style="display:none;">
+                        <!-- <h2 class="taR">Strategic Control</h2> -->
+                        <div class="combo-bottom">
+                            <span class="gauge-lateral">Energy to change mode</span>
+                            <div class="gauge gauge-lateral">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar energy" id="bar-energy-mode" style="width: 100%;"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-energy-mode">100%</span>
+                            </div>
+                            <div class="stopper"></div>
+                        </div>
+
+                        <div class="resource-combo" id="location">
+                         
+                            <div id="button-attack-mode" class="ship-mode">
+                                 <div class="icon-ratio-mode ic-attack-mode"></div>
+                                 <div class="title-text fL">Attack Mode</div>
+                                 <div class="stopper"></div>
+                             </div>
+                             
+                            <div id="button-defense-mode" class="ship-mode">
+                                    <div class="icon-ratio-mode ic-defense-mode"></div>
+                                    <div class="title-text fL">Defense Mode</div>
+                                    <div class="stopper"></div>
+                            </div>
+                            
+                            <div id="button-movemment-mode" class="ship-mode">
+                                    <div class="icon-ratio-mode ic-move-mode"></div>
+                                    <div class="title-text fL">Move Mode</div>
+                                    <div class="stopper"></div>
+                            </div>
+                            
+                            <div id="button-default-mode" class="ship-mode">
+                                    <div class="icon-ratio-mode ic-default-mode"></div>
+                                    <div class="title-text fL">Default Mode</div>
+                                    <div class="stopper"></div>
+                            </div>  
+                        </div>
+                        <div class="stopper"></div>
+
+                        <div class="resource-combo left-col" id="location">
+                                <div class="combo-top">
+                                    <div class="resource-title">
+                                        <div class="icon ic-point"></div>
+                                        <div class="title-text">Map Browse</div>
+                                     
+                                        <div class="stopper"></div>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="form-group">
+                                
+                                <input type="text" class="form-control input-map-axis" id="go-to-x">
+                                <input type="text" class="form-control input-map-axis" id="go-to-y">
+                                <div class="view" id="button-go">GO</div>
+                        </div>
+               <!--     <div class="gauges-container">
+                        
+                       
+                    </div> -->
+                </div>
+            </div>
+            
+            
+            <!-- CENTER COLUMN -->
+            <div class="col-xs-12 col-md-6-et">
+                
+                <!-- MAP -->   
+                <div class="view" id="mapView">Perspective</div>
+                <div class="mapContainer" style="display: block;">
+                    
+                    <div class="scene">
+                      <div class="arrow" id="button-arrow-up"><img class="img-pointer" src="/static/images/ua.svg"></div>
+                      <div class="arrow" id="button-arrow-up-end" style="display: none;"><img class="img-not-allowed" src="/static/images/ue.svg"></div>
+                      <div class="arrow-left" id="button-arrow-left"><img class="img-pointer" src="/static/images/la.svg"></div>
+                      <div class="arrow-left" id="button-arrow-left-end" style="display: none;"><img class="img-not-allowed" src="/static/images/le.svg"></div>
+                      <div class="panel p3d" id="map_position_0">1,1</div>
+                      <div class="panel p3d" id="map_position_7">1,1</div>
+                      <div class="panel p3d" id="map_position_14">2,1</div>
+                      <div class="panel p3d" id="map_position_21">3,1</div>
+                      <div class="panel p3d" id="map_position_28">4,1</div>
+                      <div class="panel p3d" id="map_position_35">5,1</div>
+                      <div class="panel p3d" id="map_position_42">6,1</div>
+                                           
+                      <div class="arrow-right" id="button-arrow-right"><img class="img-pointer" src="/static/images/ra.svg"></div>
+                      <div class="arrow-right" id="button-arrow-right-end" style="display: none;"><img class="img-not-allowed" src="/static/images/re.svg"></div>
+                      <div class="panel p3d" id="map_position_1">7,1</div>
+                      <div class="panel p3d" id="map_position_8">1,2</div>
+                      <div class="panel p3d" id="map_position_15">2,2</div>
+                      <div class="panel p3d" id="map_position_22">3,2</div>
+                      <div class="panel p3d" id="map_position_29">4,2</div>
+                      <div class="panel p3d" id="map_position_36">5,2</div>
+                      <div class="panel p3d" id="map_position_43">6,2</div>
+
+                      <div class="panel p3d" id="map_position_2">7,2</div>
+                      <div class="panel p3d" id="map_position_9">1,3</div>
+                      <div class="panel p3d" id="map_position_16">2,3</div>
+                      <div class="panel p3d" id="map_position_23">3,3</div>
+                      <div class="panel p3d" id="map_position_30">4,3</div>
+                      <div class="panel p3d" id="map_position_37">5,3</div>
+                      <div class="panel p3d" id="map_position_44">6,3</div>
+                      
+                      <div class="panel p3d" id="map_position_3">7,3</div>
+                      <div class="panel p3d" id="map_position_10">1,4</div>
+                      <div class="panel p3d" id="map_position_17">2,4</div>
+                      <div class="panel p3d" id="map_position_24">3,4</div>
+                      <div class="panel p3d" id="map_position_31">4,4</div>
+                      <div class="panel p3d" id="map_position_38">5,4</div>
+                      <div class="panel p3d" id="map_position_45">6,4</div>
+
+                      <div class="panel p3d" id="map_position_4">7,4</div>           
+                      <div class="panel p3d" id="map_position_11">1,5</div>
+                      <div class="panel p3d" id="map_position_18">2,5</div>
+                      <div class="panel p3d" id="map_position_25">3,5</div>
+                      <div class="panel p3d" id="map_position_32">4,5</div>
+                      <div class="panel p3d" id="map_position_39">5,5</div>
+                      <div class="panel p3d" id="map_position_46">6,5</div>
+
+                      <div class="panel p3d" id="map_position_5">7,5</div>
+                      <div class="panel p3d" id="map_position_12">1,6</div>
+                      <div class="panel p3d" id="map_position_19">2,6</div>
+                      <div class="panel p3d" id="map_position_26">3,6</div>
+                      <div class="panel p3d" id="map_position_33">4,6</div>
+                      <div class="panel p3d" id="map_position_40">5,6</div>
+                      <div class="panel p3d" id="map_position_47">6,6</div>
+
+                      <div class="panel p3d" id="map_position_6">7,6</div>
+                      <div class="panel p3d" id="map_position_13">1,7</div>
+                      <div class="panel p3d" id="map_position_20">2,7</div>
+                      <div class="panel p3d" id="map_position_27">3,7</div>
+                      <div class="panel p3d" id="map_position_34">4,7</div>
+                      <div class="panel p3d" id="map_position_41">5,7</div>
+                      <div class="panel p3d" id="map_position_48">6,7</div>
+                      
+
+                      <div class="arrow" id="button-arrow-down"><img class="img-pointer" src="/static/images/da.svg"></div>
+                      <div class="arrow" id="button-arrow-down-end" style="display: none;"><img class="img-not-allowed" src="/static/images/de.svg"></div>
+                      <div class="stopper"></div>
+                    </div>
+                    <div class="stopper"></div>
+                    
+                </div>
+                <!-- MAP END -->
+                
+                <!-- NAV 
+                <div class="stopper"></div>
+                <div class="nav-bar">
+                    <div class="views-container">
+                       <div class="view">
+                            <a href="#">Home</a>
+                        </div>
+                        <div class="view ">
+                            <a href="resources.html">Resources</a>
+                        </div>
+                        <div class="view selected">
+                            <a href="#">Map</a>
+                        </div>
+                        <div class="view">
+                            <a href="#">Buildings</a>
+                        </div>
+                        <div class="view">
+                            <a href="#">Messages</a>
+                        </div>
+                        <div class="view">
+                            <a href="#">Events</a>
+                        </div>
+                    </div>
+                </div>
+                 NAV END -->
+            </div>
+            <!-- CENTER COLUMN END -->
+            
+            
+            <div class="col-xs-12 col-md-3-et">
+               <div class="stats-container" id="stats" style="display:none;">
+               
+                <!-- <h2 class="taL">Nostromo 01</h2> -->
+                
+                    <!-- COMBO LOCATION -->
+                    <div class="resource-combo" id="location">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-location"></div>
+                                <div class="title-text">Location</div>
+                                <div class="location-coords">( <span id="location-coord-x">4</span>, <span id="location-coord-y">4</span>)</div>
+                                <div class="resource-name">(<span id="location-place">Open Space</span>)</div>
+                                <div class="stopper"></div>
+            
+            <!-- GO! 
+                                <div class="inputCont">
+                                    <input type="text" id="coord1" class="inputCoords">
+                                    </div>
+                                    <div class="inputCont"><input type="text" id="coord2" class="inputCoords"></div>
+                                    <div class="view" id="goTo">GO!</div>
+                                
+                                
+                                </div> -->
+                            </div>
+                        </div>
+    
+                    </div>
+                   <!-- COMBO LOCATION END -->
+                   
+                   <!-- COMBO STARFIGHTERS -->
+                    <div class="resource-combo" id="location">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-fighters"></div>
+                                <div class="title-text"><span id="fleet-type-name"></span></div>
+                                <div class="location-coords"><span id="fleet-size"></span></div>
+                                <div class="resource-name">(<span id="fleet-status">ready for combat</span>)</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                    </div>
+                   <!-- COMBO LOCATION END -->
+                   
+                   
+                   <!-- COMBO PRODUCTION TIME -->
+                        <div class="resource-combo" id="production-time">
+                            <div class="combo-top">
+                                <div class="resource-title">
+                                    <div class="icon ic-time"></div>
+                                    <div class="title-text">Action Countdown</div>
+                                    <div class="resource-name">Blocks to</div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="combo-bottom">
+                                <div class="watch-container watch-left">
+                                    <div class="block-amount">
+                                        <span id="blocks-to-move"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                        Move
+                                    </div>
+                                </div>
+                                <div class="watch-container watch-right">
+                                    <div class="block-amount">
+                                        <span id="blocks-to-fleet"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                            Fleet
+                                    </div>
+                                </div>
+                                <div class="watch-container watch-left">
+                                    <div class="block-amount">
+                                        <span id="blocks-to-fire"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                        fire
+                                    </div>
+                                </div>
+                                <div class="watch-container watch-right">
+                                    <div class="block-amount">
+                                        <span id="blocks-to-mode"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                        Mode
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                   <!-- COMBO PRODUCTION TIME END -->
+                
+               </div> 
+            </div>
+            <div class="stopper"></div>
+        </div> 
+    </div>
+
+<!-- Modal for pannels -->
+<!-- Modal for Mode -->
+    <!-- Attack -->
+    <div class="modal fade" id="modalAttackMode" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Change to Attack Mode</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <div class="modal-body-text"><span id="attack-mode-shipname"></span></div>
+                    <ul class="list-group">
+                    <li class="list-group-item"><span class="bonus-mode-up">+25%</span><span class="bonus-text">Attack power for Battle Ships</span></li>
+                    <li class="list-group-item"><span class="bonus-mode-up">+50%</span><span class="bonus-text">Distance for Battle Ships</span></li>
+                    <li class="list-group-item"><span class="bonus-mode-down">-5%</span><span class="bonus-text">Defense power for Battle Ship</span></li>
+                    <li class="list-group-item"><span class="bonus-mode-down">-25%</span><span class="bonus-text">Movemment range for "Ship Name"</span></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    
+                        <div class="title-text fL">Resources Cost:</div>
+                        <div class="ratio-item-modal">
+                                <div class="icon-ratio ic-energy"></div>
+                                <div class="title-text fL">2000</div>
+                                
+                                <div class="stopper"></div>
+                        </div> 
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="confirm-change-attack-mode" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Defense -->
+    <div class="modal fade" id="modalDefenseMode" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Change to Defense Mode</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <div class="modal-body-text"><span id="defense-mode-shipname"></span></div>
+                        <ul class="list-group">
+                        <li class="list-group-item"><span class="bonus-mode-up">+30%</span><span class="bonus-text">Defense power for Battle Ships</span></li>
+                        <li class="list-group-item"><span class="bonus-mode-down">-10%</span><span class="bonus-text">Attack power for Battle Ship</span></li>
+                        <li class="list-group-item"><span class="bonus-mode-down">-100%</span><span class="bonus-text">Movemment range for "Ship Name"</span></li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        
+                            <div class="title-text fL">Resources Cost:</div>
+                            <div class="ratio-item-modal">
+                                    <div class="icon-ratio ic-energy"></div>
+                                    <div class="title-text fL">2000</div>
+                                    
+                                    <div class="stopper"></div>
+                                </div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="confirm-change-defense-mode" class="btn btn-primary">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Movement -->
+    <div class="modal fade" id="modalMovemmentMode" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Change to Movemment Mode</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                        <div class="modal-body-text"><span id="movemment-mode-shipname"></span></div>
+                        <ul class="list-group">
+                        <li class="list-group-item"><span class="bonus-mode-up">+50%</span><span class="bonus-text">Movemment range for "Ship Name"</span></li>
+                        <li class="list-group-item"><span class="bonus-mode-down">-10%</span><span class="bonus-text">Attack power for Battle Ship</span></li>
+                        <li class="list-group-item"><span class="bonus-mode-down">-10%</span><span class="bonus-text">Defense power for Battle Ship</span></li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+
+                            <div class="title-text fL">Resources Cost:</div>
+                            <div class="ratio-item-modal">
+                                    <div class="icon-ratio ic-energy"></div>
+                                    <div class="title-text fL">2000</div>
+                                    
+                                    <div class="stopper"></div>
+                                </div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="confirm-change-movemment-mode" class="btn btn-primary">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Default -->
+    <div class="modal fade" id="modalDefaultMode" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Back to default Mode</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                            <div class="modal-body-text"><span id="default-mode-shipname"></span></div>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            
+                                <div class="title-text fL">Resources Cost:</div>
+                                <div class="ratio-item-modal">
+                                        <div class="icon-ratio ic-energy"></div>
+                                        <div class="title-text fL">2000</div>
+                                        
+                                        <div class="stopper"></div>
+                                    </div>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" id="confirm-change-default-mode" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+    
+
+    <!-- Modal for Map Position -->
+    <!-- Empty Space -->
+    <div class="modal fade" id="modalMapEmpty" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Location (<span id="location_x-space"></span>,<span id="location_y-space"></span>)</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <img class="modal-img" src="/static/images/empty-space.png">
+                            </div>
+                            <div class="col-md-5">
+                                    <div class="modal-info-title">
+                                            Information
+                                        </div>
+                                        <div class="modal-info-text">
+                                                <div class="icon-ratio ic-distance"></div> 
+                                                <div class="title-text">distance</div>
+                                                <div class="modal-info-data"><span id="distance-to"></span> gdu</div>
+                                                <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-title top18px">
+                                            Resource availability
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="icon-ratio ic-graphene"></div>
+                                            <div class="title-text">graphene density</div>
+                                            <div class="modal-info-data"><span id="graphene-density"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                                <div class="icon-ratio ic-metals"></div>
+                                                <div class="title-text">metals density</div>
+                                                <div class="modal-info-data"><span id="metals-density"></span></div>
+                                                <div class="stopper"></div>
+                                        </div>
+                                
+                            </div>
+                        </div>
+                        <div class="row down">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                    <div class="modal-info-title">
+                                            Your Ship
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Movemments Available</div>
+                                            <div class="modal-info-data"><span id="move-ship-distance"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Status</div>
+                                            <div class="modal-info-data"><span id="move-ship-status"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="one-button">
+                                    <button type="button" id="move-to-location" class="btn btn-primary">Move To</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Ship -->
+        <div class="modal fade" id="modalMapOtherShip" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Location (<span id="location_x-ship"></span>,<span id="location_y-ship"></span>)</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <img class="modal-img" src="/static/images/other-ship.png">
+                            </div>
+                            <div class="col-md-5">
+                                    <div class="modal-info-title">
+                                            <span id="other-ship-name"></span>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="icon-ratio ic-distance"></div>
+                                            <div class="title-text">distance</div>
+                                                <div class="modal-info-data"><span id="distance-to-ship"></span> gdu</div>
+                                                <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Owner</div>
+                                            <div class="modal-info-data">Player Name</div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Ship ID</div>
+                                            <div class="modal-info-data"><span id="other-ship-id"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">
+                                            <div class="title-text-no-icon">Mode</div>
+                                            <div class="modal-info-data"><span id="other-ship-mode"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                            </div>
+                        </div>
+                        <div class="row down">
+                            <div class="col-md-4" id="attack-modal-ship">
+                                        <div class="modal-info-title">
+                                            Your Fleet
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon"><span id="own-fleet-type"></span></div>
+                                            <div class="modal-info-data"><span id="own-fleet-size"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Action Ratio</div>
+                                            <div class="modal-info-data"><span id="own-fleet-distance"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Loading Capacity</div>
+                                            <div class="modal-info-data"><span id="own-fleet-load"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Status</div>
+                                            <div class="modal-info-data"><span id="own-fleet-status"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                            </div>
+                            <div class="col-md-4" id="send-resources-modal-ship">
+                                    <div class="modal-info-text">
+                                            <div class="icon-ratio-modal ic-energy"></div>
+                                            <div class="form-container">
+                                                <input type="number" id="energy-to-send" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="modal-info-text">
+                                            <div class="icon-ratio-modal ic-graphene"></div>
+                                            <div class="form-container">
+                                                <input type="number" id="graphene-to-send" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="modal-info-text">
+                                            <div class="icon-ratio-modal ic-metals"></div>
+                                            <div class="form-container">
+                                                <input type="number" id="metals-to-send" class="form-control">
+                                            </div>
+                                        </div>
+
+                            </div>
+                            <div class="col-md-4" id="cannon-modal-ship">
+                                    <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Cannon Status</div>
+                                            <div class="modal-info-data"><span id="cannon-status">-</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Energy to Fire Cannon</div>
+                                            <div class="modal-info-data" id="data-cannon-to-fire">-</div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="combo-bottom">
+                                            <div class="gauge-cannon gauge-lateral-cannon" data-toggle="tooltip" data-placement="top" title="" data-original-title="% of resource available for fire cannon">
+                                                <div class="gauge-reflex"></div>
+                                                <div class="gauge-bar energy" id="bar-cannon-to-fire" style="width: 100%;"></div>
+                                                <div class="gauge-background"></div>
+                                            </div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                                <div class="title-text-no-icon">Actual Damage</div>
+                                                <div class="modal-info-data" id="cannon-damage-percentage">-</div>
+                                                <div class="stopper"></div>
+                                        </div>
+                            </div>
+                        </div>
+                        <div class="modal-info-box-button down">
+                            <div class="modal-ship-information-botton"><button id="attack-button" type="button" class="btn btn-primary">Attack Ship</button></div>
+                            <div class="modal-ship-information-botton"><button id="send-resources-button" type="button" class="btn btn-primary">Send Resources</button></div>
+                            <div class="modal-ship-information-botton"><button id="fire-cannon-button" type="button" class="btn btn-primary">Fire Cannon</button></div>
+                        </div>
+                    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+
+
+
+        <!--
+            <div class="modal fade show" id="modalMapOtherShip" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" style="padding-right: 16px; display: block;">
+            <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalCenterTitle">Location (<span id="location_x-ship">5</span>,<span id="location_y-ship">4</span>)</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <img class="modal-img" src="/static/images/other-ship.png">
+                            </div>
+                            <div class="col-md-5">
+                                    <div class="modal-info-title">
+                                            <span id="other-ship-name">VENI, SUBITE A MI GILERA</span>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="icon-ratio ic-distance"></div>
+                                            <div class="title-text">distance</div>
+                                                <div class="modal-info-data"><span id="distance-to-ship">3</span> gdu</div>
+                                                <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Owner</div>
+                                            <div class="modal-info-data">Player Name</div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Ship ID</div>
+                                            <div class="modal-info-data"><span id="other-ship-id">1030</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">
+                                            <div class="title-text-no-icon">Mode</div>
+                                            <div class="modal-info-data"><span id="other-ship-mode">Attack</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                            </div>
+                        </div>
+                        <div class="row down">
+                            <div class="col-md-4" id="attack-modal-ship">
+                                        <div class="modal-info-title">
+                                            Your Fleet
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon"><span id="own-fleet-type">Predator</span></div>
+                                            <div class="modal-info-data"><span id="own-fleet-size">0</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Action Ratio</div>
+                                            <div class="modal-info-data"><span id="own-fleet-distance">3 gdu</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Loading Capacity</div>
+                                            <div class="modal-info-data"><span id="own-fleet-load">0 kU</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Status</div>
+                                            <div class="modal-info-data"><span id="own-fleet-status">-</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                            </div>
+                            <div class="col-md-4" id="send-resources-modal-ship">
+                                    <div class="modal-info-text">
+                                            <div class="icon-ratio-modal ic-energy"></div>
+                                            <div class="form-container">
+                                                <input type="number" id="energy-to-send" class="form-control" readonly="readonly">
+                                            </div>
+                                        </div>
+                                        <div class="modal-info-text">
+                                            <div class="icon-ratio-modal ic-graphene"></div>
+                                            <div class="form-container">
+                                                <input type="number" id="graphene-to-send" class="form-control" readonly="readonly">
+                                            </div>
+                                        </div>
+                                        <div class="modal-info-text">
+                                            <div class="icon-ratio-modal ic-metals"></div>
+                                            <div class="form-container">
+                                                <input type="number" id="metals-to-send" class="form-control" readonly="readonly">
+                                            </div>
+                                        </div>
+
+                            </div>
+                            <div class="col-md-4" id="cannon-modal-ship">
+     <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Mode</div>
+                                            <div class="modal-info-data">
+
+  <label><input type="radio" name="optradio" checked="">Normal</label>
+
+
+  <label style="
+"><input type="radio" name="optradio" style="
+    margin-right: 2px;
+">Accuracy</label>
+</div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                    <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Cannon Status</div>
+                                            <div class="modal-info-data"><span id="cannon-status">Out of range</span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Energy to Fire Cannon</div>
+                                            <div class="modal-info-data" id="data-cannon-to-fire">100%</div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="combo-bottom">
+                                            <div class="gauge-cannon gauge-lateral-cannon" data-toggle="tooltip" data-placement="top" title="" data-original-title="% of resource available for fire cannon">
+                                                <div class="gauge-reflex"></div>
+                                                <div class="gauge-bar energy" id="bar-cannon-to-fire" style="width: 100%;"></div>
+                                                <div class="gauge-background"></div>
+                                            </div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">       
+                                                <div class="title-text-no-icon">Actual Damage</div>
+                                                <div class="modal-info-data" id="cannon-damage-percentage">-</div>
+                                                <div class="stopper"></div>
+                                        </div>
+                            </div>
+                        </div>
+                        <div class="modal-info-box-button down">
+                            <div class="modal-ship-information-botton"><button id="attack-button" type="button" class="btn btn-primary disabled">Attack Ship</button></div>
+                            <div class="modal-ship-information-botton"><button id="send-resources-button" type="button" class="btn btn-primary disabled">Send Resources</button></div>
+                            <div class="modal-ship-information-botton">
+    
+  
+  <select class="form-control" id="sel1" style="
+    max-width: 60%;
+    width: 150px;
+    max-height: 30px;
+">
+    <option>Energy Panel1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+  </select>
+    
+    <button id="fire-cannon-button" type="button" class="btn btn-primary disabled">Fire Cannon</button></div>
+                        </div>
+                    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        New Modal End        
+        --> 
+
+
+
+
+        <!-- Planet -->
+        <div class="modal fade" id="modalMapPlanet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="exampleModalCenterTitle">Location <span id="planet-location"></span></h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-5">
+                                    <img class="modal-img" src="/static/images/planet.png">
+                                </div>
+                                <div class="col-md-5">
+                                        <div class="modal-info-title"><span id="planet-name"></span></div>
+                                            <div class="modal-info-text">       
+                                                <div class="icon-ratio ic-distance"></div>
+                                                <div class="title-text">Distance</div>
+                                                    <div class="modal-info-data"><span id="planet-distance"></span> gdu</div>
+                                                    <div class="stopper"></div>
+                                            </div>
+                                            <div class="modal-info-text">
+                                                <div class="title-text-no-icon">Owner</div>
+                                                <div class="modal-info-data"><span id="planet-owner"></span></div>
+                                                <div class="stopper"></div>
+                                            </div> 
+                                            <div class="modal-info-text">
+                                                <div class="title-text-no-icon">Defenders</div>
+                                                <div class="modal-info-data"><span id="planet-defenders"></span></div>
+                                                <div class="stopper"></div>
+                                            </div>
+                                </div>
+                            </div>
+                            <div class="row down">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-5">
+                                        <div class="modal-info-title">
+                                                Your Fleet
+                                            </div>
+                                            <div class="modal-info-text">       
+                                                <div class="title-text-no-icon"><span id="planet-fleet-type"></span></div>
+                                                <div class="modal-info-data"><span id="planet-fleet-size"></span></div>
+                                                <div class="stopper"></div>
+                                            </div>
+                                            <div class="modal-info-text">       
+                                                <div class="title-text-no-icon">Action Ratio</div>
+                                                <div class="modal-info-data"><span id="planet-fleet-distance"></span></div>
+                                                <div class="stopper"></div>
+                                            </div>
+                                            <div class="modal-info-text">       
+                                                <div class="title-text-no-icon">Status</div>
+                                                <div class="modal-info-data"><span id="planet-fleet-status"></span></div>
+                                                <div class="stopper"></div>
+                                            </div>
+                                </div>
+                                <div class="col-md-5">
+                                        <div class="modal-info-title">
+                                            Your Ship
+                                        </div>
+                                        <div class="modal-info-text">       
+                                            <div class="title-text-no-icon">Action Ratio</div>
+                                            <div class="modal-info-data"><span id="planet-ship-range"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                        <div class="modal-info-text">
+                                            <div class="title-text-no-icon">Status</div>
+                                            <div class="modal-info-data"><span id="planet-ship-status"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="row down">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-5">
+                                        <div class="one-button">
+                                        <button type="button" class="btn btn-primary" id="button-attack-planet">Attack</button>
+                                        </div>
+                                </div>
+                                <div class="col-md-5">
+                                        <div class="one-button">
+                                            <button type="button" class="btn btn-primary" id="button-land-to">Land</button>
+                                            <button type="button" class="btn btn-primary" id="button-defend-to">Defend</button>        
+                                        </div>
+
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="modal fade" id="modal_tx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Order Submited</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                            <div class="modal-body-text">ORDER: <span id="change mode"></span></div>
+                            <div class="modal-body-text">Click <a id="link_to_etherscan" href="">here</a> to verify the transaction status in Etherscan</span></div>
+                        </div>
+                        <div class="modal-footer">
+                        
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+    
+<!-- scripts -->
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/cssgame.js"></script>
+<script src="/static/js/backend.js"></script>
+<script>
+    
+    window.planetOwner = {{ game_candidate }};
+    window.reward = {{ game_reward }};
+    window.gameAge = {{ last_block_number }} - {{ game_launch }};
+    window.blocksToEnd = {{ game_end_block }} - {{ last_block_number }};
+
+    window.DEBUG = true;
+
+    window.gameAbi = {{ game_abi | js}};
+    window.gameAddress = "{{ game_address }}";
+    window.gameNetwork = {{ game_network }};
+
+    window.ship = {{ ship_id }};
+
+    window.eventsCount = {{ events_count }};
+    
+    window.position_x = {{ position_x }};
+    window.position_y = {{ position_y }};
+    window.shipName = "{{ ship_name }}";
+
+    window.game = {{ game_id }};
+    
+    window.warehouseLevel = {{ warehouse_level }};
+    window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel)
+    
+    // Map
+    window.map = {{ map }};
+    window.map_center_x = {{ map_center_x }};
+    window.map_center_y = {{ map_center_y }};
+    window.map_size = 12;
+
+    // Ship
+    window.mode = {{ mode }};
+    window.blocks_to_move = {{ countdown_move }};
+    window.blocks_to_mode = {{ countdown_mode }};
+    window.blocks_to_fleet = {{ countdown_fleet }};
+    window.blocks_to_fire = {{ countdown_fire_cannon }};
+    window.damage = {{ damage }};
+    window.cannon_level = {{ cannon_level }};
+    window.in_port = {{ in_port | boolean }};
+
+    // Si tiene cañon
+    window.cannon = window.cannon_level > 0 ? true : false;
+
+
+
+    // Stock of resources       
+    window.grapheneStock = {{ graphene_stock }};
+    window.energyStock =  {{ energy_stock }};
+    window.metalsStock = {{ metal_stock }};
+
+
+    window.fleet_size = {{ fleet_size }};
+    window.fleet_type = {{ fleet_type }};
+    window.fleet_load = {{ fleet_load }};
+    window.fleet_distance = {{ fleet_distance }};
+    
+    // URL
+    window.base_url = "{{ base_url }}";
+    window.etherscan_url = "https://kovan.etherscan.io/tx/";
+
+
+    // Constants
+    window.ATTACK_MODE = 2;
+    window.DEFENSE_MODE = 3;
+    window.MOVEMMENT_MODE = 1;
+    window.DEFAULT_MODE = 0;
+    window.ENERGY_TO_CHANGE_MODE = 2000;
+
+</script>
+
+<script>
+   $(document).ready(function(){
+
+        if (typeof web3 !== 'undefined' && web3.currentProvider.isMetaMask == true ) {
+            web3.version.getNetwork(function(error,network) {
+                if (!error && network == window.gameNetwork) {
+                    w3 = new Web3(web3.currentProvider);
+                    window.cssgame = new CSSGame(w3,window.gameAbi,window.gameAddress,web3);
+                    window.backend = new Backend(window.base_url);
+                    // Funcion para dibujar las flechas dependiendo del comienzo
+                    // del mapa
+                    function showMapArrows(x,y) 
+                    {
+                        if (x < 0 || x > (window.map_size - 1) || y < 0 || y > (window.map_size - 1))
+                            throw "Invalid Axis";
+
+                        $('#button-arrow-right').hide();
+                        $('#button-arrow-left').hide();
+                        $('#button-arrow-up').hide();
+                        $('#button-arrow-down').hide();
+                        $('#button-arrow-right-end').hide();
+                        $('#button-arrow-left-end').hide();
+                        $('#button-arrow-up-end').hide();
+                        $('#button-arrow-down-end').hide();
+
+                        if ( x > 0 ) {
+                            $('#button-arrow-left').show();
+                        }
+                        else {
+                            $('#button-arrow-left-end').show();
+                        }
+                        if ( x + 7 <= (window.map_size - 1)) {
+                            $('#button-arrow-right').show();
+                        }
+                        else {
+                            $('#button-arrow-right-end').show();
+                        }
+                        if ( y > 0 ) {
+                            $('#button-arrow-up').show();
+                        }
+                        else {
+                            $('#button-arrow-up-end').show();
+                        }
+                        if ( y + 7 <= (window.map_size - 1)) {
+                            $('#button-arrow-down').show();
+                        }
+                        else {
+                            $('#button-arrow-down-end').show();
+                        }
+                    }
+
+                /*--------------------------------------------*
+                    * Handler para el mapa                       *
+                    *--------------------------------------------*/
+                
+                    for ( i = 0; i <= 49-1; i++ ) {
+                        position = '#map_position_' + i.toString();
+                        $(position).click(function() {
+                            id = $(this).attr('id');
+                            mapHandler('#'+id);
+                        });
+                    }
+                
+
+                    // Handler for button GO
+                    $('#button-go').click(function() {
+                        coord_x = parseInt($('#go-to-x').val());
+                        coord_y = parseInt($('#go-to-y').val());
+                        if (coord_x >= 0 && coord_x <=(window.map_size - 1) && coord_y >= 0 && coord_y <= (window.map_size - 1)) {
+                            if (coord_x < 3) coord_x = 3;
+                            if (coord_x > (window.map_size - 4)) coord_x = (window.map_size - 4);
+                            if (coord_y < 3) coord_y = 3;
+                            if (coord_y > (window.map_size - 4)) coord_y = (window.map_size - 4);
+                            window.map_center_x = coord_x;
+                            window.map_center_y = coord_y;
+                            refreshMap();
+                        }
+                        else {
+                            $('#go-to-x').val("");
+                            $('#go-to-y').val("");
+                        }
+                    });
+
+                    // Handler for arrow up
+                    $('#button-arrow-up').click(function() {
+                        window.map_center_y--;
+                        refreshMap();
+                    });
+
+                    // Handler for arrow down
+                    $('#button-arrow-down').click(function() {
+                        window.map_center_y++;
+                        refreshMap();
+                    });
+
+                    // Handler for arrow left
+                    $('#button-arrow-left').click(function() {
+                        window.map_center_x--;
+                        refreshMap();
+                    });
+
+                    // Handler for arrow right
+                    $('#button-arrow-right').click(function() {
+                        window.map_center_x++;
+                        refreshMap();
+                    });
+
+
+                    function refreshMap() {
+                        window.cssgame.getStrategicMap(window.map_center_x,window.map_center_y,function(e,r) {
+                            if (!e) {
+                                ret = window.cssgame.getStrategicMapResult(r);
+                                if (ret.center_x == window.map_center_x && ret.center_y == window.map_center_y) {
+                                    if (!mapArrayCmp(ret.map)) {
+                                        window.map = ret.map;
+                                        setMap();
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+
+                    /*
+                     * Handler para apertura de modal
+                     */ 
+                    $('#button-attack-mode').click(function() {
+                        $('#attack-mode-shipname').text("Set " + window.shipName.toString() + " to Attack Mode.");
+                        if (window.mode != window.ATTACK_MODE && canChangeMode()) {
+                            $('#confirm-change-attack-mode').click(function() {
+                                cssgame.changeMode(window.ship, window.ATTACK_MODE,function(e,h){
+                                    if (!e) {
+                                        process_order ("change_attack_mode",h);
+                                    }    
+                                });
+                            });
+                        }
+                        else {
+                            $('#confirm-change-attack-mode').addClass('disabled');
+                        }
+                        window.id_modal_open = '#modalAttackMode';
+                        $(window.id_modal_open).modal('show');
+                    });
+
+                    $('#button-defense-mode').click(function() {
+                        $('#defense-mode-shipname').text("Set " + window.shipName.toString() + " to Defense Mode.");
+                        if (window.mode != window.DEFENSE_MODE && canChangeMode()) {
+                            $('#confirm-change-defense-mode').click(function() {
+                                cssgame.changeMode(window.ship, window.DEFENSE_MODE,function(e,h){
+                                    if (!e) {
+                                        process_order ("change_defense_mode",h);
+                                    }    
+                                });
+                            });
+                        }
+                        else {
+                            $('#confirm-change-defense-mode').addClass('disabled')
+                        }
+                        window.id_modal_open = '#modalDefenseMode';
+                        $(window.id_modal_open).modal('show');
+                    });
+
+                    $('#button-movemment-mode').click(function() {
+                        $('#movemment-mode-shipname').text("Set " + window.shipName.toString() + " to Movemment Mode.");
+                        if (window.mode != window.MOVEMMENT_MODE && canChangeMode()) {
+                            $('#confirm-change-movemment-mode').click(function() {
+                                cssgame.changeMode(window.ship, window.MOVEMMENT_MODE,function(e,h){
+                                    if (!e) {
+                                        process_order ("change_movement_mode",h);
+                                    }    
+                                });
+                            });
+                        }
+                        else {
+                            $('#confirm-change-movemment-mode').addClass('disabled')
+                        }
+                        window.id_modal_open = '#modalMovemmentMode';
+                        $(window.id_modal_open).modal('show');
+                    });
+
+                    $('#button-default-mode').click(function() {
+                        $('#default-mode-shipname').text("Set " + window.shipName.toString() + " to Default Mode.");
+                        if (window.mode != window.DEFAULT_MODE && canChangeMode()) {
+                            $('#confirm-change-default-mode').click(function() {
+                                cssgame.changeMode(window.ship, window.DEFAULT_MODE,function(e,h){
+                                    if (!e) {
+                                        process_order ("change_default_mode",h);
+                                    }    
+                                });
+                            });
+                        }    
+                        else {
+                            $('#confirm-change-default-mode').addClass('disabled')
+                        }
+                        window.id_modal_open = '#modalDefaultMode';
+                        $(window.id_modal_open).modal('show');
+                    });
+
+
+                    $('#modalAttackMode').on('hidden.bs.modal',function() { 
+                        clean_modal();
+                        $('#confirm-change-attack-mode').off();
+                        $('#confirm-change-attack-mode').removeClass('disabled');                        
+                    });
+                    
+                    $('#modalDefenseMode').on('hidden.bs.modal',function() {
+                        clean_modal();
+                        $('#confirm-change-defense-mode').off();
+                        $('#confirm-change-defense-mode').removeClass('disabled')
+                    });
+                    
+                    $('#modalMovemmentMode').on('hidden.bs.modal',function() { 
+                        clean_modal();
+                        $('#confirm-change-movemment-mode').off();
+                        $('#confirm-change-movemment-mode').removeClass('disabled');
+                    });
+                    
+                    $('#modalDefaultMode').on('hidden.bs.modal',function() { 
+                        clean_modal();
+                        $('#confirm-change-default-mode').off();
+                        $('#confirm-change-default-mode').removeClass('disabled');
+                    });
+                    
+                    function clean_modal() {
+                        window.id_modal_open = undefined;
+                    }
+
+                    function process_order (order, tx) {
+                        /*
+                         * Se cierra el modal
+                         */
+                        $(window.id_modal_open).modal('hide');
+                        window.backend.orders.add(window.game,window.ship,order,tx,function(e,r) {
+                            if (!e) {
+                                setInterval(function(){
+                                    w3.eth.getTransactionReceipt(tx, function(e,h){
+                                        if (h) location.reload();
+                                    });
+                                },3000);
+                            } else {
+                                console.log(e);
+                            }
+                        });
+                        $('#link_to_etherscan').attr('href', window.etherscan_url + tx);
+                        $('#modal_tx').modal('show');
+                    }
+
+
+                    /*
+                     * Botones de confirmacion de cambio de modo
+                     */
+
+                    
+
+                    
+                    
+
+                   
+
+
+                    function cannonInModal() {
+                        let p = parseInt((window.energyStock * 100 / 2000000));
+                        if (p > 100) {
+                            p = 100;
+                        }
+                        let pstr = p.toString() + '%';
+                        let damage = CSSGame.getCannonDamage([window.position_x,window.position_y],[x,y], window.cannon_level);
+                        $('#data-cannon-to-fire').text(pstr);
+                        $('#bar-cannon-to-fire').css('width',pstr);
+                        if (CSSGame.checkCannonRange([window.position_x,window.position_y],[x,y], window.cannon_level)) {
+                            if (!window.in_port) {
+                                if (window.blocks_to_fire == 0) {
+                                    if (CSSGame.energyToFire(window.energyStock)) {
+                                        if (window.mode == 2) {
+                                            $('#cannon-status').text('Ready');
+                                            $('#cannon-damage-percentage').text(damage + '%');
+                                            return true;
+                                        }
+                                        else {
+                                            $('#cannon-status').text('Wrong mode');
+                                            $('#cannon-damage-percentage').text('-');
+                                            return false;
+                                        }
+                                    }
+                                    else {
+                                        $('#cannon-status').text('Loading');
+                                        $('#cannon-damage-percentage').text('-');
+                                        return false;
+                                    }
+                                }
+                                else {
+                                    $('#cannon-status').text('Waiting');
+                                    $('#cannon-damage-percentage').text('-');
+                                    return false;
+                                }
+                            }
+                            else {
+                                $('#cannon-status').text('Ship in Port');
+                                $('#cannon-damage-percentage').text('-');
+                                return false;
+                            }
+                        }
+                        else {
+                            $('#cannon-status').text('Out of range');
+                            $('#cannon-damage-percentage').text('-');
+                            return false;
+                        }
+                    }
+
+
+
+
+                    function mapHandler(id) {
+                        type = $(id).attr("map-type");
+                        x = parseInt($(id).attr("map-coord-x"));
+                        y = parseInt($(id).attr("map-coord-y"));
+                        objectId = parseInt($(id).attr("map-object-id"));
+                        cssgame.getInPosition(x,y,function(e,r) {
+                            if (!e) {
+                                ret = cssgame.getInPositionResult(r);
+                                if (ret.id == 0) { // Empty
+                                    $('#distance-to').text(CSSGame.getDistance([window.position_x,window.position_y],[x,y]));
+                                    $('#location_x-space').text(x);
+                                    $('#location_y-space').text(y);
+                                    $('#graphene-density').text(ret.graphene);
+                                    $('#metals-density').text(ret.metals);
+                                    $('#move-ship-distance').text(CSSGame.getRangeByMode(window.mode))
+                                    
+                                    if (CSSGame.isShipInRange([window.position_x,window.position_y],[x,y], window.mode)) {
+                                        if (window.blocks_to_move == 0) {
+                                            $('#move-ship-status').text('Ready');
+                                            /*
+                                            * Se define el handler para moverse
+                                            * a esa ubicacion
+                                            */
+                                            $('#move-to-location').click(function() {
+                                                cssgame.moveTo(window.ship,x,y,function(e,h){
+                                                    if (!e) {
+                                                        process_order("move_to",h);
+                                                    }
+                                                });
+                                            });
+                                        }
+                                        else {
+                                            $('#move-ship-status').text('Waiting');
+                                            $('#move-to-location').addClass('disabled');
+                                        }
+                                    }
+                                    else {
+                                        $('#move-ship-status').text('Out of range');
+                                        $('#move-to-location').addClass('disabled');
+                                    }
+                                    /*
+                                     * Se muestra el modal
+                                     */ 
+                                    window.id_modal_open = '#modalMapEmpty';
+                                    $('#modalMapEmpty').modal('show');
+                                }
+                                else {
+                                    if (CSSGame.isShip(ret.id) && ret.id != window.ship) {
+                                        $('#distance-to-ship').text(CSSGame.getDistance([window.position_x,window.position_y],[x,y]));
+                                        window.other_ship = ret.id;
+                                        $('#location_x-ship').text(x);
+                                        $('#location_y-ship').text(y);
+
+                                        cssgame.viewShip(window.other_ship,function(e,r){
+                                            if (!e) {
+                                                ret = cssgame.viewShipResult(r);
+                                                $('#other-ship-name').text(ret.name);
+                                                $('#other-ship-id').text(window.other_ship);
+                                                $('#other-ship-mode').text(CSSGame.getModeName(ret.mode));
+                                            }
+                                        });
+
+                                        /*
+                                         * Si tiene cañon lo muestra
+                                         */ 
+                                        $('#fire-cannon-button').addClass('disabled');
+                                        if (window.cannon == false) {
+                                            //$('#cannon-modal-ship').hide();    
+                                        }
+                                        else {
+                                            /*
+                                             * Dibuja los atributos del cañon
+                                             */
+                                            if (cannonInModal()) {                                                
+                                                $('#fire-cannon-button').removeClass('disabled');
+                                                $('#fire-cannon-button').click(function() {
+                                                    cssgame.fireCannon(window.ship,window.other_ship, function(e,h) {
+                                                        if (!e) {
+                                                            process_order("fire_cannon",h);
+                                                        }
+                                                    });
+                                                });
+                                            }
+                                        }
+                                        
+                                        if (window.fleet_type > 0) {
+                                            $('#own-fleet-type').text(CSSGame.getFleetTypeName(window.fleet_type));
+                                            $('#own-fleet-size').text(window.fleet_size);
+                                            $('#own-fleet-distance').text(CSSGame.getFleetRange(window.fleet_distance, window.mode) + " gdu");
+                                            $('#own-fleet-load').text(parseInt(window.fleet_size * window.fleet_load/1000) + " kU");
+                                        }
+                                        else {
+                                            $('#own-fleet-type').text("Undesigned Fleet");
+                                            $('#own-fleet-size').text("-");
+                                            $('#own-fleet-distance').text("-");
+                                            $('#own-fleet-load').text("-")
+                                        }
+                                        
+                                        
+                                        if (window.fleet_size > 0) {
+                                            if (CSSGame.isFleetinRange([window.position_x,window.position_y],[x,y], window.fleet_distance, window.mode)) {
+                                                if (window.blocks_to_fleet == 0) {
+                                                    if (!window.in_port) {
+                                                        $('#own-fleet-status').text("Ready");
+                                                        /*
+                                                        * Define el handler para mandar los recursos
+                                                        */ 
+                                                        $('#send-resources-button').click(function() {
+                                                            let energy = $('#energy-to-send').val();
+                                                            let graphene = $('#graphene-to-send').val();
+                                                            let metals = $('#metals-to-send').val();
+                                                            cssgame.sendResources(window.ship,window.other_ship,energy,graphene,metals,function(e,h){
+                                                                if (!e) {
+                                                                    process_order("send_resources",h);                  
+                                                                }
+                                                            });
+                                                        });
+                                                        /*
+                                                         * Define el handler para atacar
+                                                         */ 
+                                                        $('#attack-button').click(function() {
+                                                            cssgame.attackShip(window.ship,window.other_ship, function(e,h){
+                                                                if (!e) {
+                                                                    process_order("attack_ship",h);
+                                                                }
+                                                            });
+                                                        });
+                                                    }
+                                                    else {
+                                                        $('#own-fleet-status').text("Ship in port");
+                                                        $('#attack-button').addClass('disabled');
+                                                        $('#send-resources-button').addClass('disabled');
+                                                        $('#energy-to-send').attr('readonly', '');
+                                                        $('#graphene-to-send').attr('readonly', '');
+                                                        $('#metals-to-send').attr('readonly', '');
+                                                    }
+                                                }
+                                                else {
+                                                    $('#own-fleet-status').text("Waiting");
+                                                    $('#attack-button').addClass('disabled');
+                                                    $('#send-resources-button').addClass('disabled');
+                                                    $('#energy-to-send').attr('readonly', '');
+                                                    $('#graphene-to-send').attr('readonly', '');
+                                                    $('#metals-to-send').attr('readonly', '');
+                                                }
+                                            }
+                                            else {
+                                                $('#own-fleet-status').text("Out of range");
+                                                $('#attack-button').addClass('disabled');
+                                                $('#send-resources-button').addClass('disabled');
+                                                $('#energy-to-send').attr('readonly', '');
+                                                $('#graphene-to-send').attr('readonly', '');
+                                                $('#metals-to-send').attr('readonly', ''); 
+                                            }                                        
+                                        }
+                                        else {
+                                            $('#own-fleet-status').text("-");
+                                            $('#attack-button').addClass('disabled');
+                                            $('#send-resources-button').addClass('disabled');
+                                            $('#energy-to-send').attr('readonly', '');
+                                            $('#graphene-to-send').attr('readonly', '');
+                                            $('#metals-to-send').attr('readonly', '');
+                                        }
+                                        window.id_modal_open = '#modalMapOtherShip';
+                                        $('#modalMapOtherShip').modal("show");
+                                    }
+                                    else if (ret.id != window.ship){
+                                        let distance = CSSGame.getDistance([window.position_x,window.position_y],[x,y]);
+                                        $('#planet-location').text('[' + x.toString() + ',' + y.toString() + ']');
+                                        $('#planet-distance').text(distance);
+                                        $('#planet-ship-range').text(CSSGame.getRangeByMode(window.mode))
+                                        
+                                        cssgame.getPort(function(e,r){
+                                            if (!e) {
+                                                ret = cssgame.getPortResult(r);
+                                                $('#planet-name').text(ret.name);
+                                                cssgame.getShipByOwner(ret.owner, function(e,r) {
+                                                    if (!e) {
+                                                        ship_id = cssgame.getShipByOwnerResult(r);
+                                                        if (ship_id != -1)
+                                                            $('#planet-owner').text(ship_id);
+                                                    }
+                                                });
+                                                let defenders = '';
+                                                window.is_defender = false;
+                                                for (i=0; i<4; i++) {
+                                                     defenders = defenders + ' ' + ret.defenders[i].toString();
+                                                     if (window.ship == ret.defenders[i]) {
+                                                        window.is_defender = true;
+                                                     }
+                                                }
+                                                $('#planet-defenders').text(defenders);
+                                            }
+
+                                        });
+                                        
+                                        if (window.fleet_type !=0) {
+                                            $('#planet-fleet-type').text(CSSGame.getFleetTypeName(window.fleet_type));
+                                            $('#planet-fleet-size').text(window.fleet_size);
+                                            $('#planet-fleet-distance').text(CSSGame.getFleetRange(window.fleet_distance, window.mode) + " gdu");
+                                        }
+                                        else {
+                                            $('#planet-fleet-type').text("Undesigned Fleet");
+                                            $('#planet-fleet-size').text("-");
+                                            $('#planet-fleet-distance').text("-");
+                                        }                                  
+                                                                                                                       
+                                        if (window.fleet_size > 0) {
+                                            let inRange = CSSGame.isFleetinRange([window.position_x,window.position_y],[x,y], window.fleet_distance, window.mode)
+                                            if (inRange) {
+                                                if (window.blocks_to_fleet == 0){
+                                                    if (!window.in_port) {
+                                                        $('#planet-fleet-status').text("Ready");
+                                                        $("#button-attack-planet").click(function() {
+                                                            cssgame.attackPort(window.ship,objectId,function(e,h){
+                                                                if (!e) {
+                                                                    process_order("attack_port",h);
+                                                                }
+                                                            });
+                                                        });
+                                                    }
+                                                    else {
+                                                        $('#planet-fleet-status').text("Ship in port");
+                                                        $("#button-attack-planet").addClass('disabled');
+                                                    }
+                                                }
+                                                else {
+                                                    $('#planet-fleet-status').text("Waiting");
+                                                    $("#button-attack-planet").addClass('disabled');
+                                                }
+                                            }
+                                            else {
+                                                $('#planet-fleet-status').text("Out of range");
+                                                $("#button-attack-planet").addClass('disabled');
+                                            }
+                                            
+                                            if (CSSGame.isShipInRange([window.position_x,window.position_y],[x,y], window.mode)) {
+                                                if (window.blocks_to_move == 0) {
+                                                    if (!window.in_port) {
+                                                        $("#planet-ship-status").text("Ready");
+                                                        $("#button-defend-to").click(function() {
+                                                            cssgame.landTo(window.ship,x,y,true,function(e,h){
+                                                                if (!e) {
+                                                                    process_order("defend_port",h);
+                                                                }
+                                                            });
+                                                        });
+                                                    }
+                                                    else {
+                                                        $("#button-defend-to").addClass('disabled');
+                                                        $("#planet-ship-status").text("Ship in port");
+                                                    }
+                                                }
+                                                else {
+                                                    $("#button-defend-to").addClass('disabled');
+                                                    $("#planet-ship-status").text("Waiting");
+                                                }
+                                            }
+                                            else {
+                                                $("#button-defend-to").addClass('disabled');
+                                                $("#planet-ship-status").text("Out of range");
+                                            }
+                                        }
+                                        else {                                                                         
+                                            $('#planet-fleet-status').text("-");
+                                            $("#button-attack-planet").addClass('disabled');
+                                            $("#button-defend-to").addClass('disabled');
+                                        }
+                                        
+                                        if (CSSGame.isShipInRange([window.position_x,window.position_y],[x,y], window.mode)) {
+                                            if (window.blocks_to_move == 0) {
+                                                if (!window.in_port || window.is_defender) {
+                                                    $("#planet-ship-status").text("Ready");
+                                                    $("#button-land-to").click(function() {
+                                                        cssgame.landTo(window.ship,x,y,false,function(e,h){
+                                                            if (!e) {
+                                                                process_order("land_to",h);
+                                                            }
+                                                        });
+                                                    });
+                                                }
+                                                else {
+                                                    $("#button-land-to").addClass('disabled');
+                                                    $("#planet-ship-status").text("Ship in port");
+                                                }
+                                            }
+                                            else {
+                                                $("#button-land-to").addClass('disabled');
+                                                $("#planet-ship-status").text("Waiting");
+                                            }
+                                        }
+                                        else {
+                                            $("#button-land-to").addClass('disabled');
+                                            $("#planet-ship-status").text("Out of range");
+                                        }              
+                                        window.id_modal_open = '#modalMapPlanet';
+                                        $('#modalMapPlanet').modal("show");
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    
+                    /*
+                     * Limpia el handler para el boton de move-to-location
+                     */
+                    $('#modalMapEmpty').on('hidden.bs.modal',function() {
+                        clean_modal();
+                        $('#move-to-location').off();
+                        $('#move-to-location').removeClass('disabled');
+                    });
+
+                     $('#modalMapPlanet').on('hidden.bs.modal',function() {
+                        clean_modal();
+                        window.is_defender = undefined;
+                        $("#button-land-to").off();
+                        $("#button-defend-to").off();
+                        $("#button-attack-planet").off();
+                        $("#button-land-to").removeClass('disabled');
+                        $("#button-defend-to").removeClass('disabled');
+                        $("#button-attack-planet").removeClass('disabled');
+                    });
+
+
+                    $('#modalMapOtherShip').on('hidden.bs.modal',function() {
+                        clean_modal();
+                        window.other_ship = undefined;
+                        $('#send-resources-button').off();
+                        $('#attack-button').off();
+                        $('#fire-cannon-button').off();
+                        $('#attack-button').removeClass('disabled');
+                        $('#send-resources-button').removeClass('disabled');
+                        $('#attack-button').removeClass('disabled');
+                    });
+
+                    function canChangeMode() {
+                        if (window.blocks_to_mode == 0 && window.energyStock >= window.ENERGY_TO_CHANGE_MODE)
+                            return true;
+                        return false;
+                    }
+
+                    function setFleet() {
+                        if (window.fleet_type != 0)
+                            $('#fleet-type-name').text(CSSGame.getFleetType(window.fleet_type));
+                        else
+                            $('#fleet-type-name').text("Undesigned Fleet");
+                        $('#fleet-size').text(window.fleet_size.toString());
+                        if (window.blocks_to_fleet == 0) {
+                            if (window.fleet_size > 0) {
+                                status = "Ready For Combat";
+                            }
+                            else {
+                                status = "No Fleet Available";
+                            }
+                        }
+                        else {
+                            status = "Waiting Blocks";
+                        }
+                        $('#fleet-status').text(status);
+
+                    }
+
+                    function setActualMode() {
+                        switch(window.mode) {
+                            case window.DEFAULT_MODE:
+                                $('#button-default-mode').addClass("selected-mode");
+                                break;
+                            case window.ATTACK_MODE:
+                                $('#button-attack-mode').addClass("selected-mode");
+                                break;
+                            case window.MOVEMMENT_MODE:
+                                $('#button-movemment-mode').addClass("selected-mode");
+                                break;
+                            case window.DEFENSE_MODE:
+                                $('#button-defense-mode').addClass("selected-mode");
+                                break;
+                        }
+                    }
+
+                    function setEventsCounter() {
+                        if (window.eventsCount > 0) {
+                            $('#events-alert').text(window.eventsCount);
+                        }
+                        else {
+                            $('#events-alert').text('');
+                        }
+                    }
+
+                    function renderView() 
+                    {
+                        setLocation();
+                        setActionCountdownBlocks();
+                        setResourcesStock();
+                        setMap(window.map);
+                        setFleet();
+                        setActualMode(window.mode);
+                        setEnergyForChangeMode();
+                        setEventsCounter();
+                        setDamage();
+                        setGameStats();
+                    }
+
+                    renderView();
+
+                    function setLocation() {
+                        $('#location-coord-x').text(window.position_x.toString());
+                        $('#location-coord-y').text(window.position_y.toString());
+                        $('#location-place').text("Open Crypto-Space");
+                    }
+
+                    function setResourcesStock() {
+                        try { 
+                            if (typeof window.energyStock !== 'undefined') 
+                                $('#energy-stock').text(window.energyStock.toString());
+                            else 
+                                throw "window.energyStock undefined";
+
+                            if (typeof window.grapheneStock !== 'undefined')
+                                $('#graphene-stock').text(window.grapheneStock.toString());
+                            else
+                                throw "window.grapheneStock undefined";
+
+                            if (typeof window.metalsStock !== 'undefined')
+                                $('#metals-stock').text(window.metalsStock.toString());
+                            else
+                                throw "window.metalsStock undefined";
+                        }
+                        catch(err) {
+                            if (window.DEBUG == true) {
+                                window.alert(err)
+                            }
+                            else {
+                                console.log(err);
+                            }
+                        }
+                    }
+
+                    function setEnergyForChangeMode() {
+                        let percentage = window.energyStock*100/window.ENERGY_TO_CHANGE_MODE;
+                        if (typeof percentage !== 'undefined') {
+                            if (percentage >100) 
+                                strpercentage = '100%'
+                            else
+                                strpercentage = percentage.toString()+'%'
+                            $('#amount-energy-mode').text(strpercentage);
+                            $('#bar-energy-mode').attr('style', 'width:' + strpercentage + ';');
+                        }
+                    }
+
+                    function setActionCountdownBlocks() {
+                        if (typeof window.blocks_to_move !== 'undefined')
+                            $('#blocks-to-move').text(window.blocks_to_move.toString());
+                        if (typeof window.blocks_to_fleet !== 'undefined')
+                            $('#blocks-to-fleet').text(window.blocks_to_fleet.toString());
+                        if (typeof window.blocks_to_fire !== 'undefined')
+                            $('#blocks-to-fire').text(window.blocks_to_fire.toString());
+                        if (typeof window.blocks_to_mode !== 'undefined')
+                            $('#blocks-to-mode').text(window.blocks_to_mode.toString());
+                    }
+
+                    function setDamage() {
+                        let status = 100 - window.damage;
+                        let statusPercentage = status.toString() + '%'
+                        $('#bar-ship-status').css('width', statusPercentage);
+                        if (status <= 25) {
+                            $('#bar-ship-status').css('background-color', '#eb1e0fbd');
+                            $('#ship-status-value').css('animation','blinker 1s linear infinite');
+                        } else {
+                            if (status < 80) {
+                                $('#bar-ship-status').css('background-color', '#d9eb0fbd');
+                            }
+                        }
+                        $('#ship-status-value').text(status);
+
+                        if (window.damage != 0 && !window.in_port) {
+                            $('#repair-button').hide();
+                        } else {
+                            console.log("Mostrar modal de reparar");
+                        }
+                    }
+                    
+                    function setMap() {
+                        let map = window.map;
+                        if (map.length != 51) {
+                            throw "Invalid Map size";
+                        }
+                        
+                        // Set center
+                        start_x = map[49];
+                        start_y = map[50];
+                        if (start_x < 0 || (window.map_size - start_x) < 7) {
+                            throw "Invalid start coord x";
+                        }
+
+                        if (start_y < 0 || (window.map_size - start_y) < 7) {
+                            throw "Invalid start coord y";
+                        }
+
+                        x = start_x;
+                        y = start_y;
+                        for ( i = 0; i <= 49-1; i++ ) {
+                            if ( i != 0 ) {
+                                if ( (i % 7) == 0 ) {
+                                    y = start_y;
+                                    x = x + 1;
+                                    
+                                }
+                                else {
+                                    y = y + 1;
+                                    
+                                }
+                            }
+                            htmlid = '#map_position_' + i.toString();
+                            if ( map[i] == 0 ) 
+                                setMapSquare(htmlid,"empty",0,x,y);
+                            else {
+                                if (CSSGame.isShip(map[i])) {
+                                    if ( map[i] == window.ship )
+                                        setMapSquare(htmlid,"ownship",map[i],x,y);
+                                    else
+                                        setMapSquare(htmlid,"ship",map[i],x,y);
+                                }
+                                else {
+                                    setMapSquare(htmlid,"planet",map[i],x,y);
+                                }
+                            }
+                        }
+                        showMapArrows(start_x,start_y);
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }    
+
+
+                    function setEmptyClassMapSquare() {
+                        function getRndInteger(min, max) {
+                            return Math.floor(Math.random() * (max - min + 1) ) + min;
+                        }
+                        let r = getRndInteger(1,48);
+                        if (r == 1 || r == 7) {
+                            let r2 = getRndInteger(1,4);
+                            if (r2 == 1)
+                                return "panel empty_m1 p3d";
+                            if (r2 == 2)
+                                return "panel empty_m2 p3d";
+                            if (r2 == 3)
+                                return "panel empty_m3 p3d";
+                            if (r2 == 4)
+                                return "panel empty_m4 p3d";
+                        }
+                        return "panel p3d";
+                    }
+
+
+                    function setMapSquare(id, object, objectId, x, y) {
+                        tooltip = false;
+                        $(id).attr("class","");
+                        $(id).removeAttr("data-toggle");
+                        $(id).removeAttr("data-placement");
+                        $(id).removeAttr("title");
+                        $(id).removeAttr("data-original-title");
+
+                        if (object === "planet") {
+                            strClass = "panel panel_planet p3d";
+                            tooltip = true;
+                            title = "Planet ID: " + objectId.toString();    
+                        }
+                        else if (object === "empty") {
+                            strClass = setEmptyClassMapSquare(); //"panel p3d";
+                        }
+                        else if (object === "ship") {
+                            strClass = "panel panel_ship p3d";
+                            tooltip = true;
+                            title = "Ship ID: " + objectId.toString();
+                        }
+                        else if (object === "ownship" ) {
+                            tooltip = true;
+                            strClass = "panel ownship p3d";
+                            title = window.shipName;                
+                        }
+                        else {
+                            throw "Invalid type";
+                        }
+                        $(id).addClass(strClass);
+                        if (tooltip) {
+                            $(id).attr("data-toggle", "tooltip");
+                            $(id).attr("data-placement", "top");
+                            $(id).attr("data-original-title", title);
+                        }
+                        $(id).attr("map-object-id", objectId.toString());
+                        $(id).attr("map-type", object);
+                        mapSetCoord(id,x,y);
+                    }
+                    
+                    function mapSetCoord(id,x,y) {
+                        $(id).attr("map-coord-x",x.toString());
+                        $(id).attr("map-coord-y",y.toString());
+                        $(id).text(x.toString()+','+y.toString());
+                    }
+
+                    function setGameStats() {
+                        let noOwner = "0x0000000000000000000000000000000000000000";
+                        console.log(window.planetOwner);
+                        if (window.planetOwner != noOwner) {
+                            if (window.blocksToEnd < 0)
+                                window.blocksToEnd = 0;
+                            $('#blocks-to-end').text(window.blocksToEnd);
+                            if (window.cssgame.w3.eth.accounts[0] != window.planetOwner)
+                                $('#win-condition').text("LOSING");
+                            else
+                                $('#win-condition').text("WINNING");
+                            $('#conquest-message').show();
+                        }
+                        $('#reward').text(window.reward/1000000000000000000);
+                        $('#game-age').text(window.gameAge);
+                    }
+
+                    setInterval(()=>{
+                        window.cssgame.getGame2((e,r)=>{
+                            if (!e) {
+                                window.cssgame.w3.eth.getBlockNumber((e,b)=>{
+                                    if (!e) {
+                                        ret = window.cssgame.getGame2Result(r);
+                                        window.gameAge = b - ret.gameLaunch;
+                                        if (b > ret.endBlock) 
+                                            window.blocksToEnd = 0;
+                                        else
+                                            window.blocksToEnd = ret.endBlock - b;
+                                        window.planetOwner = ret.candidate;
+                                        window.reward = ret.reward;
+                                        setGameStats();
+                                    }
+                                });
+                            } else {
+                                console.log(e);
+                            }
+                        });
+                    },5000);
+
+                    setInterval(function() {
+                        window.cssgame.viewShipVars(window.ship,function(e,r) {
+                            if(!e) {
+                                ret = window.cssgame.viewShipVarsResult(r);
+                                window.energyStock = ret.energyStock;
+                                window.grapheneStock = ret.grapheneStock;
+                                window.metalsStock = ret.metalStock;
+                                window.blocks_to_fire = ret.countdownToFireCannon;
+                                window.blocks_to_mode = ret.countdownToMode;
+                                window.blocks_to_move = ret.countdownToMove;
+                                window.blocks_to_fleet = ret.countdownToFleet;
+                                window.damage = ret.damage;
+                                setResourcesStock();
+                                setEnergyForChangeMode();
+                                setActionCountdownBlocks();
+                                setDamage();
+                            }
+                        });
+                        refreshMap();
+                    }, 5000);
+
+                    /*
+                     * Check Events
+                     */  
+                    setInterval(function() {
+                        backend.events.count(game,ship,function(e,r) {
+                            if (!e) {
+                                if (r.result.count > 0) {
+                                    $('#events-alert').text(r.result.count);
+                                }
+                             }
+                        });
+                    },5000);
+                    
+                    /*
+                    * Check Events
+                    */ 
+                    setInterval(function() {
+                        backend.events.count(game,ship,function(e,r) {
+                        if (!e) {
+                            window.eventsCount = r.result.count;
+                            setEventsCounter();
+                        }
+                    });
+                    },5000);
+
+                    function mapArrayCmp(m) {
+                        let i;
+                        for ( i = 0; i <= m.length-1; i++ ) {
+                            if (m[i] != window.map[i])
+                                return false;
+                        }
+                        return true;
+                    }
+
+
+                    var mapType="3D";
+                    $(".panel").addClass("p3d");// this adds 3d effect to panel hovering
+                    var myModalContent = "";
+                    /* tooltips */
+                        $('[data-toggle="tooltip"]').tooltip();
+                        
+                        $('[id=warehouse-load]').text(window.warehouseLoad);
+                    
+                    /************** Animations **************/
+                    
+                    var times = 0; // animation helper variable, this will increment/decrement for animation purposes
+                    var IntID; // serves as instance name for setIntervals
+                    
+                    // Introduce spaceShip
+                    // speed1 = fade in speed, spped2, size speed
+                        function mapFader(speed){
+                            $(".mapContainer").fadeIn(speed, function() {
+                            });
+                            
+                        }
+                    
+                    
+                    // perspective  click trigger
+                    $("#mapView").on("click", function(){
+                        if(mapType=="3D"){
+                            times = 47;
+                            var IntID = setTimer("to2D");
+                        }else{
+                            times = 0;
+                            var IntID = setTimer("to3D");
+                        }
+                    })
+                    
+                    //perspective function
+                    function to2D() { 
+                            $(".scene").css('transform','perspective(3000px) rotateX('+times+'deg) rotateZ('+times+'deg)');
+                            times--;
+                            if(times==0) {
+                                stopTimer();
+                                mapType="2D";
+                                $(".scene").css('transform','perspective(0px)');
+                                $(".panel").removeClass("p3d");
+                            }
+                    }
+                    
+                    function to3D(){ 
+                                $(".scene").css('transform',' perspective(1700px) rotateX('+times+'deg) rotateZ('+times+'deg)');
+                                times++;
+                                if(times==47){
+                                stopTimer();
+                                mapType="3D";
+                                $(".panel").addClass("p3d");
+                                }
+                    }
+                    
+
+                        function setTimer(mode){
+                            if(mode=="to2D"){
+                                console.log("cnahge to 2D!");
+                                IntID = setInterval(to2D, 10);
+                            }else{
+                                console.log("cnahge to 3D!");
+                                IntID = setInterval(to3D, 10);
+                            }             
+                            
+                        }
+
+                        function stopTimer() {
+                            clearInterval(IntID);
+                        }
+                    
+                    // slide panels
+                    function panelSlide(panelid, speed, direction, amount){
+                        if(direction="left"){
+                            $("#"+panelid).animate({"margin-left": amount}, speed)
+                        }else{
+                            $("#"+panelid).animate({"margin-right": amount}, speed)
+                        }
+                        
+                    }
+                    
+                    // fill gauges gradually
+                    function fillCounters(id, amount, speed){
+                        $("#bar-"+id).animate({width: amount}, speed)
+                        $("#amount-"+id).text(amount);
+                    }
+                    
+                        
+                    
+                    
+                    // initialize screen
+                    
+                    function init(){
+                            $('#resources').show();
+                            $('#stats').show();
+                            mapFader(1000);
+                            panelSlide("resources", 1000, "left", "+=50%");           
+                            panelSlide("stats", 1000, "left", "-=50%");
+                        
+                    }
+                    
+                    
+                    // call initializing routine
+                    init();
+
+
+
+                }
+            });
+        } 
+    })
+</script>
+</body></html>

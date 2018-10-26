@@ -1,0 +1,381 @@
+/* ================================================================
+  Ship
+   ================================================================ */
+
+.back {
+
+    a {
+        color: $color-primary;
+        @include x-rem(font-size, 20px);
+        background-image: url('../images/arrow-back.svg');
+        background-repeat: no-repeat;
+        background-size: auto;
+        padding: 0 0 0 25px;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
+
+.ship-page {
+    float: left;
+    width: 100%;
+
+    .ship-bg {
+        background-image: url('../images/no-fleet.svg');
+        background-size: auto;
+        background-repeat: no-repeat;
+        background-position: center center;
+        float: left;
+        width: 100%;
+
+        @media (min-width: $bp-m) {
+            background-position: top center;
+
+            display: flex;
+            align-items: center;
+        }
+    }
+
+
+    .ship-id {
+        @include x-rem(font-size,
+        20px);
+        color: rgba($color-invert, 0.5);
+        padding: 0 0 0 30px;
+        background-image: url('../images/ship-title-hover.svg');
+        background-repeat: no-repeat;
+        background-size: 20px;
+        background-position: 0px 3px;
+        margin: 0;
+
+        @media (min-width: $bp-m) {
+            @include x-rem(font-size, 24px);
+            margin: 20px 0 0 0;
+            background-size: 30px;
+            padding: 0 0 0 45px;
+            background-position: top left;
+        }
+    }
+
+    .ship-image {
+        text-align: center;
+        max-width: 640px;
+        width: 100%;
+        margin: 20px 0;
+        float: left;
+        position: relative;
+
+        background-image: url('../images/square-big-ship.svg');
+        background-repeat: no-repeat;
+        background-size: auto;
+        background-position: bottom left;
+
+        img {
+            width: 100%;
+            max-width: 100%;
+            z-index: 1;
+        }
+
+        canvas {
+            z-index: 2;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            right: 0;
+            max-width: 640px;
+        }
+        input[type="color"] {
+            float: right;
+            border: 0;
+            border: 1px solid $color-primary;
+            width: 50px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            right: 0;
+            top: -47px;
+            &:hover,
+            &:focus {
+                border: 1px solid $color-primary;
+            }
+        }
+    }
+}
+
+
+.ship-status {
+    background: rgba(132, 141, 196, 0.2);
+    background: -moz-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+    background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(132, 141, 196, 0.2)), color-stop(56%, rgba(132, 141, 196, 0.19)), color-stop(100%, rgba(212, 222, 238, 0.19)));
+    background: -webkit-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+    background: -o-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+    background: -ms-linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+    background: linear-gradient(45deg, rgba(132, 141, 196, 0.2) 0%, rgba(132, 141, 196, 0.19) 56%, rgba(212, 222, 238, 0.19) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#848dc4', endColorstr='#d4deee', GradientType=1);
+    border: 1px solid $form-border;
+
+    float: left;
+    width: 100%;
+    position: relative;
+    margin: 15px 0;
+
+
+    @media (min-width: $bp-m) {
+        display: flex;
+        align-items: stretch;
+        width: 90%;
+        float: right;
+    }
+
+    &:before {
+        content: '';
+        width: 12px;
+        height: 262px;
+        position: absolute;
+        background-image: url('../images/stats-line.svg');
+        background-repeat: no-repeat;
+        background-size: auto;
+        top: -15px;
+        left: -10px;
+    }
+
+    h3 {
+        @include x-rem(font-size,
+        20px);
+        color: $color-primary;
+        margin: 0 0 15px;
+    }
+
+    .stats {
+        padding: 20px;
+        border-bottom: 1px solid $form-border;
+
+        @media (min-width: $bp-m) {
+            padding:15px;
+            border-right: 1px solid $form-border;
+            border-bottom: none;
+        }
+
+        @media (min-width: $bp-mw) {
+            padding: 30px 20px 30px 25px;
+        }
+
+        .numbers {
+            float: left;
+            width: 100%;
+            margin: 0 0 15px;
+
+            @media (min-width: $bp-l) {
+                display: flex;
+                align-items: center;
+            }
+
+
+            .column {
+                margin: 0 0 15px 0;
+                float: left;
+                width: 100%;
+
+                @media (min-width: $bp-l) {
+                    margin: 0 10px 0 0;
+                }
+
+                &:last-child {
+                    margin: 0;
+                }
+
+                .status {
+                    float: left;
+                    margin: 0 20px 0 0;
+
+                    @media (min-width: $bp-l) {
+                        margin: 0 0 20px;
+                    }
+
+                    &:last-child {
+                        margin: 0;
+                    }
+
+                    p {
+                        margin: 0;
+                    }
+
+                    .info-title {
+                        @include x-rem(font-size,
+                        16px);
+                        font-weight: $fontWeight-light;
+                        line-height: 17px;
+
+                        @media (min-width: $bp-m) {
+                            @include x-rem(font-size,
+                            14px);
+                        }
+
+                        @media (min-width: $bp-xl) {
+                            @include x-rem(font-size,
+                            16px);
+                        }
+                    }
+
+                    .number {
+                        @include x-rem(font-size,
+                        48px);
+                        line-height: 45px;
+                        font-weight: $fontWeight-light;
+
+                        @media (min-width: $bp-m) {
+                            @include x-rem(font-size,
+                            40px);
+                        }
+
+                        @media (min-width: $bp-mw) {
+                            @include x-rem(font-size,
+                            48px);
+                        }
+
+                        @media (min-width: $bp-l) {
+                            @include x-rem(font-size,
+                            40px);
+                        }
+                        @media (min-width: $bp-xl) {
+                            @include x-rem(font-size,
+                            48px);
+                        }
+
+                        &.bloque {
+                            @include x-rem(font-size,
+                            64px);
+                            font-weight: $fontWeight-semibold;
+                            color: $color-primary;
+                            line-height: 60px;
+
+                            @media (min-width: $bp-l) {
+                                @include x-rem(font-size,
+                                50px);
+                            }
+                            @media (min-width: $bp-xl) {
+                                @include x-rem(font-size,
+                                64px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .level-progress {
+            float: left;
+            width: 100%;
+            margin: 0 0 25px;
+
+            p {
+                @include x-rem(font-size,
+                16px);
+                margin: 0 0 10px;
+            }
+            .bar {
+                width: 100%;
+                height: 8px;
+                float: left;
+                background-color: rgba($color-primary, 0.5);
+                position: relative;
+
+                .progress-bar {
+                    width: 45%;
+                    height: 8px;
+                    position: absolute;
+                    top: 3px;
+                    left: 0;
+                    background-color: $color-primary;
+                }
+            }
+        }
+        .btn.blue {
+
+
+            @media (min-width: $bp-m) {
+                padding:10px 20px;
+            }
+            @media (min-width: $bp-mw) {
+                padding: 10px 50px;
+            }
+        }
+    }
+
+
+    .current-mission {
+        position: relative;
+        padding: 20px;
+
+        @media (min-width: $bp-mw) {
+            padding: 30px;
+        }
+
+        h3 {
+            color: $color-invert;
+        }
+
+        p {
+            @include x-rem(font-size,
+            16px);
+            margin: 10px 0 10px;
+        }
+
+        .btn {
+
+            &.blue {
+
+
+                @media (min-width: $bp-m) {
+                    padding:10px 15px;
+                    position: absolute;
+                    bottom: 15px;
+                }
+                @media (min-width: $bp-mw) {
+                    padding: 10px 20px;
+                    bottom: 30px;
+                }
+                @media (min-width: $bp-xl) {
+                    padding: 10px 50px;
+                }
+            }
+
+            &.join-game {
+                @media (min-width: $bp-m) {
+                    padding:15px 10px;
+                    height: auto;
+                }
+                @media (min-width: $bp-l) {
+                    padding: 20px 13px;
+                }
+                @media (min-width: $bp-xl) {
+                    padding: 20px 25px;
+                    height: 60px;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+/* ================================================================
+  Modal
+   ================================================================ */
+
+body {
+    &.blur {
+        header,
+        main,
+        footer {
+            -webkit-filter: blur(5px);
+            -moz-filter: blur(5px);
+            -o-filter: blur(5px);
+            -ms-filter: blur(5px);
+            filter: blur(5px);
+        }
+    }
+}

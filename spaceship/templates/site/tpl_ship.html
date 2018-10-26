@@ -1,0 +1,268 @@
+{% extends "site/tpl_base.html" %}
+{% block content %}
+{% load js %}
+<main id="site-main" role="main" class="interior">
+    <div class="container">
+        <div class="ship-page">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="back">
+                    <a href="../../ships">
+                    Back to my CSS Tokens
+                </a>
+                </div>
+                <div class="title-left">
+                    <h1>{{ ship.name }}</h1>
+                </div>
+            </div>
+            <div class="ship-bg">
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <h2 class="ship-id">NFT# {{ ship.id }}</h2>
+                    <div class="ship-image">
+                        <!--input type="color" id="picker"-->
+                        <img id="capa-0" src="/static/site/images/capa0.png" alt="Ship" width="640" height="320px" />
+                        <canvas id="capa-1" width="640" height="320px" /></canvas>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <div class="ship-status">
+                        <div class="col-xs-12 col-sm-7 col-md-7 stats">
+                            <h3>_Stats</h3>
+                            <div class="numbers">
+                                <div class="column">
+                                    <div class="status">
+                                        <p class="info-title">Wins :</p>
+                                        <p class="number">00{{ ship.wins }}</p>
+                                    </div>
+                                    <div class="status">
+                                        <p class="info-title">QAIM :</p>
+                                        <p class="number">006</p>
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="status">
+                                        <p class="info-title">Level :</p>
+                                        <p class="number bloque">0</p>
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="status">
+                                        <p class="info-title">Gen :</p>
+                                        <p class="number">033</p>
+                                    </div>
+                                    <div class="status">
+                                        <p class="info-title">Points :</p>
+                                        <p class="number">1.1K</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="level-progress">
+                                <p>Level Progress</p>
+                                <div class="bar">
+                                    <div class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <!--a href="#modulo-qia" class="btn blue modulo-qia">QIA Modules</a-->
+                            <a href="#" id="open-qaim-modal" class="btn blue modulo-qia">QAIM Modules</a>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-5 current-mission">
+                            {% if ship.in_game == True %}
+                                <h3>_Current Mission</h3>
+                                <a href="/ui/{{ game_network_id }}/play/{{ game.id }}/{{ ship.id }}/" class="btn resume-game">go to game</a>
+                                <p>started on</br>
+                                    January 12 at 0350 hours</p>
+                                <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
+                            {% else %}
+                                <h3>_Current Mission</h3>
+                                <p>No estas participando de ningun juego</p>
+                                <a class="btn join-game" href="#join-game">join game</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modulo QIA 1-->
+<div style="display:none">
+    <div id="modulo-qia" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container modulos">
+            <div class="form-modal">
+                <h5>QAIM Modules</h5>
+                <p>_Assign points</p>
+                <p class="description">Assign points to the QAIM Modules to improve your ship </p>
+                <div class="group-input">
+                    <label for="address"><span id="ship-unnasigned-points"></span></label>
+                    <div class="column"> 
+                        <div class="points">
+                            <div class="text">
+                                <p class="title">Fleet Points</p>
+                                <p class="description">Assign additional points to build your fleet</p>
+                            </div>
+                            <div class="asignar">
+                                <p class="number"><span id="ship-qaim-0-points"></span></p>
+                                <a href="#" class="plusOne" id="qaim-0" i=0>+1</a>
+                            </div>
+                        </div>
+                        <div class="points">
+                            <div class="text">
+                                <p class="title">Resources Improve</p>
+                                <p class="description">Improve speed and cost of resources upgrade</p>
+                            </div>
+                            <div class="asignar">
+                                <p class="number"><span id="ship-qaim-1-points"></span></p>
+                                <a href="#" class="plusOne" id="qaim-1" i=1>+1</a>
+                            </div>
+                        </div>
+                        <div class="points">
+                            <div class="text">
+                                <p class="title">Buildings Improve</p>
+                                <p class="description">Improve speed and cost of buildings upgrade</p>
+                            </div>
+                            <div class="asignar">
+                                <p class="number"><span id="ship-qaim-2-points"></span></p>
+                                <a href="#" class="plusOne" id="qaim-2" i=2>+1</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column"> 
+                        <div class="points">
+                            <div class="text">
+                                <p class="title">Fleet Improve</p>
+                                <p class="description">Improve speed and cost of fleet construction</p>
+                            </div>
+                            <div class="asignar">
+                                <p class="number"><span id="ship-qaim-3-points"></span></p>
+                                <a href="#" class="plusOne" id="qaim-3" i=3>+1</a>
+                            </div>
+                        </div>
+                        <div class="points">
+                            <div class="text">
+                                <p class="title">Ship Jump Improve</p>
+                                <p class="description">Reduce time between movements</p>
+                            </div>
+                            <div class="asignar">
+                                <p class="number"><span id="ship-qaim-4-points"></span></p>
+                                <a href="#" class="plusOne" id="qaim-4" i=4>+1</a>
+                            </div>
+                        </div>
+                        <div class="points">
+                            <div class="text">
+                                <p class="title">Mode Change Improve</p>
+                                <p class="description">Reduce time between mode changes</p>
+                            </div>
+                            <div class="asignar">
+                                <p class="number"><span id="ship-qaim-5-points"></span></p>
+                                <a href="#" class="plusOne" id="qaim-5" i=5>+1</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="buttons">
+                <input type="submit" id="qaim-save-button" value="SAVE">
+                <button type="button" class="btn blue closeModal"><span id="qaim-close-button"></span></button>         
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Join Game Modal-->
+<div style="display:none">
+    <div id="join-game" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
+            <div class="form-modal">
+                <h5>Join a game</h5>
+                <p>_Select your next adventure</p>
+                <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore </p>
+                <div class="group-input">
+                    <label for="address">GAME</label>
+                    <select id="select-game">
+                        <option selected>Select an option</option>
+                        {% for game in game_list %}
+                            <option value="{{ game.contract_id }}">{{ game.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="buttons">
+                <input type="submit" id="join-game-button" value="JOIN">
+                <button type="button" class="btn blue closeModal">CANCEL</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Exit Game Modal-->
+<div style="display:none">
+    <div id="exit-game" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
+            <div class="form-modal">
+                <h5>Exit game</h5>
+                <p>_are you sure that you want to exit game?</p>
+            </div>
+            <div class="buttons">
+                <input type="submit" id="exit-game-button" value="Yes, EXIT GAME">
+                <button type="button" class="btn blue closeModal">No, CANCEL</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Waiting Confirmation Modal-->
+<div style="display:none">
+    <div id="waiting-confirmation" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
+            <div class="form-modal">
+                <h5>Waiting confirmation</h5>
+                <p>_waiting for transaction confirmation</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Constante para la capa1
+window.layer_1 = "/static/site/images/capa1.png";
+
+{% if game_network_id is not None %}
+    window.gameNetwork = "{{ game_network_id }}";
+{% endif %}
+{% if contract_address is not None %}
+    window.gameAddress = "{{ contract_address }}";
+{% endif %}
+{% if contract_abi is not None %}
+    window.gameAbi = {{contract_abi | js}};
+{% endif %}
+{% if ship.id is not None %}
+    window.shipId = {{ ship.id }};
+{% endif %}
+{% if games_data is not None %}
+    window.gamesData = {{ games_data | js }};
+{% endif %}
+{% if ship_contract_address is not None %}
+    window.shipAddress = "{{ ship_contract_address }}";
+{% endif %}
+{% if ship_contract_abi is not None %}
+    window.shipAbi = {{ship_contract_abi | js}};
+{% endif %}
+{% if ship.color is not None %}
+    window.color = {{ ship.color }};
+{% endif %}
+{% if player_address is not None %}
+    window.player_address = "{{ player_address }}";
+{% endif %}
+{% if ship.unassigned_points is not None %}
+    window.shipUnassignedPoints = {{ ship.unassigned_points }};
+    window.shipRemainingPoints = {{ ship.unassigned_points }};
+{% endif %}
+{% if ship.qaim is not None %}
+    window.shipQaim = {{ ship.qaim }};
+{% endif %}
+window.qaimClean = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+window.qaimAssign = [];
+</script>
+
+    
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "site/tpl_base.html" %}
+{% block content %}
+<main id="site-main" role="main">
+    <div class="container">
+        <div class="main-title">
+            <h1>Sign up</h1>
+        </div>
+        <div class="form-page">
+            <form action="javascript:void(0);" method="post" class="sign-up" id="signup_form">{% csrf_token %}
+                <div class="content-inputs ">
+                    <div class="form-title">
+                        <h2>NEW COMMANDER FORM</h2></div>
+                    <div class="group-input">
+                        <label for="address">Address</label>
+                        <input type="text" name="sign_address_input" required id="sign_address_input" readonly>
+                        <span class="error-message">Please, complete with you address</span>
+                    </div>
+                    <div class="group-input">
+                        <label for="email">Email</label>
+                        <input type="email" name="signup_email_input" required id="signup_email_input">
+                    </div>
+                    <div class="group-input">
+                        <label for="username">Username</label>
+                        <input type="text" name="signup_username_input" required id="signup_username_input">
+                    </div>
+                </div>
+                <input type="hidden" name="sign_signature_input" id="sign_signature_input"><br>
+                <input type="hidden" name="sign_network_input" id="sign_network_input"><br>
+                <input type="submit" id="sign_with_metamask" value="Sign up">
+            </form>
+        </div>
+    </div>
+</main>
+{% if inject_js is not None %}
+    <script src="{{ inject_js }}"></script>
+{% endif %}
+<script>
+    var signup = true;
+{% if signinLocation is not None %}
+    var signinLocation = "{{ signinLocation }}";
+{% endif %}
+{% if gameNetwork is not None %}
+    var gameNetwork = "{{ gameNetwork }}";
+{% endif %}
+{% if api_userByAddress is not None %}
+    var api_userByAddress = "{{ api_userByAddress }}";
+{% endif %}
+</script>
+{% endblock %}

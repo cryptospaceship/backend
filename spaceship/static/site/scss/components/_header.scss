@@ -1,0 +1,105 @@
+/* ******************************************************
+   Header
+   ****************************************************** */
+
+header {
+    height: 70px;
+    border-bottom: 2px solid $color-primary;
+    background-color: $color-secondary;
+
+    -webkit-overflow-scrolling: touch;
+    -webkit-transition: all .5s ease-in-out-ut;
+    transition: all .5s ease-in-out;
+    -webkit-backface-visibility: hidden;
+    z-index: 100;
+    position: fixed;
+    width:100%;
+
+
+
+      &.home {
+        background-color:transparent;
+        border-bottom:0;
+
+        &.fixed {
+            border-bottom: 2px solid $color-primary;
+    background-color: $color-secondary;
+            .logo {
+                display:block;
+
+            }
+        }
+        .logo {
+            display:none;
+        }
+        
+      }
+    
+
+
+    @media (min-width: $bp-m) {
+        top: -70px;
+        position: static;
+
+        .container {
+            position: relative;
+        }
+
+        &.fixed {
+            width: 100%;
+            z-index: 100;
+
+            position: fixed;
+            top: 0;
+            -webkit-overflow-scrolling: touch;
+            -webkit-transition: all .5s ease-in-out;
+            transition: all .5s ease-in-out;
+            -webkit-backface-visibility: hidden;
+        }
+
+        
+    }
+}
+
+.fix-element {
+    padding-top: 70px;
+
+    @media (min-width: $bp-m) {
+        padding-top: 0;
+        -webkit-overflow-scrolling: touch;
+        -webkit-transition: top .5s ease-in-out;
+        transition: top .5s ease-in-out;
+        -webkit-backface-visibility: hidden;
+
+        &.fixed {
+            padding-top: 70px;
+            -webkit-overflow-scrolling: touch;
+            -webkit-transition: top .5s ease-in-out;
+            transition: top .5s ease-in-out;
+            -webkit-backface-visibility: hidden;
+        }
+    }
+}
+
+.logo {
+    width: 100%;
+    margin: 0 auto;
+    padding: 14px 0;
+    max-width: 215px;
+    height: 70px;
+
+    img {
+        max-width: 215px;
+        width: 100%;
+    }
+
+    h1 {
+        margin: 0;
+        diplay: inline-block;
+        font-size: 0;
+
+        a {
+            float: left;
+        }
+    }
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <defs>
+    <linearGradient id="arrow-next-a" x1="102.32%" x2="65.207%" y1="-24.785%" y2="56.621%">
+      <stop offset="0%" stop-color="#DCEFFF" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#152896" stop-opacity=".5"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="matrix(-1 0 0 1 60 0)">
+    <rect width="59" height="59" x=".5" y=".5" fill="url(#arrow-next-a)" stroke="#A3B0FF" opacity=".414" transform="matrix(-1 0 0 1 60 0)"/>
+    <path stroke="#F4F4F4" stroke-dasharray="1" d="M0 0L14.0625 0M0 8.4375L14.0625 8.4375M0 15.9375L14.0625 15.9375M0 23.4375L14.0625 23.4375M0 31.875L14.0625 31.875" opacity=".412" transform="translate(1.875 15)"/>
+    <path stroke="#FFF" d="M2.43656157,13.7386183 L14.3952507,25.5464471 L12.5401684,27.4259071 L12.1843139,27.0745391 L0.0557762934,15.0988575 C-0.685143745,14.3486276 -0.685267937,13.1420424 0.0554976324,12.39166 L12.5236973,-0.238406132 L14.4026741,1.61715767 L2.43656157,13.7386183 Z" transform="translate(32.813 16.875)"/>
+  </g>
+</svg>
