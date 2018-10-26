@@ -1,3 +1,4 @@
 *.pyc
 spaceship/spaceship_app/migrations/
 spaceship/spaceship/settings.py
+venv/
