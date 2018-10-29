@@ -8,6 +8,8 @@ import json
 #from .crypto_spaceship import spaceShip
 #from .crypto_game import game
 from .libs import crypto_game_v1_4
+from .libs import crypto_game_v1_5
+
 from .libs.crypto_spaceship import spaceShip
 
 from json import loads
@@ -109,10 +111,11 @@ class Gas(models.Model):
 
        
 class Network(models.Model):
-    name   = models.CharField(max_length=32)
-    gas    = models.ForeignKey(Gas, on_delete=models.CASCADE)
-    net_id = models.IntegerField()
-    proxy  = models.CharField(max_length=128)
+    name     = models.CharField(max_length=32)
+    gas      = models.ForeignKey(Gas, on_delete=models.CASCADE)
+    net_id   = models.IntegerField()
+    proxy    = models.CharField(max_length=128)
+    explorer = models.CharField(max_length=256)
 
     def __str__(self):
         return self.name
@@ -151,6 +154,7 @@ class CryptoSpaceShip(models.Model):
         return cls.get_by_network(network)
 
     def connect(self):
+        print (self.address)
         return spaceShip(self.network.proxy, self.address, self.abi)
 
        
@@ -161,14 +165,15 @@ class Version(models.Model):
         return self.name
 
 class Game(models.Model):
-    name          = models.CharField(max_length=128)
-    version       = models.ForeignKey(Version, on_delete=models.CASCADE, blank=True, null=True)
-    network       = models.ForeignKey(Network, on_delete=models.CASCADE)
-    address       = models.CharField(max_length=128)
-    abi           = models.TextField()
-    contract_id   = models.IntegerField()
-    scanned_block = models.IntegerField(default=0)
-    enabled       = models.BooleanField(default=False)
+    name                = models.CharField(max_length=128)
+    version             = models.ForeignKey(Version, on_delete=models.CASCADE, blank=True, null=True)
+    network             = models.ForeignKey(Network, on_delete=models.CASCADE)
+    address             = models.CharField(max_length=128)
+    abi                 = models.TextField()
+    contract_id         = models.IntegerField()
+    scanned_block       = models.IntegerField(default=0)
+    discord_channel_api = models.CharField(max_length=256, blank=True)
+    enabled             = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -196,6 +201,8 @@ class Game(models.Model):
     def connect(self):
         if self.version.name == "1.4":
             return crypto_game_v1_4.game(self.network.proxy, self.address, self.abi)
+        elif self.version.name == "1.5":
+            return crypto_game_v1_5.game(self.network.proxy, self.address, self.abi)
         else:
             return None
 

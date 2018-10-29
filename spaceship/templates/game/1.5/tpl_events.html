@@ -1,0 +1,398 @@
+{% load js %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SETH.WARS</title>
+  <meta name="description" content="SPACE ETHER WARS">
+  <meta name="author" content="Emiliano Biri" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" media="screen" href="/static/css/style.css">
+  <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <script src="/static/js/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+<body>
+
+
+<!-- particles.js container -->
+<div id="particles-js">
+</div>
+    
+    <div  class="container-fluid grid">
+        <div class="row">
+            <div class="col-xs-12 col-lg-12" id="header">
+                <div class="resources-general">
+                        <div class="nav-bar">
+                                <div class="views-container">
+                                   <div class="view">
+                                        <a href="#">Home</a>
+                                    </div>
+                                    <a href="../resources">
+                                        <div class="view">
+                                            Resources
+                                        </div>
+                                    </a>
+                                    <a href="../map">
+                                        <div class="view">
+                                            Map
+                                        </div>
+                                    </a>
+                                    <div class="view">
+                                        <a href="../buildings">Buildings</a>
+                                    </div>
+                                    <div class="view">
+                                        <a href="#">Messages</a>
+                                    </div>
+                                    <a href="../events">
+                                        <div class="view selected">
+                                            Events<span class="badge events-alert" id="events-alert"></span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                   
+                   <!-- GUAGE COMBO ENERGY-->
+                        <div class="resource-general" id="general-energy" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-energy"></div>
+                                    <div class="title-text">energy</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar energy" id="bar-energy" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="energy-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                    <!-- GUAGE COMBO END -->
+                    
+                    <!-- GUAGE COMBO GRAPHENE -->
+                        <div class="resource-general" id="general-graphene" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-graphene"></div>
+                                    <div class="title-text">graphene</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar graphene" id="bar-graphene" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="graphene-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                    <!-- GUAGE COMBO END -->
+                    
+                    <!-- GUAGE COMBO METALS-->
+                        <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Total units of metals you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-metals"></div>
+                                    <div class="title-text">metals</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar metals" id="bar-metals" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="metals-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                       <!-- GUAGE COMBO END -->
+                       
+                </div>
+            </div>
+            
+        </div>
+                 
+    <div class="row">
+        <div class="col-md-3-et">
+        </div>
+        <div class="col-md-6-et">
+                <h1>Events</h1>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Event Type</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>At Block</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for event in events %}
+                                        <tr id="event" event-id="{{ event.id }}">
+                                            <td>
+                                                {% if not event.viewed %}
+                                                <span class="badge events-alert" id="events-alert" style="
+                                                    color: red;
+                                                    background-color: white;">
+                                                    unread
+                                                </span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if event.event.event_type == 'AS' %}
+                                                    Battle with Other Ship
+                                                {% elif event.event.event_type == 'FC' %}
+                                                    Crypto-Ion Cannon Fired
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ event.event.from_ship }}
+                                            </td>
+                                            <td>
+                                                {{ event.event.to_ship }}
+                                            </td>
+                                            <td>{{ event.event.event_block }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                        
+        </div>
+    </div>
+              
+
+
+    </div>
+<!-- Defense -->
+<div class="modal fade" id="modal-battle-event" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Battle Report at Block #<span id="battle-event-block"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                        <div class="modal-body-text">ATTACKER - <span id="attacker-ship"></span></div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <span class="bonus-mode-up">Units</span>
+                                <span class="bonus-text"><span id="attacker-units"></span></span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="bonus-mode-down">Down</span>
+                                <span class="bonus-text"><span id="attacker-down"></span></span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="bonus-mode-up">Bounty</span>
+                                <span class="bonus-text">
+
+                                    <div class="col-md-4 ratio-item-modal fL">
+                                        <div class="icon-ratio ic-energy"></div>
+                                        <div class="title-text fL"><span id="bouty-energy">0</span></div>
+                                            
+                                        <div class="stopper"></div>
+                                    </div> 
+                                    <div class="col-md-4 ratio-item-modal fL">
+                                        <div class="icon-ratio ic-graphene"></div>
+                                        <div class="title-text fL"><span id="bouty-graphene">0</span></div>
+                                        <div class="stopper"></div>
+                                    </div>
+                                    <div class="col-md-4 ratio-item-modal fL">
+                                        <div class="icon-ratio ic-metals"></div>
+                                        <div class="title-text fL"><span id="bouty-metals">0</span></div>
+                                        <div class="stopper"></div>
+                                    </div>
+                                </span>
+                            </li>
+                        </ul>
+                        <div class="stopper" style="margin-top: 30px;"></div>
+                        <div class="modal-body-text">DEFENDER - <span id="defender-ship"></span></div>
+                            <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <span class="bonus-mode-up">Units</span>
+                                        <span class="bonus-text"><span id="defender-units"></span></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="bonus-mode-down">Down</span>
+                                        <span class="bonus-text"> <span id="defender-down"></span></span>
+                                    </li>
+                            </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANNON-->
+    <div class="modal fade" id="modal-cannon-fired-event" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Crypto-Ion Cannon Fired<span id="battle-event-block"></span></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                                <div class="modal-body-text"><span id="fired-ship"></span> ATTACK TO <span id="other-ship"></span></div>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <span class="bonus-mode-up">Damage</span>
+                                        <span class="bonus-text"><span id="damage"></span></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="bonus-mode-down">Destroyed</span>
+                                        <span class="bonus-text"><span id="destroyed"></span></span>
+                                    </li>
+                                    
+                                </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+</body>
+<!-- scripts -->
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/css.js"></script>
+<script>
+    window.base_url = "{{ base_url }}";
+    window.etherscan_url = "https://kovan.etherscan.io/tx/";
+    window.game = {{ game_id }};
+    window.ship = {{ ship_id }};
+    window.eventsCount = {{ events_count }};
+    window.grapheneStock = {{ graphene_stock }};
+    window.energyStock =  {{ energy_stock }};
+    window.metalsStock = {{ metal_stock }};
+    window.gameAbi = {{ game_abi | js }};
+    window.gameAddress = "{{ game_address }}";
+    window.gameNetwork = {{ game_network }};
+    window.warehouseLevel = {{ warehouse_level }};
+    window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel)
+</script>
+<script>
+ $(document).ready(function(){
+       /* tooltips */
+        if (typeof web3 !== 'undefined' && web3.currentProvider.isMetaMask == true ) {
+            web3.version.getNetwork(function(error,network) {
+                if (!error && network == window.gameNetwork) {
+                    w3 = new Web3(web3.currentProvider);
+                    window.cssgame = new CSSGame(w3,window.gameAbi,window.gameAddress,web3);
+                    window.backend = new Backend(window.base_url);
+
+
+
+                    function open_event_modal(event_id) {
+                        window.backend.events.get(event_id, function(e,r) {
+                            if (!e) {
+                                switch(r.result.event_type) {
+                                    case 'AS':
+                                        $('#attacker-ship').text(r.result.meta._from);
+                                        $('#attacker-units').text(r.result.meta._attacker_size);
+                                        $('#attacker-down').text(r.result.meta._attacker_size - r.result.meta._attacker_left);
+                                        $('#defender-units').text(r.result.meta._defender_size);
+                                        $('#defender-down').text(r.result.meta._defender_size - r.result.meta._defender_left);
+                                        $('#bouty-energy').text(r.result.meta._e);
+                                        $('#bouty-graphene').text(r.result.meta._g);
+                                        $('#bouty-metals').text(r.result.meta._m);
+                                        $('#defender-ship').text(r.result.meta._to);
+                                        $('#modal-battle-event').modal('show');
+                                        break;
+                                    case 'FC':
+                                        $('#modal-cannon-fired-event').modal('show');
+                                        $('#fired-ship').text(r.result.meta._from);
+                                        $('#other-ship').text(r.result.meta._to);
+                                        $('#damage').text(r.result.meta._damage);
+                                        $('#destroyed').text(r.result.meta._destroyed);
+                                        break;
+                                }
+
+                            }
+                        });
+                    }
+
+                    $('[id="event"]').click(function() {
+                        open_event_modal($(this).attr('event-id'));
+                    });
+
+                    setResourcesStock();
+
+                    function setResourcesStock() {
+                        try { 
+                            if (typeof window.energyStock !== 'undefined') 
+                                $('#energy-stock').text(window.energyStock.toString());
+                            else 
+                                throw "window.energyStock undefined";
+
+                            if (typeof window.grapheneStock !== 'undefined')
+                                $('#graphene-stock').text(window.grapheneStock.toString());
+                            else
+                                throw "window.grapheneStock undefined";
+
+                            if (typeof window.metalsStock !== 'undefined')
+                                $('#metals-stock').text(window.metalsStock.toString());
+                            else
+                                throw "window.metalsStock undefined";
+                        }
+                        catch(err) {
+                            if (window.DEBUG == true) {
+                                window.alert(err)
+                            }
+                            else {
+                                console.log(err);
+                            }
+                        }
+                    }
+
+                    setInterval(function() {
+                        window.cssgame.viewShipVars(window.ship,function(e,r) {
+                            if(!e) {
+                                ret = window.cssgame.viewShipVarsResult(r);
+                                window.energyStock = ret.energyStock;
+                                window.grapheneStock = ret.grapheneStock;
+                                window.metalsStock = ret.metalStock;
+                                setResourcesStock();
+                            }
+                        });
+                    }, 5000);
+                }
+            });
+        }
+
+        
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        $('[id=warehouse-load]').text(window.warehouseLoad);
+
+    })
+</script>
+</html>

@@ -14,7 +14,6 @@ class spaceShip(object):
         naddr = web3.utils.normalizers.to_checksum_address(address)
         self.contract = w3.eth.contract(address=naddr, abi=abi)
 
-
     def get_ship(self, ship_id):
         try:
             data = self.contract.functions.getShip(ship_id).call()
@@ -22,15 +21,18 @@ class spaceShip(object):
             raise spaceShipException(str(e))
 
         ret = {'id': ship_id,
-               'name': data[0],
-               'color': data[1],
-               'in_game': data[2],
-               'owner': data[3],
-               'level': data[4],
-               'takedowns': data[5],
-               'wins': data[6],
-               'loses': data[7],
-               'launch': data[8]
+               'owner': data[0],
+               'name': data[1],
+               'color': data[2],
+               'gen': data[3],
+               'points': data[4],
+               'level': data[5],
+               'plays': data[6],
+               'wins': data[7],
+               'launch': data[8],
+               'progress': data[9],
+               'qaims': data[10],
+               'in_game': data[11]
               }
 
         return ret
@@ -66,13 +68,9 @@ class spaceShip(object):
         except Exception as e:
             raise spaceShipException(str(e))
 
-        ret = {'name': data[0],
-               'address': data[1],
-               'id': data[2],
-               'players': data[3],
-               'game_start': data[4],
-               'price': float(web3.Web3.fromWei(data[5], 'ether')),
-               'jackpot': float(web3.Web3.fromWei(data[6], 'ether')) }
+        ret = {'address': data[0],
+               'id': data[1],
+        }
 
         return ret
 

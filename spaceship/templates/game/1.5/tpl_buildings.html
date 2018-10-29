@@ -1,0 +1,1678 @@
+{% load js %}
+{% load boolean %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CSS Resources</title>
+  <meta name="description" content="Crypto SpaceShip - Building View">
+  <meta name="author" content="Emiliano Alejandro Billi" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" media="screen" href="/static/css/style.css">
+  <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <script src="/static/js/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+<body>
+
+
+<!-- particles.js container -->
+<div id="particles-js">
+</div>
+    
+    <div  class="container-fluid grid">
+            
+        <div class="row">
+            <div class="col-xs-12 col-lg-12" id="header">
+
+                <div class="row">
+                    <div class="col-md-2 col-lg-2">
+                        <h1 id="conquest-message" class="conquest-message">The planet has been conquered. The game could end in <span id="blocks-to-end" class="end-message"></span> Blocks. YOU ARE <span class="end-message" id="win-condition"></span></h1>
+                    </div>
+                    <div class="col-md-8 col-lg-8">
+                        <div class="resources-general">
+                    <!-- Link Start -->    
+
+                <!-- Links End -->
+                   <!-- GUAGE COMBO ENERGY-->
+                        <div class="resource-general" id="general-energy" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-energy"></div>
+                                    <div class="title-text">energy</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar energy" id="bar-energy" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="energy-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                    <!-- GUAGE COMBO END -->
+                    
+                    <!-- GUAGE COMBO GRAPHENE -->
+                        <div class="resource-general" id="general-graphene" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-graphene"></div>
+                                    <div class="title-text">graphene</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar graphene" id="bar-graphene" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="graphene-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                    <!-- GUAGE COMBO END -->
+                    
+                    <!-- GUAGE COMBO METALS-->
+                        <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Total units of metals you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-metals"></div>
+                                    <div class="title-text">metals</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar metals" id="bar-metals" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="metals-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                       <!-- GUAGE COMBO END -->
+                           <!-- GAUGE COMBO STATUS -->
+                           <div class="resource-general" >
+                                <span data-toggle="tooltip" data-placement="bottom" title="Ship Status">
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-status"></div>
+                                    <div class="title-text">ship status</div>
+                                    <div class="stopper"></div>
+                                </div>
+    
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar ship-status" id="bar-ship-status" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                </span>
+                                <div class="amount">
+                                        <div class="repair-list" id="repair-button" style="display: none;">
+                                                <div class="repair-item can-repair pointer" >
+                                                    <div class="icon-ratio ic-repair"></div>
+                                                    <div class="title-text fL repair-text">Repair</div>
+                                                </div>
+                                            </div>
+                                        <span class="status-current"><span id="ship-status-value"></span> %</span> 
+                                </div>
+                                    <div class="stopper"></div>
+    
+                            </div>
+                            <!-- GAUGE COMBO END-->
+                       
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2">
+                            <div class="game-info">
+                                    <p>Game Age: <span id="game-age"></span></p>
+                                    <p>Reward: <span id="reward"></span> eth</p>
+                                    <p>Players:</p>
+                                </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="row last-row">
+            <div class="col-xs-12 col-md-3-et" >
+                <div class="resources-container" id="resources" style="display:none;">
+                    <div class="stopper"></div>
+                    <div class="gauges-container">
+                  
+                   <!-- <h2 class="taR">Gathering modules</h2> -->
+                   
+                   <!-- GUAGE COMBO ENERGY-->
+                    <div class="resource-combo" id="warehouse">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-warehouse"></div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="El Warehouse te permite almancenar los recursos que produces. Sube su nivel para aumentar su capacidad.">Warehouse</div>
+                                <div class="resource-level"><span id="warehouse-level"></span></div>
+                                <div class="resource-name">Resources Storage</div>
+                            <!--<div class="resource-upgrade" id="upgrade-graphene">upgrade</div> -->
+                                <div class="resource-upgrade upgrade-ready" id="upgrade-warehouse-ready">Upgrade<br>ready! <div class="icon-right ic-upgrade" ></div></div>
+                                <div class="resource-upgrade upgrading" id="upgrading-warehouse" style="display: none;">Upgrading</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-bottom">
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="warehouse-energy-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar energy" id="bar-energy1"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-energy1"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="warehouse-graphene-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar graphene" id="bar-graphene1"></div>
+                                <div class="gauge-background" ></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-graphene1"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="warehouse-metals-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar metals" id="bar-metals1"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-metals1"></span>
+                            </div>
+                            <div class="stopper"></div>
+                        </div>
+                    </div>
+                   <!-- GUAGE COMBO END -->
+                   
+                   <!-- GUAGE COMBO Hangar-->
+                    <div class="resource-combo" id="hangar">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-hangar"></div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="Construye el Hangar para crear tu flota. Cuanto más alto sea su nivel, mayor será la velocidad de producción.">Hangar</div>
+                                <div class="resource-level"><span id="hangar-level"></span></div>
+                                <div class="resource-name">Fleet Maker</div>
+                            <!--<div class="resource-upgrade" id="upgrade-graphene">upgrade</div> -->
+                                <div class="resource-upgrade upgrade-ready" id="upgrade-hangar-ready">Upgrade<br>ready! <div class="icon-right ic-upgrade" ></div></div>
+                                <div class="resource-upgrade upgrading" id="upgrading-hangar" style="display: none;">Upgrading</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-bottom">
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="hangar-energy-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar energy" id="bar-energy2" ></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-energy2"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="hangar-graphene-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar graphene" id="bar-graphene2"></div>
+                                <div class="gauge-background" ></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-graphene2"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="hangar-metals-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar metals" id="bar-metals2"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-metals2"></span>
+                            </div>
+                            <div class="stopper"></div>
+                        </div>
+                    </div>
+                   <!-- GUAGE COMBO END -->
+                   
+                   <!-- GUAGE COMBO METALS-->
+                    <div class="resource-combo" id="cannon">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-cannon"></div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="Disparando el Cannon podras dañar las main ships de tus enemigos. La cantidad de daño que causará es propocional a su nivel.">Cannon</div>
+                                <div class="resource-level"><span id="cannon-level"></span></div>
+                                <div class="resource-name">Crypto-Ion Gun</div>
+                            <!--<div class="resource-upgrade" id="upgrade-metals">upgrade</div> -->
+                                <div class="resource-upgrade upgrade-ready" id="upgrade-cannon-ready">Upgrade<br>ready! <div class="icon-right ic-upgrade"></div></div>
+                                <div class="resource-upgrade upgrading" id="upgrading-cannon" style="display: none;">Upgrading</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-bottom">
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="cannon-energy-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar energy" id="bar-energy3"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-energy3"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="cannon-graphene-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar graphene" id="bar-graphene3"></div>
+                                <div class="gauge-background" ></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-graphene3"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="cannon-metals-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar metals" id="bar-metals3"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-metals3"></span>
+                            </div>
+                            <div class="stopper"></div>
+                        </div>
+                    </div>
+                   <!-- GUAGE COMBO END -->
+                   
+                </div> 
+                </div>
+            </div>
+            
+            
+            <!-- CENTER COLUMN -->
+            <div class="col-xs-12 col-md-6-et">
+                <div class="shipContainer-building">
+                    <div class="ship-img-building">
+                        <img src="/static/images/interior.png" style="width:100%">
+                    </div>
+                    <div class="ship-title"><span id="ship-name"></span></div>
+                </div>
+                
+                <!-- Nav-bar arriba
+                <div class="nav-bar">
+                        <div class="views-container">
+                           <div class="view">
+                                <a href="#">Home</a>
+                            </div>
+                            <div class="view selected">
+                                <a href="#">Resources</a>
+                            </div>
+                            <div class="view">
+                                <a href="map.html">Map</a>
+                            </div>
+                            <div class="view">
+                                <a href="#">Buildings</a>
+                            </div>
+                            <div class="view">
+                                <a href="#">Messages</a>
+                            </div>
+                            <div class="view">
+                                <a href="#">Events</a>
+                            </div>
+                        </div>
+                    </div> -->
+            </div>
+            <!-- CENTER COLUMN END -->
+            
+            
+            <div class="col-xs-12 col-md-3-et">
+               <div class="stats-container" id="stats" style="display:none;">
+               
+                <!-- <h2 class="taL">Stats</h2> -->
+                
+                    <!-- COMBO LOCATION 
+                    <div class="resource-combo" id="location">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-location"></div>
+                                <div class="title-text">location</div>
+                                <div class="location-coords">( <span id="position-x"></span>, <span id="position-y"></span> )</div>
+                                <div class="resource-name">Map coordinates</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                    </div> -->
+                   <!-- COMBO LOCATION END -->
+                   
+                   <!-- COMBO PRODUCTION RATIO -->
+                    <div class="resource-combo" id="production-ratio">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-fighters"></div>
+                                <div class="title-text">Fleet</div>
+                                <div class="fleet-size"><span id="fleet-size"></span></div>
+                                <div class="resource-name">Type: <span id="fleet-type">Hybrid</span></div>
+                                <div class="build-fleet upgrade-ready" id="build-fleet-ready">Build<br>More!<div class="icon-right-2 ic-hangar"></div></div>
+                                <div class="stopper"></div>
+                            </div>
+                            
+                        </div>
+                        <div class="combo-bottom">
+                            <!-- RATIO LIST ITEM -->
+                            <span id="fleet-design">
+                            <div class="ratio-list">
+                                <div class="ratio-item">
+                                    <div class="icon-ratio ic-attack-mode"></div>
+                                    <div class="title-text fL">Attack</div>
+                                    <div class="ratio-amount fR"><span id="fleet-attack"></span></div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- RATIO LIST ITEM -->
+                            <div class="ratio-list">
+                                <div class="ratio-item">
+                                    <div class="icon-ratio ic-defense-mode"></div>
+                                    <div class="title-text fL">Defense</div>
+                                    <div class="ratio-amount fR"><span id="fleet-defense"></span></div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- RATIO LIST ITEM -->
+                            <div class="ratio-list">
+                                <div class="ratio-item">
+                                    <div class="icon-ratio ic-distance"></div>
+                                    <div class="title-text fL">Distance</div>
+                                    <div class="ratio-amount fR"><span id="fleet-distance"></span></div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            <!-- RATIO LIST ITEM -->
+                            <div class="ratio-list">
+                                <div class="ratio-item">
+                                    <div class="icon-ratio ic-load"></div>
+                                    <div class="title-text fL">Load</div>
+                                    <div class="ratio-amount fR"><span id="fleet-load"></span></div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            </span>
+                            <div class="ratio-list">
+                                <div class="ratio-item upgrade-ready pointer" id="design-fleet-ready">
+                                    <div class="icon-ratio ic-design"></div>
+                                    <div class="title-text fL">Design Fleet</div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            <div class="ratio-list">
+                                <div class="ratio-item upgrade-ready pointer" id="disassemble-fleet">
+                                    <div class="icon-ratio ic-design"></div>
+                                    <div class="title-text fL">Dissasemble Fleet</div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   <!-- COMBO PRODUCTION RATIO END -->
+                   <div class="resource-combo" id="production-time">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-time"></div>
+                                <div class="title-text">FLEET PROD. QUEUE</div>
+                                <div class="queue-size"><span id="fleet-queue"></span></div>
+                                <div class="resource-name">End at fleet watch</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- COMBO PRODUCTION TIME -->
+                        <div class="resource-combo" id="production-time">
+                            <div class="combo-top">
+                                <div class="resource-title">
+                                    <div class="icon ic-time"></div>
+                                    <div class="title-text">WATCH COUNTDOWN</div>
+                                    <div class="resource-name">Blocks to </div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="watch-container watch-left">
+                                    <div class="block-amount">
+                                        <span id="blocks-to-build"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                        Build
+                                    </div>
+                                </div>
+                                <div class="watch-container watch-right">
+                                    <div class="block-amount">
+                                        <span id="blocks-to-fleet-ends"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                        fleet
+                                    </div>
+                                </div>
+                            
+                        </div>
+                   <!-- COMBO PRODUCTION TIME END -->
+                
+               </div> 
+            </div>
+        </div>  
+    </div>
+
+<!-- Modal for pannels -->
+<div class="modal fade" id="modal-warehouse-upgrade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+            <div class="modal-body-text">UPGRADE Warehouse to LEVEL <span id="next-warehouse-level"></span></div>
+      </div>
+      <div class="modal-footer">
+            <div class="title-text fL">Resources Cost:</div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-energy"></div>
+                <div class="title-text fL"><span id="energy-warehouse-upgrade"></span></div>
+                    
+                <div class="stopper"></div>
+            </div> 
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-graphene"></div>
+                <div class="title-text fL"><span id="graphene-warehouse-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-metals"></div>
+                <div class="title-text fL"><span id="metals-warehouse-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>  
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="button-upgrade-warehouse" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for pannels Graphene -->
+<div class="modal fade" id="modal-hangar-upgrade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div class="modal-body-text">UPGRADE Hangar to LEVEL <span id="next-hangar-level"></span></div>
+      </div>
+      <div class="modal-footer">
+            <div class="title-text fL">Resources Cost:</div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-energy"></div>
+                <div class="title-text fL"><span id="energy-hangar-upgrade"></span></div>
+                    
+                <div class="stopper"></div>
+            </div> 
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-graphene"></div>
+                <div class="title-text fL"><span id="graphene-hangar-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-metals"></div>
+                <div class="title-text fL"><span id="metals-hangar-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>  
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="button-upgrade-hangar" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Cannon -->
+<div class="modal fade" id="modal-cannon-upgrade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div class="modal-body-text">UPGRADE Crypto-Ion Cannon to LEVEL <span id="next-cannon-level"></span></div>
+      </div>
+      <div class="modal-footer">
+            <div class="title-text fL">Resources Cost:</div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-energy"></div>
+                <div class="title-text fL"><span id="energy-cannon-upgrade"></span></div>
+                    
+                <div class="stopper"></div>
+            </div> 
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-graphene"></div>
+                <div class="title-text fL"><span id="graphene-cannon-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-metals"></div>
+                <div class="title-text fL"><span id="metals-cannon-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>  
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="button-upgrade-cannon" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal_tx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Order Submited</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <div class="modal-body-text">ORDER: <span id="change mode"></span></div>
+                    <div class="modal-body-text">Click <a id="link_to_etherscan" href="">here</a> to verify the transaction status in Etherscan</span></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+ </div>
+
+<!-- Modal for Design Fleet -->
+<div class="modal fade" id="modal-design-fleet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-building modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">DESIGN FLEET</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5">
+                        <div class="modal-body-text">Points available: <span id="available-design-points">100</span></div>
+                        <div class="slidecontainer">
+                            <p class="design-tag fL">Attack</p>
+                            <input type="range" min="0" max="100" value="0" class="slider slider-design-attack" id="range-attack-points">
+                            <p class="fR"><span id="attack-design-points"></span></p>
+                        </div>
+                        <div class="slidecontainer">
+                            <p class="design-tag fL">Defense</p>
+                            <input type="range" min="0" max="100" value="0" class="slider slider-design-defense" id="range-defense-points">
+                            <p class="fR"><span id="defense-design-points"></span></p>
+                        </div>
+                        <div class="slidecontainer">
+                                <p class="design-tag fL">Distance</p>
+                                <input type="range" min="0" max="10" value="0" class="slider slider-design-distance" id="range-distance-points">
+                                <p class="fR"><span id="distance-design-points"></span></p>
+                        </div>
+                        <div class="slidecontainer">
+                                <p class="design-tag fL">Load</p>
+                                <input type="range" min="0" max="8000" value="0" step="80" class="slider slider-design-load" id="range-load-points">
+                                <p class="fR"><span id="load-design-points"></span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                            <div class="modal-body-text"><span id="fleet-type-design"></span> cost </div>
+                            <div class="combo-bottom">
+                                    <!-- RATIO LIST ITEM -->
+                                    <div class="ratio-list">
+                                        <div class="ratio-item-design">
+                                            <div class="icon-ratio ic-energy"></div>
+                                            <div class="title-text fL">Energy</div>
+                                            <div class="ratio-amount fR"><span id="energy-cost"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- RATIO LIST ITEM -->
+                                    <div class="ratio-list">
+                                        <div class="ratio-item-design">
+                                            <div class="icon-ratio ic-graphene"></div>
+                                            <div class="title-text fL">Graphene</div>
+                                            <div class="ratio-amount fR"><span id="graphene-cost"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- RATIO LIST ITEM -->
+                                    <div class="ratio-list">
+                                        <div class="ratio-item-design">
+                                            <div class="icon-ratio ic-metals"></div>
+                                            <div class="title-text fL">Metals</div>
+                                            <div class="ratio-amount fR"><span id="metals-cost"></span></div>
+                                            <div class="stopper"></div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" id="button-design-fleet" class="btn btn-primary">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal for Build -->
+<div class="modal fade" id="modal-build-fleet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Build Fleet</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+              <div class="modal-body-text">Max: <span id="max-fleet-to-build"></span></div>
+              <div class="slidecontainer">
+                    <p class="build-tag fL">Fleet to Queue: </p>
+                    <input type="range" min="0" max="480" value="0" step="1" class="slider-build slider-build-fleet" id="range-build-fleet">
+                    <p class="fR"><span id="fleet-to-build">0</span></p>
+            </div>
+            </div>
+            <div class="modal-footer">
+                  <div class="title-text fL">Resources Cost:</div>
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-energy"></div>
+                      <div class="title-text fL"><span id="energy-build-fleet">0</span></div>
+                          
+                      <div class="stopper"></div>
+                  </div> 
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-graphene"></div>
+                      <div class="title-text fL"><span id="graphene-build-fleet">0</span></div>
+                      <div class="stopper"></div>
+                  </div>
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-metals"></div>
+                      <div class="title-text fL"><span id="metals-build-fleet">0</span></div>
+                      <div class="stopper"></div>
+                  </div>  
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" id="button-build-fleet" class="btn btn-primary">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="modal fade" id="modal-disassemble-fleet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">DISASSEMBLE FLEET</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <!-- New Body and footer 
+
+            <div class="modal-body" id="modal-body">
+              <div class="modal-body-text">You are gonna to disassemble your fleet - Warning</div>
+                  <div class="modal-body-text">Max: <span id="max-fleet-to-build">15</span></div>
+              <div class="slidecontainer">
+                    <p class="build-tag fL">Fleet to Disassemble: </p>
+                    <input type="range" min="0" max="15" value="0" step="1" class="slider-build slider-build-fleet" id="range-build-fleet" style="
+    width: 44%;
+">
+                    <p class="fR"><span id="fleet-to-build">15</span></p>
+            </div>
+            </div>
+            <div class="modal-footer">
+    <div class="title-text fL">Recycled Resources: </div>
+                   
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-graphene"></div>
+                      <div class="title-text fL"><span id="graphene-build-fleet">78600</span></div>
+                      <div class="stopper"></div>
+                  </div>
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-metals"></div>
+                      <div class="title-text fL"><span id="metals-build-fleet">97800</span></div>
+                      <div class="stopper"></div>
+                  </div>  
+                 
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" id="button-disassemble-fleet" class="btn btn-primary">Confirm</button>
+            </div>
+            
+            -->
+
+            <div class="modal-body" id="modal-body">
+              <div class="modal-body-text">You are gonna to disassemble your fleet - Warning</div>
+            </div>
+            <div class="modal-footer">
+                 
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" id="button-disassemble-fleet" class="btn btn-primary">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="modal_upgrading" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Upgrade in Progress</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                            <div class="modal-body-text">You are currently upgrading <span id="building-upgrading"></span></div>
+                        </div>
+                        <div class="modal-footer">
+                        
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+</body>
+<!-- scripts -->
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/cssgame.js"></script>
+<script src="/static/js/backend.js"></script>
+<script>
+    window.DEBUG = true;
+    window.planetOwner = {{ game_candidate }};
+    window.reward = {{ game_reward }};
+    window.gameAge = {{ last_block_number }} - {{ game_launch }};
+    window.blocksToEnd = {{ game_end_block }} - {{ last_block_number }};
+    
+    window.gameAbi = {{ game_abi | js}};
+    window.gameAddress = "{{ game_address }}";
+    window.gameNetwork = {{ game_network }};
+
+    window.ship = {{ ship_id }};
+    window.damage = {{ damage }};
+    window.game = {{ game_id }};
+
+    window.warehouseLevel = {{ warehouse_level }};
+    window.hangarLevel = {{ hangar_level }};
+    window.cannonLevel = {{ cannon_level }};
+
+    window.grapheneStock = {{ graphene_stock }};
+    window.energyStock =  {{ energy_stock }};
+    window.metalsStock = {{ metal_stock }};
+    
+    window.eventsCount = {{ events_count }};
+
+    window.shipName = "{{ ship_name }}";
+
+    window.fleetSize = {{ fleet_size }};
+    window.fleetQueue = {{ fleet_in_production }};
+    window.fleetAttack = {{ fleet_attack }};
+    window.fleetDefense = {{ fleet_defense }};
+    window.fleetDistance = {{ fleet_distance }};
+    window.fleetLoad = {{ fleet_load }};
+
+    window.fleetType = "{{ fleet_type }}";
+
+    window.energyProduction = {{ energy_production }};
+
+    window.fleetEnergyCost = {{ fleet_energy_cost }};
+    window.fleetGrapheneCost = {{ fleet_graphene_cost }};
+    window.fleetMetalsCost = {{ fleet_metals_cost }};
+
+    window.in_port = {{ in_port | boolean }};
+
+    window.blocksToEndProduction = {{ fleet_blocks_to_end }};
+
+    window.buildingBlock = {{ countdown_buildings }};
+
+    window.buildingUpgrading = {{ building_upgrading }};
+    
+    window.base_url = "{{ base_url }}";
+    window.etherscan_url = "https://kovan.etherscan.io/tx/";
+    window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel)
+    
+</script>
+
+<script>
+$(document).ready(function(){
+
+    if (window.fleetType != "" && window.fleetEnergyCost != 0 && window.fleetGrapheneCost != 0 && window.fleetMetalsCost != 0)
+        window.fleetDesigned = true;
+    else
+        window.fleetDesigned = false; 
+
+    if (typeof web3 !== 'undefined' && web3.currentProvider.isMetaMask == true ) {
+        web3.version.getNetwork(function(error,network) {
+            if (!error && network == window.gameNetwork) {
+                w3 = new Web3(web3.currentProvider);
+                window.cssgame = new CSSGame(w3,window.gameAbi,window.gameAddress,web3);
+                window.backend = new Backend(window.base_url);
+
+                function process_order (order, tx) {
+                    /*
+                     * Se cierra el modal
+                     */
+                    $(window.id_modal_open).modal('hide');
+                    window.backend.orders.add(window.game,window.ship,order,tx,function(e,r) {
+                        if (!e) {
+                            setInterval(function(){
+                                w3.eth.getTransactionReceipt(tx, function(e,h){
+                                    if (h && h.blockNumber != null) location.reload();
+                                });
+                            },3000);
+                        } else {
+                            console.log(e);
+                        }
+                    });
+                    $('#link_to_etherscan').attr('href', window.etherscan_url + tx);
+                    $('#modal_tx').modal('show');
+                }
+                
+                // Codigo
+                $('#range-attack-points').on('input', function(){
+                    $('#attack-design-points').text(this.value);
+                    checkDesignPoints();
+                });
+
+                $('#range-defense-points').on('input', function(){
+                    $('#defense-design-points').text(this.value);
+                    checkDesignPoints();
+                });
+
+                $('#range-distance-points').on('input', function(){
+                    $('#distance-design-points').text(this.value);
+                    checkDesignPoints();
+                });
+
+                $('#range-load-points').on('input', function(){
+                    $('#load-design-points').text(this.value);
+                    checkDesignPoints();
+                });
+
+                if ( window.fleetSize > 0 && window.fleetQueue == 0) {
+                    $('#disassemble-fleet').show();
+                }
+                else {
+                    $('#disassemble-fleet').hide();
+                }
+
+                $('#disassemble-fleet').click(function() {
+                    $('#modal-disassemble-fleet').modal('show');
+                    window.id_modal_open = '#modal-disassemble-fleet';
+                    $('#button-disassemble-fleet').click(function() {
+                        window.cssgame.disassembleFleet(window.ship,function(e,h){
+                            if (!e) 
+                                process_order("disassemble_fleet",h);
+                        });
+                    });
+                });
+
+                $('#modal-disassemble-fleet').on('hidden.bs.modal', function () { 
+                    window.id_modal_open = undefined;
+                });
+
+                function checkDesignPoints() {
+                    let design = {};
+                    let points;
+                    let cost;
+
+                    design.attack = parseInt($('#range-attack-points').val());
+                    design.defense = parseInt($('#range-defense-points').val());
+                    design.distance = parseInt($('#range-distance-points').val());
+                    design.load = parseInt($('#range-load-points').val());
+                    design.points = design.attack + design.defense + design.distance * 6 + design.load / 80;
+                    points = 100 - design.points;
+                    $('#available-design-points').text(points);
+                    if (points >= 0) {
+                        $('#available-design-points').css("color", "rgb(0, 232, 123)");
+                        $('#fleet-type-design').text(CSSGame.getFleetType(design.attack,design.defense,design.distance,design.load));
+                        cost = CSSGame.getFleetCost(design.attack,design.defense,design.distance,design.load);
+                    }
+                    else {
+                        $('#available-design-points').css("color", "rgba(232,0,87,1)");
+                        $('#fleet-type-design').text("ERROR");
+                        cost = {};
+                        cost.e = 0;
+                        cost.g = 0;
+                        cost.m = 0;
+                        cost.valid = false;
+                    }
+                    $('#energy-cost').text(cost.e);
+                    $('#graphene-cost').text(cost.g);
+                    $('#metals-cost').text(cost.m);
+
+                    // Disable handler
+                    $('#button-design-fleet').off();
+                    if (cost.valid) {
+                        window.designCost = cost;
+                        window.design = design;
+                        // Configurar el handler para mandar a diseñar
+                        $('#button-design-fleet').click(function(){
+                            window.cssgame.designFleet(window.ship,window.design.attack,window.design.defense,window.design.distance,window.design.load,function(e,h){
+                            if (!e) 
+                                process_order("design_fleet",h);
+                            });
+                        });
+                    }
+                }
+
+
+                $('#upgrade-warehouse-ready').click(function() {
+                    // Get Values
+                    nextLevel = window.warehouseLevel+1;
+                    gRes = CSSGame.getUpgradeBuildingCost(0,nextLevel);
+                    // Render HTML
+                    $('#next-warehouse-level').text(nextLevel);
+                    $('#energy-warehouse-upgrade').text(gRes.energy);
+                    $('#graphene-warehouse-upgrade').text(gRes.graphene);
+                    $('#metals-warehouse-upgrade').text(gRes.metals);
+                    
+                    // Finally Show the Modal
+                    window.id_modal_open = '#modal-warehouse-upgrade';
+                    $(window.id_modal_open).modal('show');
+                });
+
+                $('#upgrade-hangar-ready').click(function() {
+                    // Get Values
+                    nextLevel = window.hangarLevel+1;
+                    gRes = CSSGame.getUpgradeBuildingCost(1,nextLevel);
+                    // Render HTML
+                    $('#next-hangar-level').text(nextLevel);
+                    $('#energy-hangar-upgrade').text(gRes.energy);
+                    $('#graphene-hangar-upgrade').text(gRes.graphene);
+                    $('#metals-hangar-upgrade').text(gRes.metals);
+                    
+                    // Finally Show the Modal
+                    window.id_modal_open = '#modal-hangar-upgrade';
+                    $(window.id_modal_open).modal('show');
+                });
+
+                $('#upgrade-cannon-ready').click(function() {
+                    // Get Values
+                    nextLevel = window.cannonLevel+1;
+                    mRes = CSSGame.getUpgradeBuildingCost(2,nextLevel);
+                    // Render HTML
+                    $('#next-cannon-level').text(nextLevel);
+                    $('#energy-cannon-upgrade').text(mRes.energy);
+                    $('#graphene-cannon-upgrade').text(mRes.graphene);
+                    $('#metals-cannon-upgrade').text(mRes.metals);
+                    
+                    // Finally Show the Modal
+                    window.id_modal_open = '#modal-cannon-upgrade';
+                    $(window.id_modal_open).modal('show');
+                });
+
+                $('#modal-warehouse-upgrade').on('hidden.bs.modal', function () { 
+                    window.id_modal_open = undefined;
+                });
+
+                $('#modal-hangar-upgrade').on('hidden.bs.modal', function () { 
+                    window.id_modal_open = undefined;
+                });
+
+                $('#modal-cannon-upgrade').on('hidden.bs.modal', function () { 
+                    window.id_modal_open = undefined;
+                });
+
+                $('#upgrading-warehouse').click(function() {
+                    modal_upgrading();
+                });
+                
+                $('#upgrading-hangar').click(function () {
+                    modal_upgrading();
+                });
+
+                $('#upgrading-cannon').click(function() {
+                    modal_upgrading();
+                });
+
+                function modal_upgrading () {
+                    if (window.buildingUpgrading == 1)
+                        text = 'Warehouse at level ' + (window.warehouseLevel + 1).toString();
+
+                    if (window.buildingUpgrading == 2)
+                        text = 'Hangar at level ' + (window.hangarLevel+1).toString();
+
+                    if (window.buildingUpgrading == 3)
+                        text = 'Cannon at level ' + (window.cannonLevel+1).toString();
+
+                    $('#building-upgrading').text(text);
+                    $('#modal_upgrading').modal('show');
+                }
+
+                
+                $('#modal_upgrading').on('hidden.bs.modal', function() {
+                    $('#resource-upgrading').text('');
+                });
+
+                $('#button-upgrade-cannon').click(function() {
+                    window.cssgame.upgradeCannon(window.ship,function(e,h){
+                        if (!e) 
+                            process_order("upgrade_cannon",h);
+                    });
+                });
+                $('#button-upgrade-hangar').click(function() {
+                    window.cssgame.upgradeHangar(window.ship,function(e,h){
+                        if (!e) 
+                            process_order("upgrade_hangar",h);
+                    });
+                });
+                $('#button-upgrade-warehouse').click(function() {
+                    window.cssgame.upgradeWarehouse(window.ship,function(e,h){
+                        if (!e) 
+                            process_order("upgrade_warehouse",h);
+                    });
+                });
+
+                /*
+                * Todas las condiciones para ver si se puede 
+                * diseñar una flota
+                */
+                if (window.fleetSize == 0 && window.fleetQueue == 0 && window.hangarLevel > 0) {
+                    $('#design-fleet-ready').click(function(){
+                        $('#attack-design-points').text(window.fleetAttack);
+                        $('#defense-design-points').text(window.fleetDefense);
+                        $('#distance-design-points').text(window.fleetDistance);
+                        $('#load-design-points').text(window.fleetLoad);
+
+                        $('#range-attack-points').val(window.fleetAttack);
+                        $('#range-defense-points').val(window.fleetDefense);
+                        $('#range-distance-points').val(window.fleetDistance);
+                        $('#range-load-points').val(window.fleetLoad);
+
+                        checkDesignPoints();
+                        // Finally Show de Modal
+                        window.id_modal_open = '#modal-design-fleet';
+                        $(window.id_modal_open).modal('show');
+                    });
+                }
+                else {
+                    $('#design-fleet-ready').hide();
+                }
+                $('#modal-design-fleet').on('hidden.bs.modal', function () {
+                    let cost = {};
+                    let design = {};
+                    cost.e = 0;
+                    cost.g = 0;
+                    cost.m = 0;
+                    cost.valid = false;
+                    window.designCost = cost;
+                    window.design = design;
+                    window.id_modal_open = undefined;
+                });
+
+                /*
+                * La condicion para saber si puede construir una flota
+                */
+                if (window.energyProduction > 0 && 
+                    window.fleetDesigned == true &&
+                    window.blocksToEndProduction == 0 &&
+                    window.fleetEnergyCost != 0 &&
+                    window.fleetGrapheneCost != 0 &&
+                    window.fleetMetalsCost != 0) {
+                    $('#build-fleet-ready').click(function(){
+                        let max = calcBuildFleet();
+                        $('#range-build-fleet').attr('max',max);
+                        $('#max-fleet-to-build').text(max);
+
+                        window.id_modal_open = '#modal-build-fleet';
+                        $(window.id_modal_open).modal('show');
+                    });
+                }
+                else {
+                    $('#build-fleet-ready').hide();
+                }
+
+                $('#modal-build-fleet').on('hidden.bs.modal', function () {
+                    window.id_modal_open = undefined;
+                });
+
+                $('#button-build-fleet').click(function(){
+                    let value = parseInt($('#range-build-fleet').val());
+                    if (value > 0) {
+                        window.cssgame.buildFleet(window.ship,value,function(e,h){
+                            if (!e) 
+                                process_order("build_fleet",h);
+                        });
+                    }
+                });
+
+                $('#range-build-fleet').on('input', function(){
+                    let size = parseInt(this.value);
+                    let r = calcFleetCost(size);
+                    $('#fleet-to-build').text(size);
+                    $('#energy-build-fleet').text(r.energy);
+                    $('#graphene-build-fleet').text(r.graphene);
+                    $('#metals-build-fleet').text(r.metals);
+                });
+
+                function calcBuildFleet() {
+                    let min;
+                    min = window.energyStock / window.fleetEnergyCost;
+
+                    if (window.grapheneStock / window.fleetGrapheneCost < min)
+                        min = window.grapheneStock / window.fleetGrapheneCost;
+                    if (window.metalsStock / window.fleetMetalsCost < min)
+                        min = window.metalsStock / window.fleetMetalsCost;
+                    if (window.energyProduction < min)
+                        min = window.energyProduction;
+
+                    return Math.floor(min);
+                }
+
+                function calcFleetCost(size) {
+                    let ret = {};
+                    ret.energy = window.fleetEnergyCost * size;
+                    ret.graphene = window.fleetGrapheneCost * size;
+                    ret.metals = window.fleetMetalsCost * size;
+                    return ret;
+                }
+
+
+                function checkBuildingUpgrade() {
+                    if (window.warehouseLevel < 4) {
+                        if (window.buildingUpgrading == 1 && window.buildingBlock != 0) 
+                            setUpgradeResourceBar(0, window.warehouseLevel + 2);
+                        else
+                            setUpgradeResourceBar(0, window.warehouseLevel + 1);         
+                    }
+                    if (window.hangarLevel < 4) {
+                        if (window.buildingUpgrading == 2 && window.buildingBlock != 0) 
+                            setUpgradeResourceBar(1, window.hangarLevel + 2);
+                        else
+                            setUpgradeResourceBar(1, window.hangarLevel + 1);
+                    }
+                    if (window.cannonLevel < 4) {
+                        if (window.buildingUpgrading == 3 && window.buildingBlock != 0) 
+                            setUpgradeResourceBar(2, window.cannonLevel + 2);
+                        else
+                            setUpgradeResourceBar(2, window.cannonLevel + 1);
+                    }
+                    if (window.buildingUpgrading > 0 && window.buildingUpgrading <= 3 && window.buildingBlock != 0) {
+                        if (window.buildingUpgrading == 1) {
+                            setUpgradeBuildingReady(0,2);
+                            setUpgradeBuildingReady(1,1);
+                            setUpgradeBuildingReady(2,1);    
+                        } else {
+                            if (window.buildingUpgrading == 2 ) {
+                                setUpgradeBuildingReady(1,2);
+                                setUpgradeBuildingReady(0,1);
+                                setUpgradeBuildingReady(2,1);
+                            } else {
+                                setUpgradeBuildingReady(0,1);
+                                setUpgradeBuildingReady(1,1);
+                                setUpgradeBuildingReady(2,2);
+                            }
+                        }
+                    } else {
+                        if (window.warehouseLevel < 4) {
+                            eRes = CSSGame.getUpgradeBuildingCost(0,window.warehouseLevel+1);
+                            if ( eRes.energy <= window.energyStock && 
+                                eRes.graphene <= window.grapheneStock && 
+                                eRes.metals <= window.metalsStock && 
+                                window.buildingBlock == 0)
+                                setUpgradeBuildingReady(0,0);
+                            else
+                                setUpgradeBuildingReady(0,1);
+                        } else {
+                            setUpgradeBuildingReady(0,1);
+                        }
+
+                        if (window.hangarLevel < 4) {
+                            // Building 1 is Hangar
+                            gRes = CSSGame.getUpgradeBuildingCost(1,window.hangarLevel+1);
+                            if ( gRes.energy <= window.energyStock && 
+                                gRes.graphene <= window.grapheneStock && 
+                                gRes.metals <= window.metalsStock && 
+                                window.buildingBlock == 0)
+                                setUpgradeBuildingReady(1,0);
+                            else
+                                setUpgradeBuildingReady(1,1);
+                        } else {
+                            setUpgradeBuildingReady(1,1);
+                        }
+                        
+                        if (window.cannonLevel < 4) {
+                            mRes = CSSGame.getUpgradeBuildingCost(2,window.cannonLevel+1);
+                            
+                            if ( mRes.energy <= window.energyStock && 
+                                mRes.graphene <= window.grapheneStock && 
+                                mRes.metals <= window.metalsStock && 
+                                window.buildingBlock == 0)
+                                setUpgradeBuildingReady(2,0);
+                            else
+                                setUpgradeBuildingReady(2,1);
+                        } else {
+                            setUpgradeBuildingReady(2,1);
+                        }
+                    }
+
+
+                }
+
+                function setUpgradeBuildingReady(building, show_type) {
+                    switch(building) {
+                        case 0:
+                            id_ready = "#upgrade-warehouse-ready";
+                            id_upgrading = "#upgrading-warehouse";
+                            if (show_type == 0) {
+                                // Upgrade Ready
+                                $(id_ready).show();
+                                $(id_upgrading).hide();
+                                return;
+                            }
+                            if (show_type == 1) {
+                                // No upgrade
+                                $(id_ready).hide();
+                                $(id_upgrading).hide();
+                                return;
+                            }
+                            if (show_type == 2) {
+                                // Upgrading
+                                $(id_ready).hide();
+                                $(id_upgrading).show();
+                                return;
+                            }
+                            break;
+                        case 1:
+                            id_ready = "#upgrade-hangar-ready";
+                            id_upgrading = "#upgrading-hangar";
+                            if (show_type == 0) {
+                                // Upgrade Ready    
+                                $(id_ready).show();
+                                $(id_upgrading).hide();
+                                return;
+                            }
+                            if (show_type == 1) {
+                                // No upgrade
+                                $(id_ready).hide();
+                                $(id_upgrading).hide();
+                                return;
+                            }
+                            if (show_type == 2) {
+                                // Upgrading
+                                $(id_ready).hide();
+                                $(id_upgrading).show();
+                                return;
+                            }
+                            break;
+                        case 2:
+                            id_ready = "#upgrade-cannon-ready";
+                            id_upgrading = "#upgrading-cannon";
+                            if (show_type == 0) {
+                                // Upgrade Ready    
+                                $(id_ready).show();
+                                $(id_upgrading).hide();
+                                return;
+                            }
+                            if (show_type == 1) {
+                                // No upgrade
+                                $(id_ready).hide();
+                                $(id_upgrading).hide();
+                                return;
+                            }
+                            if (show_type == 2) {
+                                // Upgrading
+                                $(id_ready).hide();
+                                $(id_upgrading).show();
+                                return;
+                            }
+                            break;
+                    }
+                }
+
+                function setBuildingLevel() {
+                    $('#warehouse-level').text(window.warehouseLevel);
+                    $('#hangar-level').text(window.hangarLevel);
+                    $('#cannon-level').text(window.cannonLevel);
+                }
+
+                function setUpgradeResourceBar(resource,level)
+                {
+                    res = CSSGame.getUpgradeBuildingCost(resource,level);        
+                    energy = Math.floor(window.energyStock * 100 / res.energy);
+                    graphene = Math.floor(window.grapheneStock * 100 / res.graphene);
+                    metals = Math.floor(window.metalsStock * 100 / res.metals);
+
+                    if (energy > 100) energy = 100;
+                    if (graphene > 100) graphene = 100;
+                    if (metals > 100) metals = 100;
+
+                    switch (resource) {
+                        case 0:
+                            bar_energy = '#bar-energy1';
+                            amount_energy = '#amount-energy1';
+                            bar_graphene = '#bar-graphene1';
+                            amount_graphene = '#amount-graphene1';
+                            bar_metals = '#bar-metals1';
+                            amount_metals = '#amount-metals1';
+                            break;
+                        case 1:
+                            bar_energy = '#bar-energy2';
+                            amount_energy = '#amount-energy2';
+                            bar_graphene = '#bar-graphene2';
+                            amount_graphene = '#amount-graphene2';
+                            bar_metals = '#bar-metals2';
+                            amount_metals = '#amount-metals2';
+                            break;
+                        case 2:
+                            bar_energy = '#bar-energy3';
+                            amount_energy = '#amount-energy3';
+                            bar_graphene = '#bar-graphene3';
+                            amount_graphene = '#amount-graphene3';
+                            bar_metals = '#bar-metals3';
+                            amount_metals = '#amount-metals3';
+                            break;
+                    }
+                    if (level < 5) {
+                        $(amount_energy).text(energy.toString()+'%');
+                        $(amount_graphene).text(graphene.toString()+'%');
+                        $(amount_metals).text(metals.toString()+'%');
+                    }
+                    else {
+                        $(amount_energy).text('');
+                        $(amount_graphene).text('');
+                        $(amount_metals).text('');
+                    }
+                    $(bar_energy).attr("style", "width:" + energy.toString() + '%');
+                    $(bar_graphene).attr("style", "width:" + graphene.toString() + '%');
+                    $(bar_metals).attr("style", "width:" + metals.toString() + '%');
+                }
+
+                function setResourcesStock()
+                {    
+                    try { 
+                        if (typeof window.energyStock !== 'undefined') 
+                            $('#energy-stock').text(window.energyStock.toString());
+                        else 
+                            throw "window.energyStock undefined";
+
+                        if (typeof window.grapheneStock !== 'undefined')
+                            $('#graphene-stock').text(window.grapheneStock.toString());
+                        else
+                            throw "window.grapheneStock undefined";
+
+                        if (typeof window.metalsStock !== 'undefined')
+                            $('#metals-stock').text(window.metalsStock.toString());
+                        else
+                            throw "window.metalsStock undefined";
+                    }
+                    catch(err) {
+                        if (window.DEBUG == true) {
+                            window.alert(err)
+                        }
+                        else {
+                            console.log(err);
+                        }
+                    }
+                }
+
+                // No Va
+
+                function setCountdown()
+                {
+                    $('#blocks-to-build').text(window.buildingBlock);
+                }
+
+                function setEventsCounter() {
+                    if (window.eventsCount > 0) {
+                        $('#events-alert').text(window.eventsCount);
+                    }
+                    else {
+                        $('#events-alert').text('');
+                    }
+                }
+
+                function setShip()
+                {
+                    $('#ship-name').text(window.shipName);
+                }
+
+                function setFleet()
+                {
+                    if (window.fleetDesigned == true) {
+                        $('#fleet-type').text(CSSGame.getFleetTypeName(window.fleetType));
+                    }
+                    else {
+                        $('#fleet-type').text("No Designed");
+                    }
+                    $('#fleet-size').text(window.fleetSize);
+                    $('#fleet-attack').text(window.fleetAttack);
+                    $('#fleet-defense').text(window.fleetDefense);
+                    $('#fleet-distance').text(window.fleetDistance);
+                    $('#fleet-load').text(window.fleetLoad);
+                    $('#fleet-queue').text(window.fleetQueue);
+                    $('#blocks-to-fleet-ends').text(window.blocksToEndProduction);
+                }
+
+                function getUpgradeBuildingsCost()
+                {
+                    let warehouseCost = CSSGame.getUpgradeBuildingCost(0, window.warehouseLevel+1);
+                    let hangarCost = CSSGame.getUpgradeBuildingCost(1, window.hangarLevel+1);
+                    let cannonCost = CSSGame.getUpgradeBuildingCost(2, window.cannonLevel+1);
+                    
+                    if (window.warehouseLevel < 4) {                    
+                        $('#warehouse-energy-tooltip').attr('data-original-title', 'Energy required for next level: ' + parseInt(warehouseCost.energy).toString());
+                        $('#warehouse-graphene-tooltip').attr('data-original-title', 'Graphene required for next level: ' + parseInt(warehouseCost.graphene).toString());
+                        $('#warehouse-metals-tooltip').attr('data-original-title', 'Metals required for next level: ' + parseInt(warehouseCost.metals).toString());
+                    }
+                    else {
+                        $('#warehouse-energy-tooltip').attr('data-original-title', 'Warehouse max level reached');
+                        $('#warehouse-graphene-tooltip').attr('data-original-title', 'Warehouse max level reached');
+                        $('#warehouse-metals-tooltip').attr('data-original-title', 'Warehouse max level reached');
+                    }
+                    
+                    if (window.hangarLevel < 4) {
+                        $('#hangar-energy-tooltip').attr('data-original-title', 'Energy required for next level: ' + parseInt(hangarCost.energy).toString());
+                        $('#hangar-graphene-tooltip').attr('data-original-title', 'Graphene required for next level: ' + parseInt(hangarCost.graphene).toString());
+                        $('#hangar-metals-tooltip').attr('data-original-title', 'Metals required for next level: ' + parseInt(hangarCost.metals).toString());
+                    }
+                    else {
+                        $('#hangar-energy-tooltip').attr('data-original-title', 'Hangar max level reached');
+                        $('#hangar-graphene-tooltip').attr('data-original-title', 'Hangar max level reached');
+                        $('#hangar-metals-tooltip').attr('data-original-title', 'Hangar max level reached');
+                    }
+                    
+                    if (window.cannonLevel < 4) {
+                        $('#cannon-energy-tooltip').attr('data-original-title', 'Energy required for next level: ' + parseInt(cannonCost.energy).toString());
+                        $('#cannon-graphene-tooltip').attr('data-original-title', 'Graphene required for next level: ' + parseInt(cannonCost.graphene).toString());
+                        $('#cannon-metals-tooltip').attr('data-original-title', 'Metals required for next level: ' + parseInt(cannonCost.metals).toString());
+                    }
+                    else {
+                        $('#cannon-energy-tooltip').attr('data-original-title', 'Cannon max level reached');
+                        $('#cannon-graphene-tooltip').attr('data-original-title', 'Cannon max level reached');
+                        $('#cannon-metals-tooltip').attr('data-original-title', 'Cannon max level reached');
+                    }
+                }
+
+                function setDamage() {
+                    let status = 100 - window.damage;
+                    let statusPercentage = status.toString() + '%'
+                    $('#bar-ship-status').css('width', statusPercentage);
+                    if (status <= 25) {
+                        $('#bar-ship-status').css('background-color', '#eb1e0fbd');
+                        $('#ship-status-value').css('animation','blinker 1s linear infinite');
+                    } else {
+                        if (status < 80) {
+                            $('#bar-ship-status').css('background-color', '#d9eb0fbd');
+                        }
+                    }
+                    $('#ship-status-value').text(status);
+                    
+                    if (window.damage != 0 && window.in_port) {
+                        $('#repair-button').show();
+                    } 
+                    
+                }
+                
+                setResourcesStock();
+                checkBuildingUpgrade();
+                setCountdown();
+                setShip();
+                setDamage();
+                setGameStats();
+                setBuildingLevel();
+                setFleet();
+                setEventsCounter();
+                getUpgradeBuildingsCost();
+
+                function setGameStats() {
+                        let noOwner = "0x0000000000000000000000000000000000000000";
+                        if (window.planetOwner != noOwner) {
+                            if (window.blocksToEnd < 0)
+                                window.blocksToEnd = 0;
+                            $('#blocks-to-end').text(window.blocksToEnd);
+                            if (window.cssgame.w3.eth.accounts[0] != window.planetOwner)
+                                $('#win-condition').text("LOSING");
+                            else
+                                $('#win-condition').text("WINNING");
+                            $('#conquest-message').show();
+                        }
+                        $('#reward').text(window.reward/1000000000000000000);
+                        $('#game-age').text(window.gameAge);
+                    }
+
+                    setInterval(()=>{
+                        window.cssgame.getGame2((e,r)=>{
+                            if (!e) {
+                                window.cssgame.w3.eth.getBlockNumber((e,b)=>{
+                                    if (!e) {
+                                        ret = window.cssgame.getGame2Result(r);
+                                        window.gameAge = b - ret.gameLaunch;
+                                        if (b > ret.endBlock) 
+                                            window.blocksToEnd = 0;
+                                        else
+                                            window.blocksToEnd = ret.endBlock - b;
+                                        window.planetOwner = ret.candidate;
+                                        window.reward = ret.reward;
+                                        setGameStats();
+                                    }
+                                });
+                            } else {
+                                console.log(e);
+                            }
+                        });
+                    },5000);
+
+                setInterval(function() {
+                    window.cssgame.viewShipVars(window.ship,function(e,r) {
+                        if(!e) {
+                            ret = window.cssgame.viewShipVarsResult(r);
+                            window.energyStock = ret.energyStock;
+                            window.grapheneStock = ret.grapheneStock;
+                            window.metalsStock = ret.metalStock;
+                            if (window.buildingBlock != 0 && ret.countdownToUpgradeBuildings == 0)
+                                location.reload();
+                            window.buildingBlock = ret.countdownToUpgradeBuildings;
+                            window.damage = ret.damage;
+                            setDamage();
+                            setResourcesStock();
+                            checkBuildingUpgrade();
+                            setCountdown();
+                        }
+                    });
+
+                    window.cssgame.viewFleet(window.ship,function(e,r) {
+                        if(!e) {
+                            ret = window.cssgame.viewFleetResult(r);
+                            window.fleetSize = ret.size;
+                            window.fleetQueue = ret.inProduction;
+                            window.blocksToEndProduction = ret.blocksToEndProduction;
+                            setFleet();
+                        }
+                    });
+                }, 5000);
+
+                /*
+                 * Check Events
+                 */ 
+                setInterval(function() {
+                    backend.events.count(game,ship,function(e,r) {
+                        if (!e) {
+                            window.eventsCount = r.result.count;
+                            setEventsCounter();
+                        }
+                    });
+                },5000);
+
+                       /* tooltips */
+                $('[data-toggle="tooltip"]').tooltip();
+                
+                $('[id=warehouse-load]').text(window.warehouseLoad);
+
+
+            
+                // slide panels
+                function panelSlide(panelid, speed, direction, amount){
+                    if(direction="left"){
+                        $("#"+panelid).animate({"margin-left": amount}, speed)
+                    }else{
+                        $("#"+panelid).animate({"margin-right": amount}, speed)
+                    }   
+                    }
+
+                // initialize screen
+                
+                function init(){
+                    $('#resources').show();
+                    $('#stats').show();
+                    panelSlide("resources", 1000, "left", "+=50%"); 
+                    panelSlide("stats", 1000, "left", "-=50%");          
+                }
+                
+                
+                // call initializing routine
+                init();
+                    
+                
+            }
+        });
+    }
+
+
+    })
+</script>
+</html>

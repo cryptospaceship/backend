@@ -23,7 +23,7 @@ class CSSGame {
         let w3 = this.w3;
         contract.getGame(function(error,ret) {
             if (!error) {
-                contract.placeShip(ship,{from:w3.eth.accounts[0],gasPrice:1000000000,value:ret[3].toNumber()},callback);
+                contract.placeShip(ship,0,1,{from:w3.eth.accounts[0],gasPrice:1000000000,value:ret[2].toNumber()},callback);
             }
         });
     }

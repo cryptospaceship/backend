@@ -40,8 +40,9 @@ def fleet_view(request, net_id):
     if ship is None:
         return render(request, SiteTemplate.get_file('not_found'))
 
-    ship_list  = ship.connect().get_ships_by_owner(player.address)
+    ship_list = ship.connect().get_ships_by_owner(player.address)
     ship_price = ship.connect().get_creation_ship_price()
+
     net_name   = Network.get_by_net_id(net_id)
 
     template = SiteTemplate.get('fleet')
@@ -121,6 +122,15 @@ def signup_view(request):
     if request.user.is_authenticated:
         return redirect('/ui/ships/')
 
+    template          = SiteTemplate.get('signup')    
+    signin            = Var.get_var('signinLocation')
+    api_userByAddress = Var.get_var('api_userByAddress')
+
+    context['inject_js']         = template.get_js()
+    context['inject_css']        = template.get_css()
+    context['signinLocation']    = signin
+    context['api_userByAddress'] = api_userByAddress
+
     if request.method == 'POST':
         address   = request.POST['sign_address_input']
         username  = request.POST['signup_username_input']
@@ -141,7 +151,7 @@ def signup_view(request):
         try:
             User.objects.get(username=username)
             context['message'] = {'status': 'failed', 'message': 'El nombre de usuario ya existe'}
-            return render(request, html_templates['signup'], context)
+            return render(request, template.file, context)
         except ObjectDoesNotExist:
             pass # El username no existe
 
@@ -149,7 +159,7 @@ def signup_view(request):
         try:
             User.objects.get(email=email)
             context['message'] = {'status': 'failed', 'message': 'Ya te has registrado con este correo electronico: %s' % email}
-            return render(request, html_templates['signup'], context)
+            return render(request, template.file, context)
         except ObjectDoesNotExist:
             pass # El mail no esta registrado
 
@@ -167,15 +177,6 @@ def signup_view(request):
             player.save()
             login(request, user)
             return redirect('/ui/ships/%s' % net_id)
-
-    template          = SiteTemplate.get('signup')    
-    signin            = Var.get_var('signinLocation')
-    api_userByAddress = Var.get_var('api_userByAddress')
-
-    context['inject_js']         = template.get_js()
-    context['inject_css']        = template.get_css()
-    context['signinLocation']    = signin
-    context['api_userByAddress'] = api_userByAddress
 
     return render(request, template.file, context)
 

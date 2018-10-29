@@ -4,7 +4,7 @@ window.addEventListener('load', async() => {
 	config.unlock = "/unlock/";
 	config.account = window.player_address;
 	config.network = "/network/";
-	config.networks = [42];
+	config.networks = [42,77];
     config.signout  = "/signout/"
 
     if (window.ethereum) {

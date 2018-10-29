@@ -34,20 +34,20 @@
                                         <p class="number">00{{ ship.wins }}</p>
                                     </div>
                                     <div class="status">
-                                        <p class="info-title">QAIM :</p>
-                                        <p class="number">006</p>
+                                        <p class="info-title">QAIMs :</p>
+                                        <p class="number">00{{ ship.qaims }}</p>
                                     </div>
                                 </div>
                                 <div class="column">
                                     <div class="status">
                                         <p class="info-title">Level :</p>
-                                        <p class="number bloque">0</p>
+                                        <p class="number bloque">{{ ship.level }}</p>
                                     </div>
                                 </div>
                                 <div class="column">
                                     <div class="status">
                                         <p class="info-title">Gen :</p>
-                                        <p class="number">033</p>
+                                        <p class="number">00{{ ship.gen }}</p>
                                     </div>
                                     <div class="status">
                                         <p class="info-title">Points :</p>
@@ -58,7 +58,7 @@
                             <div class="level-progress">
                                 <p>Level Progress</p>
                                 <div class="bar">
-                                    <div class="progress-bar"></div>
+                                    <div class="progress-bar" style="width: {{ ship.progress }}%;"></div>
                                 </div>
                             </div>
                             <!--a href="#modulo-qia" class="btn blue modulo-qia">QIA Modules</a-->

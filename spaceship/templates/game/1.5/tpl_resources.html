@@ -1,0 +1,703 @@
+{% load js %}
+{% load boolean %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CSS Resources</title>
+  <meta name="description" content="Crypto SpaceShip - Resources View">
+  <meta name="author" content="Emiliano Alejandro Billi" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" media="screen" href="/static/css/style.css">
+  <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <script src="/static/js/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+<body>
+
+
+<!-- particles.js container -->
+<div id="particles-js">
+</div>
+    
+    <div  class="container-fluid grid">
+        <div class="row">
+            <div class="col-xs-12 col-lg-12" id="header">
+
+                <div class="row">
+                    <div class="col-md-2 col-lg-2">
+                        <h1 id="conquest-message" class="conquest-message">The planet has been conquered. The game could end in <span id="blocks-to-end" class="end-message"></span> Blocks. YOU ARE <span class="end-message" id="win-condition"></span></h1>
+                    </div>
+                    <div class="col-md-8 col-lg-8">
+                        <div class="resources-general">
+                    <!-- Link Start -->    
+                    <!-- Links End -->
+                   <!-- GUAGE COMBO ENERGY-->
+                        <div class="resource-general" id="general-energy" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-energy"></div>
+                                    <div class="title-text">energy</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar energy" id="bar-energy" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="energy-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                    <!-- GUAGE COMBO END -->
+                    
+                    <!-- GUAGE COMBO GRAPHENE -->
+                        <div class="resource-general" id="general-graphene" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-graphene"></div>
+                                    <div class="title-text">graphene</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar graphene" id="bar-graphene" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="graphene-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                    <!-- GUAGE COMBO END -->
+                    
+                    <!-- GUAGE COMBO METALS-->
+                        <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Total units of metals you gathered so far">
+
+                                <div class="resource-title">
+                                    <div class="icon-ratio ic-metals"></div>
+                                    <div class="title-text">metals</div>
+                                    <div class="stopper"></div>
+                                </div>
+
+                                <div class="gauge">
+                                    <div class="gauge-reflex"></div>
+                                    <div class="gauge-bar metals" id="bar-metals" style="width: 100%;"></div>
+                                    <div class="gauge-background"></div>
+                                    <div class="stopper"></div>
+                                </div>
+                                <div class="amount">
+                                        <span class="amount-current" id="metals-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
+                                </div>
+                                    <div class="stopper"></div>
+
+                        </div>
+                       <!-- GUAGE COMBO END -->
+
+                       <!-- GAUGE COMBO STATUS -->
+                       <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Ship Status">
+
+                            <div class="resource-title">
+                                <div class="icon-ratio ic-status"></div>
+                                <div class="title-text">ship status</div>
+                                <div class="stopper"></div>
+                            </div>
+
+                            <div class="gauge">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar ship-status" id="bar-ship-status" style="width: 100%;"></div>
+                                <div class="gauge-background"></div>
+                                <div class="stopper"></div>
+                            </div>
+                            <div class="amount">
+                                    <div class="repair-list" id="repair-button" style="display: none;">
+                                            <div class="repair-item can-repair pointer" >
+                                                <div class="icon-ratio ic-repair"></div>
+                                                <div class="title-text fL repair-text">Repair</div>
+                                            </div>
+                                        </div>
+                                    <span class="status-current"><span id="ship-status-value"></span> %</span> 
+                            </div>
+                                <div class="stopper"></div>
+
+                        </div>
+                        <!-- GAUGE COMBO END-->
+                       
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2">
+                        <div class="game-info">
+                            <p>Game Age: <span id="game-age"></span></p>
+                            <p>Reward: <span id="reward"></span> eth</p>
+                            <p>Players:</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="row last-row">
+            <div class="col-xs-12 col-md-3-et" >
+                <div class="resources-container" id="resources" style="display: none;">
+                    <div class="stopper"></div>
+                    <div class="gauges-container">
+                  
+                   <!-- <h2 class="taR">Gathering modules</h2> -->
+                   
+                   <!-- GUAGE COMBO ENERGY-->
+                    <div class="resource-combo" id="energy">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-energy"></div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="Solar panels are devices in charge of accumulating energy as a resource for multiple porpouses. The more panels you active, the faster energy is gathered.">energy</div>
+                                <div class="resource-energy-level"></div>
+                                <div class="resource-name">Solar Panels x 6</div>
+                                <div class="resource-upgrade" id="upgrade-energy">VIEW</div>
+                                <div class="resource-upgrade upgrade-ready" id="upgrade-energy-ready">Upgrade<br>ready! <div class="icon-right ic-upgrade" ></div></div>
+                                <div class="resource-upgrade upgrading" id="upgrading-energy" style="display: none;">Upgrading</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-bottom" id="energy-bars">
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="energy-panels-energy-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar energy" id="bar-energy1"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-energy1"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="energy-panels-graphene-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar graphene" id="bar-graphene1"></div>
+                                <div class="gauge-background" ></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-graphene1"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="energy-panels-metals-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar metals" id="bar-metals1"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-metals1"></span>
+                            </div>
+                            <div class="stopper"></div>
+                        </div>
+                    </div>
+                   <!-- GUAGE COMBO END -->
+                   
+                   <!-- GUAGE COMBO GRAPHENE-->
+                    <div class="resource-combo" id="graphene">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-graphene"></div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="El Graphene Molecular Weaver permite recolectar graphene del espacio. Actualizalo para optimizar la recolección.">graphene</div>
+                                <div class="resource-level"><span id="graphene-collector-level"></span></div>
+                                <div class="resource-name">Molecular weaver</div>
+                            <!--<div class="resource-upgrade" id="upgrade-graphene">upgrade</div> -->
+                                <div class="resource-upgrade upgrade-ready" id="upgrade-graphene-ready">Upgrade<br>ready! <div class="icon-right ic-upgrade" ></div></div>
+                                <div class="resource-upgrade upgrading" id="upgrading-graphene" style="display: none;">Upgrading</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-bottom" id="graphene-bars">
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="graphene-collector-energy-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar energy" id="bar-energy2"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-energy2"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="graphene-collector-graphene-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar graphene" id="bar-graphene2"></div>
+                                <div class="gauge-background" ></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-graphene2"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="graphene-collector-metals-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar metals" id="bar-metals2"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-metals2"></span>
+                            </div>
+                            <div class="stopper"></div>
+                        </div>
+                    </div>
+                   <!-- GUAGE COMBO END -->
+                   
+                   <!-- GUAGE COMBO METALS-->
+                    <div class="resource-combo" id="metals">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-metals"></div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="Recolecta metales utilizando el Metals Harvesting Module. Su nivel determinará tu producción de metales.">metals</div>
+                                <div class="resource-level"><span id="metals-collector-level"></span></div>
+                                <div class="resource-name">Harvesting Module</div>
+                            <!--<div class="resource-upgrade" id="upgrade-metals">upgrade</div> -->
+                                <div class="resource-upgrade upgrade-ready" id="upgrade-metals-ready">Upgrade<br>ready! <div class="icon-right ic-upgrade"></div></div>
+                                <div class="resource-upgrade upgrading" id="upgrading-metals" style="display: none;">Upgrading</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="combo-bottom" id="metals-bar">
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="metals-collector-energy-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar energy" id="bar-energy3"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-energy3"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="metals-collector-graphene-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar graphene" id="bar-graphene3"></div>
+                                <div class="gauge-background" ></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-graphene3"></span>
+                            </div>
+                            <div class="stopper"></div>
+                            <div class="gauge gauge-lateral" data-toggle="tooltip" data-placement="top" id="metals-collector-metals-tooltip" title="">
+                                <div class="gauge-reflex"></div>
+                                <div class="gauge-bar metals" id="bar-metals3"></div>
+                                <div class="gauge-background"></div>
+                            </div>
+                            <div class="amount amount-lateral">
+                                <span class="amount-total" id="amount-metals3"></span>
+                            </div>
+                            <div class="stopper"></div>
+                        </div>
+                    </div>
+                   <!-- GUAGE COMBO END -->
+                   
+                </div> 
+                </div>
+            </div>
+            
+            
+            <!-- CENTER COLUMN -->
+            <div class="col-xs-12 col-md-6-et">
+                <div class="shipContainer">
+                    <div class="ship-img">
+                        <img src="/static/images/hull.png">
+                    </div>
+                    <div class="ship-title"><span id="ship-name"></span></div>
+                </div>
+                
+                <!-- Nav-bar arriba
+                <div class="nav-bar">
+                        <div class="views-container">
+                           <div class="view">
+                                <a href="#">Home</a>
+                            </div>
+                            <div class="view selected">
+                                <a href="#">Resources</a>
+                            </div>
+                            <div class="view">
+                                <a href="map.html">Map</a>
+                            </div>
+                            <div class="view">
+                                <a href="#">Buildings</a>
+                            </div>
+                            <div class="view">
+                                <a href="#">Messages</a>
+                            </div>
+                            <div class="view">
+                                <a href="#">Events</a>
+                            </div>
+                        </div>
+                    </div> -->
+            </div>
+            <!-- CENTER COLUMN END -->
+            
+            
+            <div class="col-xs-12 col-md-3-et">
+               <div class="stats-container" id="stats" style="display: none;">
+               
+                <!-- <h2 class="taL">Stats</h2> -->
+                
+                    <!-- COMBO LOCATION -->
+                    <div class="resource-combo" id="location">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-location"></div>
+                                <div class="title-text">location</div>
+                                <div class="location-coords">( <span id="position-x"></span>, <span id="position-y"></span> )</div>
+                                <div class="resource-name">Map coordinates</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                   <!-- COMBO LOCATION END -->
+                   
+                   <!-- COMBO PRODUCTION RATIO -->
+                    <div class="resource-combo" id="production-ratio">
+                        <div class="combo-top">
+                            <div class="resource-title">
+                                <div class="icon ic-production"></div>
+                                <div class="title-text">production ratio</div>
+                                <div class="resource-name">Units per block</div>
+                                <div class="stopper"></div>
+                            </div>
+                        </div>
+                        <div class="combo-bottom">
+                            <!-- RATIO LIST ITEM -->
+                            <div class="ratio-list">
+                                <div class="ratio-item">
+                                    <div class="icon-ratio ic-energy"></div>
+                                    <div class="title-text fL">Energy</div>
+                                    <div class="ratio-amount fR"><span id="energy-production"></span>x</div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- RATIO LIST ITEM -->
+                            <div class="ratio-list">
+                                <div class="ratio-item">
+                                    <div class="icon-ratio ic-graphene"></div>
+                                    <div class="title-text fL">Graphene</div>
+                                    <div class="ratio-amount fR"><span id="graphene-production"></span>x</div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- RATIO LIST ITEM -->
+                            <div class="ratio-list">
+                                <div class="ratio-item">
+                                    <div class="icon-ratio ic-metals"></div>
+                                    <div class="title-text fL">Metals</div>
+                                    <div class="ratio-amount fR"><span id="metals-production"></span>x</div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                   <!-- COMBO PRODUCTION RATIO END -->
+                
+                    <!-- COMBO PRODUCTION TIME -->
+                        <div class="resource-combo" id="production-time">
+                            <div class="combo-top">
+                                <div class="resource-title">
+                                    <div class="icon ic-time"></div>
+                                    <div class="title-text">Resources Upgrade</div>
+                                    <div class="resource-name">Countdown Blocks to end </div>
+                                    <div class="stopper"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="combo-bottom">
+                                <div class="watch-container-unique">
+                                    <div class="block-amount">
+                                        <span id="countdown-upgrade-blocks"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                        Blocks
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                   <!-- COMBO PRODUCTION TIME END -->
+                
+               </div> 
+            </div>
+        </div> 
+              
+               
+    </div>
+
+<!-- Modal for pannels -->
+<div class="modal fade" id="modal-energy-upgrade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+            <div class="modal-body-text">Solar Panels</div>
+            <div class="panel-container">
+                    <div class="solarPanel">PANEL 1 in <span class="energy-panel-color">LEVEL <span id="pe1-level"></span></span></div>
+                    <div class="ratio-item-modal blink" panel-number="1" id="pe1-upgrade-ready">
+                            <div class="icon-ratio ic-upgrade"></div>
+                            <div class="title-text fL">UPGRADE READY to Level <span id="pe1-nextLevel"></span></div>
+                            <div class="stopper"></div>
+                    </div>
+            </div>
+
+            <div class="panel-container">
+                    <div class="solarPanel">PANEL 2 in <span class="energy-panel-color">LEVEL <span id="pe2-level"></span></span></div>
+                    <div class="ratio-item-modal blink" panel-number="2" id="pe2-upgrade-ready">
+                            <div class="icon-ratio ic-upgrade"></div>
+                            <div class="title-text fL">UPGRADE READY to Level <span id="pe2-nextLevel"></span></div>
+                            <div class="stopper"></div>
+                    </div>
+            </div>
+
+            <div class="panel-container">
+                    <div class="solarPanel">PANEL 3 in <span class="energy-panel-color">LEVEL <span id="pe3-level"></span></span></div>
+                    <div class="ratio-item-modal blink" panel-number="3" id="pe3-upgrade-ready">
+                            <div class="icon-ratio ic-upgrade"></div>
+                            <div class="title-text fL">UPGRADE READY to Level <span id="pe3-nextLevel"></span></div>
+                            <div class="stopper"></div>
+                    </div>
+            </div>
+
+            <div class="panel-container">
+                    <div class="solarPanel">PANEL 4 in <span class="energy-panel-color">LEVEL <span id="pe4-level"></span></span></div>
+                    <div class="ratio-item-modal blink" panel-number="4" id="pe4-upgrade-ready">
+                            <div class="icon-ratio ic-upgrade"></div>
+                            <div class="title-text fL">UPGRADE READY to Level <span id="pe4-nextLevel"></span></div>
+                            <div class="stopper"></div>
+                    </div>
+            </div>
+
+            <div class="panel-container">
+                    <div class="solarPanel">PANEL 5 in <span class="energy-panel-color">LEVEL <span id="pe5-level"></span></span></div>
+                    <div class="ratio-item-modal blink" panel-number="5" id="pe5-upgrade-ready">
+                            <div class="icon-ratio ic-upgrade"></div>
+                            <div class="title-text fL">UPGRADE READY to Level <span id="pe5-nextLevel"></span></div>
+                            <div class="stopper"></div>
+                    </div>
+            </div>
+
+            <div class="panel-container">
+                    <div class="solarPanel">PANEL 6 in <span class="energy-panel-color">LEVEL <span id="pe6-level"></span></span></div>
+                    <div class="ratio-item-modal blink" panel-number="6" id="pe6-upgrade-ready">
+                            <div class="icon-ratio ic-upgrade"></div>
+                            <div class="title-text fL">UPGRADE READY to Level <span id="pe6-nextLevel"></span></div>
+                            <div class="stopper"></div>
+                    </div>
+            </div>            
+            
+      </div>
+      <div class="modal-footer">
+        <div class="solar-panel-cost">
+            <div class="title-text fL">Cost for Panel: <span id="solar-panel-cost-index"></span> </div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-energy"></div>
+                <div class="title-text fL"><span id="energy-energy-upgrade"></span></div>
+                    
+                <div class="stopper"></div>
+            </div> 
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-graphene"></div>
+                <div class="title-text fL"><span id="graphene-energy-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-metals"></div>
+                <div class="title-text fL"><span id="metals-energy-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>  
+        </div>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="button-upgrade-energy-panel" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for pannels Graphene -->
+<div class="modal fade" id="modal-graphene-upgrade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div class="modal-body-text">UPGRADE Molecular Weaver to LEVEL <span id="next-graphene-level"></span></div>
+      </div>
+      <div class="modal-footer">
+            <div class="title-text fL">Resources Cost:</div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-energy"></div>
+                <div class="title-text fL"><span id="energy-graphene-upgrade"></span></div>
+                    
+                <div class="stopper"></div>
+            </div> 
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-graphene"></div>
+                <div class="title-text fL"><span id="graphene-graphene-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-metals"></div>
+                <div class="title-text fL"><span id="metals-graphene-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>  
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="button-upgrade-graphene" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for pannels Metal -->
+<div class="modal fade" id="modal-metal-upgrade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div class="modal-body-text">UPGRADE Metal Harvester to LEVEL <span id="next-metals-level"></span></div>
+      </div>
+      <div class="modal-footer">
+            <div class="title-text fL">Resources Cost:</div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-energy"></div>
+                <div class="title-text fL"><span id="energy-metals-upgrade"></span></div>
+                    
+                <div class="stopper"></div>
+            </div> 
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-graphene"></div>
+                <div class="title-text fL"><span id="graphene-metals-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>
+            <div class="ratio-item-modal">
+                <div class="icon-ratio ic-metals"></div>
+                <div class="title-text fL"><span id="metals-metals-upgrade"></span></div>
+                <div class="stopper"></div>
+            </div>  
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="button-upgrade-metals" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-tx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Order Submited</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                            <div class="modal-body-text">ORDER: <span id="change mode"></span></div>
+                            <div class="modal-body-text">Click <a id="link-to-explorer" href="">here</a> to verify the transaction status in Etherscan</span></div>
+                        </div>
+                        <div class="modal-footer">
+                        
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+            <div class="modal fade" id="modal_upgrading" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Upgrade in Progress</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                                <div class="modal-body-text">You are currently upgrading <span id="resource-upgrading"></span></div>
+                            </div>
+                            <div class="modal-footer">
+                            
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+</body>
+<!-- scripts -->
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/cssgame.1.5.js"></script>
+<script src="/static/js/backend.js"></script>
+<script src="/static/js/cssinit.js"></script>
+<script src="/static/js/resources.js"></script>
+<script>
+    window.DEBUG = true;
+    window.planetOwner = {{ game_candidate }};
+    window.reward = {{ game_reward }};
+    window.gameAge = {{ last_block_number }} - {{ game_launch }};
+    window.blocksToEnd = {{ game_end_block }} - {{ last_block_number }};
+
+    window.gameAbi = {{ game_abi | js}};
+    window.gameAddress = "{{ game_address }}";
+    window.gameNetwork = {{ game_network }};
+
+    window.ship = {{ ship_id }};
+    window.damage = {{ damage }};
+    window.in_port = {{ in_port | boolean }};
+
+    window.grapheneCollectorLevel = {{ graphene_collector_level }};
+    window.metalsCollectorLevel = {{ metals_collector_level }};
+    window.energyPanels = {{ energy_level }};
+    
+    window.eventsCount = {{ events_count }};
+    
+    window.warehouseLevel = {{ warehouse_level }};
+    window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel)
+    
+    window.position_x = {{ position_x }};
+    window.position_y = {{ position_y }};
+    window.shipName = "{{ ship_name }}";
+
+    window.energyProduction = {{ energy_production }};
+    window.grapheneProduction = {{ graphene_production }};
+    window.metalsProduction = {{ metals_production}};
+
+    // Update con setTimer()
+    window.resourceBlock = {{ countdown_resources }};
+    window.grapheneStock = {{ graphene_stock }};
+    window.energyStock =  {{ energy_stock }};
+    window.metalsStock = {{ metal_stock }};
+
+    window.resourceUpgrading = {{ resource_upgrading }};
+
+    // URL
+    window.base_url = "{{ base_url }}";
+    window.explorer_url = "{{ explorer_url }}";
+    window.game = {{ game_id }};
+</script>
+</html>

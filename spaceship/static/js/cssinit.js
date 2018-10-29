@@ -2,7 +2,6 @@
 class CSSInit {
     constructor(config,w3) {
         this.account = config.account;
-        console.log(config.account);
         this.networks = config.networks;
         /*
          * Urls
@@ -10,7 +9,7 @@ class CSSInit {
         this.signout = config.signout;
         this.install = config.install;
         this.unlock  = config.unlock;
-        this.network = config.network;
+        this.select_network = config.network;
         this.w3    = w3;
     }
 
@@ -44,9 +43,10 @@ class CSSInit {
             w3.version.getNetwork(function(err,net) {
                 if (!err) {
                     let ok = false;
-                    for (let i = 0; i <= networks.length-1; i++ )
+                    for (let i = 0; i <= networks.length-1; i++ ) {
                         if (networks[i] == net)
                             ok = true;
+                    }
                     if (!ok) 
                         window.location = url;
                 }
@@ -75,7 +75,7 @@ class CSSInit {
         if (typeof this.account !== 'undefined' && this.account != '') 
             this.setAccountCheck(this.account,this.signout);
 
-        this.setNetworkCheck(this.networks, this.network);
+        this.setNetworkCheck(this.networks, this.select_network);
         
         if (typeof callback === "function") {
             // Call it, since we have confirmed it is callable

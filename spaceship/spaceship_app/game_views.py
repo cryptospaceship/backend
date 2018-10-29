@@ -41,7 +41,14 @@ def __get_resources(game, ship_id):
         context.update(game.connect().view_building_level(ship_id))
         context.update(game.connect().get_game_2())
         context.update(game.connect().get_last_block_number())
-    
+    elif game.version.name == "1.5":
+        context.update(game.connect().view_ship(ship_id))
+        context.update(game.connect().view_ship_vars(ship_id))
+        context.update(game.connect().view_resource_production(ship_id))
+        context.update(game.connect().view_building_level(ship_id))
+        context.update(game.connect().get_game())
+        context.update(game.connect().get_last_block_number())
+        
     return context
 
 def __get_map(game, ship_id):
@@ -106,6 +113,7 @@ def play_resources_view(request, net_id, game_id, ship_id):
         return render(request, html_templates['not_foud'])
 
     context = {}
+    context['explorer_url'] = game.network.explorer
     context['base_url']     = Var.get_var('base_url')
     context['game_id']      = game_id
     context['game_abi']     = loads(game.abi)

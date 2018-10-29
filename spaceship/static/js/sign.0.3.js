@@ -5,7 +5,7 @@ window.addEventListener('load', async () => {
 	config.unlock = "/unlock/";
 	config.account = undefined;
 	config.network = "/network/";
-	config.networks = [42];
+	config.networks = [42,77];
     
     if (window.ethereum) {
         window.web3 = new Web3(ethereum);
