@@ -17,6 +17,10 @@ from .models import GameTemplate
 from .models import GameStatic
 from .models import SiteTemplate
 from .models import SiteStatic
+from .models import Message
+from .models import Ship
+from .models import GameAbiEvent
+from .models import GameAbiFunction
 
 @admin.register(Var)
 class VarAdmin(admin.ModelAdmin):
@@ -76,8 +80,24 @@ class ActionAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['game', 'ship_id', 'action', 'tx_hash', 'at_block', 'gas_expended', 'confirmed', 'creation_date']
+    list_display = ['game', 'ship_id', 'action', 'tx_hash', 'at_block', 'gas_expended', 'creation_date']
 
 @admin.register(Stat)
 class StatAdmin(admin.ModelAdmin):
     list_display = ['ship_id', 'ship_name', 'game', 'military_points', 'technology_points', 'production_points']
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ['sender', 'receiver', 'subject', 'read']
+
+@admin.register(Ship)
+class ShipAdmin(admin.ModelAdmin):
+    list_display = ['ship_id', 'name', 'player', 'game']
+    
+@admin.register(GameAbiEvent)
+class GameAbiEventAdmin(admin.ModelAdmin):
+    list_display = ['name', 'game']
+
+@admin.register(GameAbiFunction)
+class GameAbiFunctionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'hash', 'game']

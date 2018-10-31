@@ -165,7 +165,7 @@ class game(object):
                'game_play_value': data[2],
                'game_end_block': data[3],
                'game_reward': data[4],
-               'players': data[5],
+               'game_players': data[5],
                'game_candidate': data[6],
                'game_winner': data[7] }
 
@@ -206,19 +206,15 @@ class game(object):
 
     def get_port_conquest_event(self, receipt):
         try:
-            data = self.contract.events.PortConquestEvent().processReceipt(receipt)
+            return self.contract.events.PortConquestEvent().processReceipt(receipt)
         except Exception as e:
-            raise gameException(str(e))
-
-        return data
+            raise gameException(str(e))            
 
     def get_fire_cannon_event(self, receipt):
         try:
-            data = self.contract.events.FireCannonEvent().processReceipt(receipt)
+            return self.contract.events.FireCannonEvent().processReceipt(receipt)
         except Exception as e:
             raise gameException(str(e))
-
-        return data
 
     def get_send_resources_event(self, receipt):
         try:
@@ -227,4 +223,27 @@ class game(object):
             raise gameException(str(e))
 
         return data
+        
+    def get_start_play_event(self, receipt):
+        try:
+            data = self.contract.events.ShipStartPlay().processReceipt(receipt)
+        except Exception as e:
+            raise gameException(str(e))
+
+        return data
+        
+    def get_end_play_event(self, receipt):
+        try:
+            data = self.contract.events.ShipEndPlay().processReceipt(receipt)
+        except Exception as e:
+            raise gameException(str(e))
+
+        return data
+        
+    def get_event(self, event, receipt):
+        try:
+            event_function = getattr(self.contract.events, event)
+            return event_function().processReceipt(receipt)
+        except Exception as e:
+            raise gameException(str(e))
         

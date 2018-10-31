@@ -34,22 +34,56 @@ window.addEventListener('load', async () => {
         window.cssgame = new CSSGame(w3,window.gameAbi,window.gameAddress,window.web3);
         window.backend = new Backend(window.base_url);
 
+        function setGameStats() {
+            let noOwner = "0x0000000000000000000000000000000000000000";
+            if (window.planetOwner != noOwner) {
+                if (window.blocksToEnd < 0)
+                    window.blocksToEnd = 0;
+                $('#blocks-to-end').text(window.blocksToEnd);
+                if (window.cssgame.w3.eth.accounts[0] != window.planetOwner)
+                    $('#win-condition').text("LOSING");
+                else
+                    $('#win-condition').text("WINNING");
+                $('#conquest-message').show();
+            }
+            $('#reward').text(window.reward/1000000000000000000);
+            $('#game-age').text(window.gameAge);
+            $('#players').text(window.players);
+        }
+
+        setInterval(()=>{
+            window.cssgame.getGame((e,r)=>{
+                if (!e) {
+                    window.cssgame.w3.eth.getBlockNumber((e,b)=>{
+                        if (!e) {
+                            ret = window.cssgame.getGameResult(r);
+                            window.gameAge = b - ret.gameLaunch;
+                            if (b > ret.endBlock) 
+                                window.blocksToEnd = 0;
+                            else
+                                window.blocksToEnd = ret.endBlock - b;
+                            window.planetOwner = ret.candidate;
+                            window.reward = ret.reward;
+                            window.players = ret.players;
+                            setGameStats();
+                        }
+                    });
+                } else {
+                    console.log(e);
+                }
+            });
+        },5000);
+
         function process_order (order, tx) {
             /*
              * Se cierra el modal
              */
             $(window.id_modal_open).modal('hide');
-            window.backend.orders.add(window.game,window.ship,order,tx,function(e,r) {
-                if (!e) {
-                    setInterval(function(){
-                        w3.eth.getTransactionReceipt(tx, function(e,h){
-                            if (h && h.blockNumber != null) location.reload();
-                        });
-                    },3000);
-                } else {
-                    console.log(e);
-                }
-            });
+            setInterval(()=>{
+                w3.eth.getTransactionReceipt(tx, function(e,h){
+                    if (h && h.blockNumber != null) location.reload();
+                });
+            },3000);
             $('#link-to-explorer').attr('href', window.explorer_url + tx);
             $('#modal-tx').modal('show');
         }
@@ -610,44 +644,6 @@ window.addEventListener('load', async () => {
         checkResourceUpgrade();
         setCountdown();
         getUpgradeResourcesCost();
-
-        function setGameStats() {
-                let noOwner = "0x0000000000000000000000000000000000000000";
-                if (window.planetOwner != noOwner) {
-                    if (window.blocksToEnd < 0)
-                        window.blocksToEnd = 0;
-                    $('#blocks-to-end').text(window.blocksToEnd);
-                    if (window.cssgame.w3.eth.accounts[0] != window.planetOwner)
-                        $('#win-condition').text("LOSING");
-                    else
-                        $('#win-condition').text("WINNING");
-                    $('#conquest-message').show();
-                }
-                $('#reward').text(window.reward/1000000000000000000);
-                $('#game-age').text(window.gameAge);
-            }
-
-            setInterval(()=>{
-                window.cssgame.getGame((e,r)=>{
-                    if (!e) {
-                        window.cssgame.w3.eth.getBlockNumber((e,b)=>{
-                            if (!e) {
-                                ret = window.cssgame.getGameResult(r);
-                                window.gameAge = b - ret.gameLaunch;
-                                if (b > ret.endBlock) 
-                                    window.blocksToEnd = 0;
-                                else
-                                    window.blocksToEnd = ret.endBlock - b;
-                                window.planetOwner = ret.candidate;
-                                window.reward = ret.reward;
-                                setGameStats();
-                            }
-                        });
-                    } else {
-                        console.log(e);
-                    }
-                });
-            },5000);
 
         setInterval(function() {
             window.cssgame.viewShipVars(window.ship,function(e,r) {

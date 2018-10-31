@@ -56,7 +56,7 @@ window.addEventListener('load', async () => {
 					setAddress(web3.eth.accounts[0]);
 					document.getElementById('sign_with_metamask').addEventListener('click',function() {
 						str = document.getElementById('sign_address_input').value;
-						signWithMetamask(str,'signin_form', 42, '/signin/');
+						signWithMetamask(str,'signin_form', '', '/signin/');
 					});
 				}
 				else {
@@ -68,7 +68,7 @@ window.addEventListener('load', async () => {
 					document.getElementById('sign_with_metamask').addEventListener('click',function() {
 						str = document.getElementById('signup_email_input').value;
 						str = str + ':' +  document.getElementById('signup_username_input').value;
-						signWithMetamask(str,'signup_form', 42, '/signup/');
+						signWithMetamask(str,'signup_form', '', '/signup/');
 					});
 				}
 			}

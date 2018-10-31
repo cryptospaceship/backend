@@ -13,6 +13,7 @@ from django.core.exceptions import *
 from .models import Player
 from .models import EventInbox
 from .models import Order
+from .models import Message
 
 from json import dumps
 from json import loads
@@ -22,6 +23,7 @@ http_REQUEST_OK           = 200
 http_NOT_FOUND            = 404
 http_BAD_REQUEST          = 400
 http_UNAUTHORIZED         = 401
+http_FORBIDDEN            = 403
 http_SERVER_ERROR         = 500
 
 # Create your views here.
@@ -82,4 +84,53 @@ def api_create_order(request):
         return HttpResponse(status=http_BAD_REQUEST)
     return HttpResponse(status=http_POST_OK)
 
+    
+@require_http_methods(['POST'])
+@csrf_exempt
+@login_required(login_url='/signin/')
+def api_create_message(request):
+    try:
+        data = loads(request.body.decode('utf-8'))
+    except Exception:
+        user_message = "Error sending message. Please try again later."
+        message = "error decoding json"
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    sender   = Player.get_by_user(request.user)
+    receiver = Player.get_by_username(data['to'])
+    if receiver is None:
+        user_message = "Error sending message. Please try again later."
+        message = "user does not exist"
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    try:    
+        Message.create(sender, receiver, data['subject'], data['message'])
+    except:
+        user_message = "Error sending message. Please try again later."
+        message = "error saving data into db"
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    return HttpResponse(status=http_POST_OK)
+    
 
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')
+def api_get_message(request, msg_id):
+    receiver = Player.get_by_user(request.user)
+    msg = Message.get_by_id(receiver, msg_id)
+    
+    if msg is None:
+        body = {'status': 'error', 'message': 'permission denied'}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_FORBIDDEN)
+        
+    return HttpResponse(dumps(msg.serialize()), content_type="application/json", status=http_REQUEST_OK)
+
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')
+def api_get_inbox_messages(request):
+    receiver = Player.get_by_user(request.user)
+    messages = Message.get_inbox_list(receiver, True)
+    return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)

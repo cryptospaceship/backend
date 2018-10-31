@@ -11,14 +11,13 @@ class CSSToken {
         let w3 = this.w3;
         contract.getCreationShipPrice(function(error,price) {
             if (!error) {
-                console.log(price);
                 contract.createShip(name,color,{from:w3.eth.accounts[0],gasPrice:1000000000,value:price},callback);
             }
         });
     }
 
-    unsetGame(ship,callback) {
-        this.contract.unsetGame(ship,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+    exitGame(ship,callback) {
+        this.contract.exitGame(ship,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     getShipsByOwner(address,callback) {

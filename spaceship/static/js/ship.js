@@ -48,7 +48,7 @@ window.addEventListener('load', async () => {
         }
         
         function exitGame() {            
-            csstoken.unsetGame(window.shipId,function(e,tx){
+            csstoken.exitGame(window.shipId,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});

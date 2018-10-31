@@ -142,7 +142,7 @@
                         <div class="game-info">
                             <p>Game Age: <span id="game-age"></span></p>
                             <p>Reward: <span id="reward"></span> eth</p>
-                            <p>Players:</p>
+                            <p>Players: <span id="players"></span></p>
                         </div>
                     </div>
                 </div>
@@ -618,7 +618,7 @@
                     </div>
                     <div class="modal-body" id="modal-body">
                             <div class="modal-body-text">ORDER: <span id="change mode"></span></div>
-                            <div class="modal-body-text">Click <a id="link-to-explorer" href="">here</a> to verify the transaction status in Etherscan</span></div>
+                            <div class="modal-body-text">Click <a id="link-to-explorer" href="" target="_blank">here</a> to verify the transaction status in Etherscan</span></div>
                         </div>
                         <div class="modal-footer">
                         
@@ -659,6 +659,7 @@
     window.DEBUG = true;
     window.planetOwner = {{ game_candidate }};
     window.reward = {{ game_reward }};
+    window.players = {{ game_players }};
     window.gameAge = {{ last_block_number }} - {{ game_launch }};
     window.blocksToEnd = {{ game_end_block }} - {{ last_block_number }};
 

@@ -13,6 +13,7 @@ from .libs import crypto_game_v1_5
 from .libs.crypto_spaceship import spaceShip
 
 from json import loads
+from .misc import calc_function_hash
 
 # Create your models here.
 
@@ -53,12 +54,80 @@ class Var(models.Model):
 
 
 class Message(models.Model):
-    msg_from    = models.ForeignKey('Player', on_delete=models.CASCADE)
-    subject     = models.CharField(max_length=250)
-    message     = models.CharField(max_length=1000)
-    read        = models.BooleanField()
+    sender   = models.ForeignKey('Ship', related_name='msg_from', on_delete=models.CASCADE)
+    receiver = models.ForeignKey('Ship', related_name='msg_to', on_delete=models.CASCADE)
+    game     = models.ForeignKey('Game', on_delete=models.CASCADE)
+    subject  = models.CharField(max_length=250)
+    message  = models.TextField(max_length=1000)
+    read     = models.BooleanField()
 
+    def __str__(self):
+        return str(self.id)
     
+    def serialize(self):
+        ret = {}
+        ret['id']      = self.id
+        ret['from']    = self.sender.ship.name
+        ret['to']      = self.receiver.ship.name
+        ret['subject'] = self.subject
+        ret['message'] = self.message
+        return ret
+    
+    @classmethod
+    def create(cls, sender, receiver, subject, message):
+        msg = cls()
+        msg.sender   = sender
+        msg.receiver = receiver
+        msg.subject  = subject
+        msg.message  = message
+        msg.read     = False
+        msg.save()
+        return msg
+        
+    @classmethod
+    def get_by_sender(cls, ship):
+        return cls.objects.filter(sender=ship)
+        
+    @classmethod
+    def get_by_receiver(cls, ship):
+        return cls.objects.filter(receiver=ship)
+        
+    @classmethod
+    def get_by_id(cls, ship, id):
+        try:
+            msg = cls.objects.get(id=id)
+        except:
+            return None
+               
+        if ship == msg.receiver:
+            msg.read = True
+            msg.save()
+            return msg
+        elif ship == msg.sender:
+            return msg
+        else:
+            return None
+        
+    @classmethod
+    def inbox_unread_count(cls, ship):
+        return cls.objects.filter(receiver=ship).count()
+        
+    @classmethod
+    def outbox_unread_count(cls, ship):
+        return cls.objects.filter(sender=ship).count()
+    
+    @classmethod
+    def get_inbox_list(cls, ship, serialized=False):
+        msgs = cls.objects.filter(receiver=ship)
+        if serialized:
+            ret = {}
+            for msg in msgs:
+                ret[msg.id] = {'sender': msg.sender.ship.name, 'subject': msg.subject, 'read': msg.read}
+            return ret
+        else:
+            return msgs
+        
+
 class Player(models.Model):
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
     address     = models.CharField(max_length=42)
@@ -66,7 +135,7 @@ class Player(models.Model):
     messages    = models.ManyToManyField('Message')
 
     def __str__(self):
-        return '%d_%s' % (self.id,self.address)
+        return '%s' % str(self.user.username)
 
     @classmethod
     def get_by_address(cls,address):
@@ -81,6 +150,15 @@ class Player(models.Model):
             return cls.objects.get(user=user)
         except:
             return None
+            
+    @classmethod
+    def get_by_username(cls, username):
+        try:
+            user = User.objects.get(username=username)
+        except:
+            return None
+        return cls.objects.get(user=user)
+        
 
 class JSClient(models.Model):
     view = models.CharField(max_length=250)
@@ -172,12 +250,23 @@ class Game(models.Model):
     abi                 = models.TextField()
     contract_id         = models.IntegerField()
     scanned_block       = models.IntegerField(default=0)
+    deployed_block      = models.IntegerField(default=0)
     discord_channel_api = models.CharField(max_length=256, blank=True)
     enabled             = models.BooleanField(default=False)
+    load_abi_trigger    = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):        
+        if self.load_abi_trigger:
+            GameAbiFunction.delete_game(self)
+            GameAbiEvent.delete_game(self)   
+            self.load_abi()
+            self.load_abi_trigger = False
+        super(Game, self).save(*args, **kwargs)
+        
+        
     @classmethod
     def get_by_id(cls, game_id):
         try:
@@ -194,8 +283,6 @@ class Game(models.Model):
             ret = cls.objects.get(contract_id=contract_id, network=network)
         except:
             ret = None
-
-        print(ret)
         return ret
 
     def connect(self):
@@ -205,6 +292,17 @@ class Game(models.Model):
             return crypto_game_v1_5.game(self.network.proxy, self.address, self.abi)
         else:
             return None
+    
+    def load_abi(self):             
+        abi = json.loads(self.abi)
+        for e in abi:
+            if e['type'] == 'function':
+                name = e['name']
+                hash = calc_function_hash(e)
+                GameAbiFunction.create(name, hash, self)
+            if e['type'] == 'event':
+                GameAbiEvent.create(e['name'], self)
+                
 
 class GameTemplate(models.Model):
     version = models.ForeignKey(Version, on_delete=models.CASCADE)
@@ -484,38 +582,27 @@ class Action(models.Model):
 class Order(models.Model):
     game          = models.ForeignKey(Game, on_delete=models.CASCADE)
     ship_id       = models.IntegerField()
-    action        = models.ForeignKey(Action, on_delete=models.CASCADE)
+    action        = models.ForeignKey('GameAbiFunction', on_delete=models.CASCADE)
     tx_hash       = models.CharField(max_length=128)
     at_block      = models.IntegerField(blank=True, null=True)
     gas_expended  = models.IntegerField(blank=True, null=True)
-    confirmed     = models.BooleanField(default=False)
     creation_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__(self):
         return self.tx_hash
 
     @classmethod
-    def create(cls, data):
+    def create(cls, game, ship_id, action, tx_hash, at_block, gas_expended):
         order  = cls()
-        game   = Game.get_by_id(data['gameId'])
-        action = Action.get(data['orderType'])
-
-        if action is None or game is None:
-            return None
-
-        order.game    = game
-        order.ship_id = data['shipId']
-        order.action  = action
-        order.tx_hash = data['txHash']
+        order.game     = game
+        order.ship_id  = ship_id
+        order.action   = action
+        order.action   = action
+        order.tx_hash  = tx_hash
+        order.at_block = at_block
         order.save()
         return order
 
-    def confirm(self, block, gas):
-        self.at_block = block
-        self.gas_expended = gas
-        self.confirmed = True
-        self.save()
-        return self
 
 
 class Stat(models.Model):
@@ -566,8 +653,95 @@ class Stat(models.Model):
         return stat
 
 
+class Ship(models.Model):
+    ship_id = models.IntegerField()
+    name    = models.CharField(max_length=128)
+    player  = models.ForeignKey(Player, on_delete=models.CASCADE)
+    game    = models.ForeignKey(Game, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return str(self.name)
+    
+    @classmethod
+    def create(cls, ship_id, name, player):
+        ship = cls()
+        ship.ship_id = ship_id
+        ship.name    = name
+        ship.player  = player
+        ship.save()
+        return ship    
+    
+    @classmethod
+    def get_by_id(cls, ship_id):
+        try:
+            return cls.objects.get(ship_id=ship_id)
+        except:
+            return None
+        
+    @classmethod
+    def get_by_player(cls, player, game):
+        try:
+            return cls.objects.get(player=player, game=game)
+        except:
+            return None
+        
+    def join_game(self, game):
+        self.game = game
+        self.save()
+        return self
 
 
+class GameAbiEvent(models.Model):
+    name = models.CharField(max_length=128)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+        
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def create(cls, name, game):
+        ae = cls()
+        ae.name = name
+        ae.game = game
+        ae.save()
+        return ae
+    
+    @staticmethod
+    def delete_game(game):
+        GameAbiEvent.objects.filter(game=game).delete()
+        
+
+class GameAbiFunction(models.Model):
+    name   = models.CharField(max_length=128)
+    hash   = models.CharField(max_length=10)
+    game   = models.ForeignKey(Game, on_delete=models.CASCADE)
+    events = models.ManyToManyField(GameAbiEvent, blank=True)
+    
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def create(cls, name, hash, game):
+        af = cls()
+        af.name = name
+        af.hash = hash
+        af.game = game
+        af.save()
+        return af
+        
+    @classmethod
+    def get_by_hash(cls, hash, game):
+        try:
+            return cls.objects.get(hash=hash, game=game)
+        except:
+            return None
+            
+    @staticmethod
+    def delete_game(game):
+        GameAbiFunction.objects.filter(game=game).delete()
+        
+
+    
 #class Ranking
 
 #class Battles

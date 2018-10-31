@@ -34,37 +34,8 @@ class Events {
     }
 } 
 
-
-class Orders {
-    constructor(baseurl) {
-        this.baseurl = baseurl;
-    }
-
-    add(gameId,shipId,order,hash,callback) {
-        let ep = '/api/orders/add/';
-        let xhr = new XMLHttpRequest();
-        let doc = {};
-        doc.gameId = gameId;
-        doc.shipId = shipId
-        doc.orderType = order;
-        doc.txHash = hash;
-        xhr.open('POST',this.baseurl + ep,true);
-        xhr.withCredentials = true;
-        xhr.send(JSON.stringify(doc));
-        xhr.onreadystatechange = function() {
-            if(this.readyState == XMLHttpRequest.DONE) {
-                if (this.status == 201) 
-                    callback(null,hash);
-                else
-                    callback(xhr.response,hash);
-            }
-        }
-    }
-}
-
 class Backend {
     constructor(baseurl) {
         this.events = new Events(baseurl);
-        this.orders = new Orders(baseurl);
     }
 }

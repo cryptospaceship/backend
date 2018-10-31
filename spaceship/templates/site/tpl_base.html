@@ -69,6 +69,7 @@
             <div class="sign-menu">
                 <ul>
                 {% if user.is_authenticated %}
+                    <li><a href="/ui/ships/">MY TOKENS</a></li>
                     <li><a href="/signout/">SIGN OUT</a></li>
                 {% else %}
                     <li><a href="/signin/">SIGN IN</a></li>
