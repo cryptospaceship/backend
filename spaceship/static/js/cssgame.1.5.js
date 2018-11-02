@@ -1,11 +1,11 @@
 class CSSGame {
 
-    constructor(provider,abi,address,web3) {
+    constructor(provider,abi,address) {
         this.version = "1.5-AS";
 
 		this.access = provider.eth.contract(abi);
         this.contract = this.access.at(address);
-        this.w3 = web3;
+        this.w3 = provider;
     }
 
     getNetwork(callback) {
@@ -29,79 +29,98 @@ class CSSGame {
     }
 
     claimVictory(callback) {
+        let w3 = this.w3;
         this.contract.claimVictory({from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
     // Resources Functions
     upgradeEnergy(ship,panel,callback) {
+        let w3 = this.w3;
         this.contract.upgradeResource(ship,0,panel,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
     upgradeGraphene(ship,callback) {
+        let w3 = this.w3;
         this.contract.upgradeResource(ship,1,0,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
     upgradeMetals(ship,callback) {
+        let w3 = this.w3;
         this.contract.upgradeResource(ship,2,0,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Buildings Functions
     upgradeWarehouse(ship,callback){
+        let w3 = this.w3;
         this.contract.upgradeBuilding(ship,0,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     upgradeHangar(ship,callback){
+        let w3 = this.w3;
         this.contract.upgradeBuilding(ship,1,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     upgradeCannon(ship,callback){
+        let w3 = this.w3;
         this.contract.upgradeBuilding(ship,2,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Attack Functions
     attackPort(ship, port,callback) {
+        let w3 = this.w3;
         this.contract.attackPort(ship,port,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
     attackShip(ship, to, callback) {
+        let w3 = this.w3;
         this.contract.attackShip(ship,to,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
     fireCannon(ship,to,callback){
+        let w3 = this.w3;
         this.contract.fireCannon(ship,to,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Send Resources
     sendResources(_from,_to,energy,graphene,metals,callback) {
+        let w3 = this.w3;
         this.contract.sendResources(_from,_to,energy,graphene,metals,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Fleet Functions
     designFleet(_ship,_attack,_defense,_distance,_load,callback) {
+        let w3 = this.w3;
         this.contract.designFleet(_ship,_attack,_defense,_distance,_load,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     buildFleet(_ship,size,callback) {
+        let w3 = this.w3;
         this.contract.buildFleet(_ship,size,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     disassembleFleet(_ship,callback) {
+        let w3 = this.w3;
         this.contract.disassembleFleet(_ship,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Movemment Functions
     moveTo(_ship, x, y, callback) {
+        let w3 = this.w3;
         this.contract.moveTo(_ship,x,y,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     landTo(_ship, x, y, defend, callback) {
+        let w3 = this.w3;
         this.contract.landTo(_ship,x,y,defend,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Mode
     changeMode(_ship, _mode, callback) {
+        let w3 = this.w3;
         this.contract.changeMode(_ship,_mode,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Query Functions
     getInPosition(x,y,callback) {
+        let w3 = this.w3;
         this.contract.getInPosition(x,y,callback);
     }
+
     getInPositionResult(result) {
         var ret = {};
         ret.id = result[0].toNumber();
@@ -117,6 +136,7 @@ class CSSGame {
         });
     */
     getStrategicMap(x,y,callback) {
+    
         this.contract.getStrategicMap(x,y,callback);
     }
     getStrategicMapResult(result) {
@@ -149,7 +169,6 @@ class CSSGame {
         ret.gameLaunch = result[1].toNumber();
         ret.endBlock = result[3].toNumber();
         ret.reward = result[4].toNumber();
-        ret.players = result[5].toNumber();
         ret.candidate = result[6];
         return ret;
     }

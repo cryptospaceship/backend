@@ -1,6 +1,6 @@
 
 class CSSInit {
-    constructor(config,w3) {
+    constructor(config) {
         this.account = config.account;
         this.networks = config.networks;
         /*
@@ -10,23 +10,23 @@ class CSSInit {
         this.install = config.install;
         this.unlock  = config.unlock;
         this.select_network = config.network;
-        this.w3    = w3;
+
     }
 
     checkMetamask(install, unlock) {
         
-        if (typeof this.w3 === 'undefined') 
+        if (typeof this.web3 === 'undefined') 
             window.location.href = install;
-        if (!(this.w3.currentProvider.isMetaMask)) 
+        if (!(this.web3.currentProvider.isMetaMask)) 
             window.location.href = install;
     
-        if (this.w3.eth.accounts[0] == undefined)
+        if (this.web3.eth.accounts[0] == undefined)
             window.location.href = unlock;
-        return this.w3.eth.accounts[0];
+        return this.web3.eth.accounts[0];
     }
 
     setAccountCheck(account, signout) {
-        let w3 = this.w3;
+        let w3 = this.web3;
         window.accountCheckInterval = setInterval(function() {
             if (typeof account !== 'undefined' && typeof signout !== 'undefined') {
                 if (account != w3.eth.accounts[0]) {
@@ -38,7 +38,7 @@ class CSSInit {
     }
 
     setNetworkCheck(networks,url) {
-        let w3 = this.w3;
+        let w3 = this.web3;
         window.networkCheckInterval = setInterval(function() {
             w3.version.getNetwork(function(err,net) {
                 if (!err) {
@@ -69,7 +69,25 @@ class CSSInit {
         xhr.send();
     };
 
-    init(callback) {
+    async init(callback) {
+
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum);
+            try {
+                // Request account access if needed
+                await ethereum.enable();
+                // Acccounts now exposed
+            } catch (error) {
+                // User denied account access...
+            }
+        }
+        // Legacy dapp browsers...
+        else if (window.web3) {
+            window.web3 = new Web3(web3.currentProvider);
+            // Acccounts always exposed
+        }
+        this.web3 = window.web3;
+
         this.checkMetamask(this.install,this.unlock);
 
         if (typeof this.account !== 'undefined' && this.account != '') 

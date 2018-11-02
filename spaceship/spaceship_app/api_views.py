@@ -12,7 +12,7 @@ from django.core.exceptions import *
 ########## Models #############
 from .models import Player
 from .models import EventInbox
-from .models import Order
+from .models import Transaction
 from .models import Message
 
 from json import dumps
@@ -65,7 +65,7 @@ def api_get_event(request, event_id):
     ship = ei.game.connect().get_ship_by_owner(player.address)
     
     if ship == ei.ship_id:
-        ret['result'] = {'meta': loads(ei.event.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))}
+        ret['result'] = {'meta': ei.event.load_meta()}
         ret['result']['event_type'] = ei.event.event_type
         ei.view()
     else:
@@ -74,17 +74,7 @@ def api_get_event(request, event_id):
     return HttpResponse(dumps(ret), content_type="application/json", status=http_REQUEST_OK)
 
 
-@require_http_methods(['POST'])
-@csrf_exempt
-@login_required(login_url='/signin/')
-def api_create_order(request):
-    data = request.body.decode('utf-8')
-    order = Order.create(loads(data))
-    if order is None:
-        return HttpResponse(status=http_BAD_REQUEST)
-    return HttpResponse(status=http_POST_OK)
-
-    
+   
 @require_http_methods(['POST'])
 @csrf_exempt
 @login_required(login_url='/signin/')
@@ -114,14 +104,23 @@ def api_create_message(request):
         return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
     
     return HttpResponse(status=http_POST_OK)
-    
 
+    
+@require_http_methods(['GET'])
+def api_messages_not_read_count(request, game_id, ship_id):
+    ret = {}
+    events = EventInbox.not_read_ids(game_id, ship_id)
+    ret['result'] = {'count': len(events), 'ids': events}
+
+    return HttpResponse(dumps(ret), content_type="application/json", status=http_REQUEST_OK)
+    
+    
 @require_http_methods(['GET'])
 @login_required(login_url='/signin/')
 def api_get_message(request, msg_id):
     receiver = Player.get_by_user(request.user)
     msg = Message.get_by_id(receiver, msg_id)
-    
+    # Consultar quien es el dueño de la nave al contrato.
     if msg is None:
         body = {'status': 'error', 'message': 'permission denied'}
         return HttpResponse(dumps(body), content_type="application/json", status=http_FORBIDDEN)
@@ -133,4 +132,11 @@ def api_get_message(request, msg_id):
 def api_get_inbox_messages(request):
     receiver = Player.get_by_user(request.user)
     messages = Message.get_inbox_list(receiver, True)
+    return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
+    
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')
+def api_get_outbox_messages(request):
+    sender = Player.get_by_user(request.user)
+    messages = Message.get_outbox_list(sender, True)
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)

@@ -9,7 +9,7 @@ from .models import CryptoSpaceShip
 from .models import Game
 from .models import Event
 from .models import EventInbox
-from .models import Order
+from .models import Transaction
 from .models import Stat
 from .models import Action
 from .models import Version
@@ -36,11 +36,11 @@ class GasAdmin(admin.ModelAdmin):
 
 @admin.register(Network)
 class NetworkAdmin(admin.ModelAdmin):
-    list_display = ['name', 'gas', 'net_id', 'proxy']
+    list_display = ['name', 'gas', 'net_id', 'proxy', 'scanned_block']
 
 @admin.register(CryptoSpaceShip)
 class CryptoSpaceShipAdmin(admin.ModelAdmin):
-    list_display = ['name', 'network', 'address', 'abi']
+    list_display = ['name', 'network', 'address', 'enabled']
 
 @admin.register(Version)
 class VersionAdmin(admin.ModelAdmin):
@@ -64,7 +64,7 @@ class SiteStaticAdmin(admin.ModelAdmin):
     
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
-    list_display = ['name', 'version', 'network', 'address', 'abi']
+    list_display = ['name', 'version', 'network', 'address', 'enabled']
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
@@ -78,9 +78,9 @@ class EventInboxAdmin(admin.ModelAdmin):
 class ActionAdmin(admin.ModelAdmin):
     list_display = ['name']
 
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ['game', 'ship_id', 'action', 'tx_hash', 'at_block', 'gas_expended', 'creation_date']
+@admin.register(Transaction)
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ['game', 'action', 'hash', 'at_block', 'gas_expended', 'creation_date']
 
 @admin.register(Stat)
 class StatAdmin(admin.ModelAdmin):
@@ -88,11 +88,11 @@ class StatAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ['sender', 'receiver', 'subject', 'read']
+    list_display = ['game', 'sender', 'receiver', 'subject', 'read']
 
 @admin.register(Ship)
 class ShipAdmin(admin.ModelAdmin):
-    list_display = ['ship_id', 'name', 'player', 'game']
+    list_display = ['ship_id', 'name', 'game']
     
 @admin.register(GameAbiEvent)
 class GameAbiEventAdmin(admin.ModelAdmin):
@@ -101,3 +101,14 @@ class GameAbiEventAdmin(admin.ModelAdmin):
 @admin.register(GameAbiFunction)
 class GameAbiFunctionAdmin(admin.ModelAdmin):
     list_display = ['name', 'hash', 'game']
+    
+    def get_object(self, request, object_id, from_field=None):
+        # Hook obj for use in formfield_for_manytomany
+        self.obj = super(GameAbiFunctionAdmin, self).get_object(request, object_id, from_field)
+        return self.obj
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "events" and getattr(self, 'obj', None):
+            kwargs["queryset"] = GameAbiEvent.objects.filter(game=self.obj.game)
+        return super(GameAbiFunctionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+    

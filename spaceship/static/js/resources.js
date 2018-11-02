@@ -6,32 +6,11 @@ window.addEventListener('load', async () => {
 	config.network = "/network/";
 	config.networks = [window.gameNetwork];
     config.signout  = "/signout/"
-
-    if (window.ethereum) {
-        window.web3 = new Web3(ethereum);
-        try {
-            // Request account access if needed
-            await ethereum.enable();
-            // Acccounts now exposed
-        } catch (error) {
-            // User denied account access...
-        }
-    }
-    // Legacy dapp browsers...
-    else if (window.web3) {
-        window.web3 = new Web3(web3.currentProvider);
-        // Acccounts always exposed
-    }
-    // Non-dapp browsers...
-    else {
-        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
     
     init = new CSSInit(config,window.web3);
 
     init.init(function() {
-        w3 = window.web3;
-        window.cssgame = new CSSGame(w3,window.gameAbi,window.gameAddress,window.web3);
+        window.cssgame = new CSSGame(this.web3,window.gameAbi,window.gameAddress);
         window.backend = new Backend(window.base_url);
 
         function setGameStats() {
@@ -80,7 +59,7 @@ window.addEventListener('load', async () => {
              */
             $(window.id_modal_open).modal('hide');
             setInterval(()=>{
-                w3.eth.getTransactionReceipt(tx, function(e,h){
+                this.web3.eth.getTransactionReceipt(tx, function(e,h){
                     if (h && h.blockNumber != null) location.reload();
                 });
             },3000);
@@ -300,7 +279,6 @@ window.addEventListener('load', async () => {
                 }
                 else {
                     setUpgradeResourceReady(0,1);
-                    //setUpgradeReady(0,false);
                     //$('#energy-bars').hide();
                 }
 
@@ -313,13 +291,10 @@ window.addEventListener('load', async () => {
                         gRes.metals <= window.metalsStock && 
                         window.resourceBlock == 0)
                         setUpgradeResourceReady(1,0);
-                        //setUpgradeReady(1,true);
                     else
                         setUpgradeResourceReady(1,1);
-                        //setUpgradeReady(1,false);
                 } else {
                     setUpgradeResourceReady(1,1);
-                    //setUpgradeReady(1,false);
                     //$('#graphene-bars').hide();
                 }
 
@@ -331,13 +306,10 @@ window.addEventListener('load', async () => {
                         mRes.metals <= window.metalsStock && 
                         window.resourceBlock == 0)
                         setUpgradeResourceReady(2,0);
-                        //setUpgradeReady(2,true);
                     else
                         setUpgradeResourceReady(2,1);
-                        //setUpgradeReady(2,false);
                 } else {
                     setUpgradeResourceReady(2,1);
-                    //setUpgradeReady(2,false);
                     //$('#metals-bar').hide();
                 }
             }
@@ -525,45 +497,6 @@ window.addEventListener('load', async () => {
             }
         }
 
-
-        function setUpgradeReady(resource, show) {
-            try {
-                if (typeof resource !== 'undefined' && typeof show !== 'undefined') {
-                    if (resource == 0 || resource === 'energy') {
-                        id = '#upgrade-energy-ready';
-                        if (show)
-                            $('#upgrade-energy').hide();
-                        else
-                            $('#upgrade-energy').show();
-                    }
-                    else { 
-                        if (resource == 1 || resource === 'graphene')
-                            id = '#upgrade-graphene-ready';
-                        else {
-                            if (resource == 2 || resource === 'metals') {
-                                id = '#upgrade-metals-ready';
-                            }
-                        }
-                    }
-                    if (show == true )
-                        $(id).show();
-                    else
-                        $(id).hide();
-                }
-                else {
-                    throw "Invalid Parameter";
-                }
-            }
-            catch(err) {
-                if (window.DEBUG == true) {
-                    window.alert(err);
-                }
-                else {
-                    console.log(err);
-                }
-            }
-        }
-
         function getUpgradeResourcesCost()
         {
 
@@ -653,8 +586,7 @@ window.addEventListener('load', async () => {
                     window.grapheneStock = ret.grapheneStock;
                     window.metalsStock = ret.metalStock;
                     if (window.resourceBlock != 0 && ret.countdownToUpgradeResources == 0) {
-                        console.log("Reload");
-                        //location.reload();
+                        location.reload();
                     }
                     window.resourceBlock = ret.countdownToUpgradeResources;
                     window.damage = ret.damage;
@@ -706,7 +638,5 @@ window.addEventListener('load', async () => {
         
         // call initializing routine
         init();
-
-
     });
 });

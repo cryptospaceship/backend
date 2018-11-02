@@ -38,11 +38,10 @@ class game(object):
 
     def get_block(self, block):
         try:
-            data = self.w3.eth.getBlock(block)
+            return self.w3.eth.getBlock(block)
         except Exception as e:
             raise gameException(str(e))
 
-        return data
     
     def view_ship(self, ship_id):
         try:

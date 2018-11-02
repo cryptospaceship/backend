@@ -4,16 +4,17 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
 import json
+import web3
 
 #from .crypto_spaceship import spaceShip
 #from .crypto_game import game
 from .libs import crypto_game_v1_4
 from .libs import crypto_game_v1_5
+from .libs import network_utils
 
 from .libs.crypto_spaceship import spaceShip
 
-from json import loads
-from .misc import calc_function_hash
+#from .misc import calc_function_hash
 
 # Create your models here.
 
@@ -80,20 +81,25 @@ class Message(models.Model):
         msg.receiver = receiver
         msg.subject  = subject
         msg.message  = message
+        msg.game     = sender.game
         msg.read     = False
         msg.save()
         return msg
-        
+    
+    """
     @classmethod
     def get_by_sender(cls, ship):
-        return cls.objects.filter(sender=ship)
+        return cls.objects.filter(sender=ship, game=sender.game)
         
     @classmethod
     def get_by_receiver(cls, ship):
-        return cls.objects.filter(receiver=ship)
-        
+        return cls.objects.filter(receiver=ship, game=receiver.game)
+    """
+    
     @classmethod
     def get_by_id(cls, ship, id):
+        print(id)
+        
         try:
             msg = cls.objects.get(id=id)
         except:
@@ -110,23 +116,34 @@ class Message(models.Model):
         
     @classmethod
     def inbox_unread_count(cls, ship):
-        return cls.objects.filter(receiver=ship).count()
+        return cls.objects.filter(receiver=ship, game=receiver.game).count()
         
     @classmethod
     def outbox_unread_count(cls, ship):
-        return cls.objects.filter(sender=ship).count()
+        return cls.objects.filter(sender=ship, game=sender.game).count()
     
     @classmethod
     def get_inbox_list(cls, ship, serialized=False):
-        msgs = cls.objects.filter(receiver=ship)
+        msgs = cls.objects.filter(receiver=ship, game=receiver.game)
         if serialized:
             ret = {}
             for msg in msgs:
-                ret[msg.id] = {'sender': msg.sender.ship.name, 'subject': msg.subject, 'read': msg.read}
+                ret[msg.id] = {'from': msg.sender.ship.name, 'subject': msg.subject, 'read': msg.read}
             return ret
         else:
             return msgs
-        
+    
+    @classmethod
+    def get_outbox_list(cls, ship, serialized=False):
+        msgs = cls.objects.filter(sender=ship, game=sender.game)
+        if serialized:
+            ret = {}
+            for msg in msgs:
+                ret[msg.id] = {'to': msg.receiver.ship.name, 'subject': msg.subject, 'read': msg.read}
+            return ret
+        else:
+            return msgs
+    
 
 class Player(models.Model):
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -167,18 +184,6 @@ class JSClient(models.Model):
     def __str__(self):
         return '%s:%s' % (self.view,self.js)
 
-class Transaction(models.Model):
-    STATUS = (('S', 'Success'),
-              ('E', 'Error'))
-
-    DESCRIPTION = (('M', 'Move'),
-                   ('A', 'Attack'))
-
-    player      = models.ForeignKey('Player', on_delete=models.CASCADE)
-    tx_hash     = models.CharField(max_length=66)
-    status      = models.CharField(max_length=1, choices=STATUS)
-    description = models.CharField(max_length=1, choices=DESCRIPTION)
-
 
 ###########################################################################
 class Gas(models.Model):
@@ -189,11 +194,13 @@ class Gas(models.Model):
 
        
 class Network(models.Model):
-    name     = models.CharField(max_length=32)
-    gas      = models.ForeignKey(Gas, on_delete=models.CASCADE)
-    net_id   = models.IntegerField()
-    proxy    = models.CharField(max_length=128)
-    explorer = models.CharField(max_length=256)
+    name           = models.CharField(max_length=32)
+    gas            = models.ForeignKey(Gas, on_delete=models.CASCADE)
+    net_id         = models.IntegerField()
+    proxy          = models.CharField(max_length=128)
+    explorer       = models.CharField(max_length=256, blank=True)
+    scanned_block  = models.IntegerField(default=0)
+    scanner_sleep  = models.IntegerField(default=5)
 
     def __str__(self):
         return self.name
@@ -201,12 +208,14 @@ class Network(models.Model):
     @classmethod
     def get_by_net_id(cls, net_id):
         try:
-            ret = cls.objects.get(net_id=net_id)
+            return cls.objects.get(net_id=net_id)
         except:
-            ret = None
-        return ret
+            return None        
 
-
+    def connect(self):        
+        return network_utils.network(self.proxy)
+        
+        
 class CryptoSpaceShip(models.Model):
     name    = models.CharField(max_length=128)
     version = models.IntegerField()
@@ -221,10 +230,9 @@ class CryptoSpaceShip(models.Model):
     @classmethod
     def get_by_network(cls, network):
         try:
-            ret = cls.objects.get(network=network, enabled=True)
+            return cls.objects.get(network=network, enabled=True)
         except:
-            ret = None
-        return ret
+            return None        
 
     @classmethod
     def get_by_net_id(cls, net_id):
@@ -249,8 +257,6 @@ class Game(models.Model):
     address             = models.CharField(max_length=128)
     abi                 = models.TextField()
     contract_id         = models.IntegerField()
-    scanned_block       = models.IntegerField(default=0)
-    deployed_block      = models.IntegerField(default=0)
     discord_channel_api = models.CharField(max_length=256, blank=True)
     enabled             = models.BooleanField(default=False)
     load_abi_trigger    = models.BooleanField(default=False)
@@ -258,13 +264,14 @@ class Game(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):        
+    def save(self, *args, **kwargs):
+        super(Game, self).save(*args, **kwargs)
         if self.load_abi_trigger:
             GameAbiFunction.delete_game(self)
             GameAbiEvent.delete_game(self)   
             self.load_abi()
             self.load_abi_trigger = False
-        super(Game, self).save(*args, **kwargs)
+            super(Game, self).save(*args, **kwargs)
         
         
     @classmethod
@@ -278,12 +285,19 @@ class Game(models.Model):
     def get_by_contract_id(cls, contract_id, net_id):
         network = Network.get_by_net_id(net_id)
         if network is None:
-            ret = None
+            return None
         try:
-            ret = cls.objects.get(contract_id=contract_id, network=network)
+            return cls.objects.get(contract_id=contract_id, network=network)
         except:
-            ret = None
-        return ret
+            return None        
+    
+    @classmethod
+    def get_by_net(cls, net):
+        return cls.objects.filter(network=net)
+        
+    @classmethod
+    def get_enabled_by_net(cls, net):
+        return cls.objects.filter(network=net, enabled=True)
 
     def connect(self):
         if self.version.name == "1.4":
@@ -293,12 +307,21 @@ class Game(models.Model):
         else:
             return None
     
+    @staticmethod
+    def calc_function_hash(function):
+        f = "%s(" % function['name']
+        for input in function['inputs']:
+            f = "%s%s," % (f, input['type'])
+        f = f[:-1] + ')'    
+        hash = web3.Web3.sha3(f.encode()).hex()
+        return hash[0:10]    
+    
     def load_abi(self):             
         abi = json.loads(self.abi)
         for e in abi:
             if e['type'] == 'function':
                 name = e['name']
-                hash = calc_function_hash(e)
+                hash = self.calc_function_hash(e)
                 GameAbiFunction.create(name, hash, self)
             if e['type'] == 'event':
                 GameAbiEvent.create(e['name'], self)
@@ -374,7 +397,6 @@ class SiteTemplate(models.Model):
         ss = SiteStatic.objects.filter(site_template=self, file_type='js')
         for js in ss:
             ret.append(js.file)
-        print(ret)
         return ret
 
     def get_css(self):
@@ -399,14 +421,16 @@ class SiteStatic(models.Model):
     
     
 class Event(models.Model):
+    """
     EVENT_TYPES = (('AS', 'Attack Ship'),
                    ('AP', 'Attack Port'),
                    ('PC', 'Port Conquest'),
                    ('FC', 'Fire Cannon'),
                    ('SR', 'Send Resources'))
-
+    """
+    
     game        = models.ForeignKey(Game, on_delete=models.CASCADE)
-    event_type  = models.CharField(max_length=2, choices=EVENT_TYPES)
+    event_type  = models.CharField(max_length=128)
     event_block = models.IntegerField()
     from_ship   = models.IntegerField(blank=True, null=True)
     to_ship     = models.IntegerField(blank=True, null=True)
@@ -416,9 +440,9 @@ class Event(models.Model):
         return str(self.id)
 
     @classmethod
-    def create_attack_ship(cls, order, data):
+    def create_attack_ship(cls, tx, data):
         event             = cls()
-        event.game        = order.game
+        event.game        = tx.game
         event.event_type  = 'AS'
         event.event_block = data[0].blockNumber
         event.from_ship   = dict(data[0].args)['_from']
@@ -430,9 +454,9 @@ class Event(models.Model):
         EventInbox.create_to(event, data[0].args._to)
 
     @classmethod
-    def create_attack_port(cls, order, data):
+    def create_attack_port(cls, tx, data):
         event             = cls()
-        event.game        = order.game
+        event.game        = tx.game
         event.event_type  = 'AP'
         event.event_block = data[0].blockNumber
         event.from_ship   = dict(data[0].args)['_from']
@@ -445,9 +469,9 @@ class Event(models.Model):
                 EventInbox.create_to(event, to)
 
     @classmethod
-    def create_port_conquest(cls, order, data):
+    def create_port_conquest(cls, tx, data):
         event             = cls()
-        event.game        = order.game
+        event.game        = tx.game
         event.event_type  = 'PC'
         event.event_block = data[0].blockNumber
         event.from_ship   = dict(data[0].args)['_from']
@@ -455,15 +479,15 @@ class Event(models.Model):
         event.save()
 
         EventInbox.create_from(event, data[0].args._from)
-        ships = order.game.connect().get_ships_id()
+        ships = tx.game.connect().get_ships_id()
         for ship in ships:
             if ship != event.from_ship:
                 EventInbox.create_to(event, ship)
 
     @classmethod
-    def create_fire_cannon(cls, order, data):
+    def create_fire_cannon(cls, tx, data):
         event             = cls()
-        event.game        = order.game
+        event.game        = tx.game
         event.event_type  = 'FC'
         event.event_block = data[0].blockNumber
         event.from_ship   = dict(data[0].args)['_from']
@@ -475,9 +499,9 @@ class Event(models.Model):
         EventInbox.create_to(event, data[0].args._to)
 
     @classmethod
-    def create_send_resources(cls, order, data):
+    def create_send_resources(cls, tx, data):
         event             = cls()
-        event.game        = order.game
+        event.game        = tx.game
         event.event_type  = 'SR'
         event.event_block = data[0].blockNumber
         event.from_ship   = dict(data[0].args)['_from']
@@ -488,7 +512,23 @@ class Event(models.Model):
         EventInbox.create_from(event, data[0].args._from)
         EventInbox.create_to(event, data[0].args._to)
 
+    @classmethod
+    def create(cls, game, event_type, data):
+        event             = cls()
+        event.game        = game
+        event.event_type  = event_type
+        event.event_block = data[0].blockNumber
+        event.from_ship   = dict(data[0].args)['_from']
+        if '_to' in dict(data[0].args):
+            event.to_ship     = dict(data[0].args)['_to']
+        event.event_meta  = dict(data[0].args)
+        event.save()
+        return event
 
+    def load_meta(self):
+        return json.loads(self.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
+        
+        
 class EventInbox(models.Model):
     INBOX_TYPE = (('F', 'From'),
                   ('T', 'To'))
@@ -508,10 +548,10 @@ class EventInbox(models.Model):
         self.save()
 
     @classmethod
-    def create_from(cls, event, ship_id):
+    def create_from(cls, event):
         event_inbox            = cls()
         event_inbox.game       = event.game
-        event_inbox.ship_id    = ship_id
+        event_inbox.ship_id    = event.from_ship
         event_inbox.event      = event
         event_inbox.inbox_type = 'F'
         event_inbox.viewed     = False
@@ -531,10 +571,9 @@ class EventInbox(models.Model):
     def not_read_count(cls, game_id, ship_id):
         game = Game.get_by_id(game_id)
         if game is not None:
-            ret = cls.objects.filter(game=game, ship_id=ship_id, viewed=False).count()
+            return cls.objects.filter(game=game, ship_id=ship_id, viewed=False).count()
         else:
-            ret = 0
-        return ret
+            return 0
 
     @classmethod
     def not_read_ids(cls, game_id, ship_id):
@@ -550,17 +589,16 @@ class EventInbox(models.Model):
     @classmethod
     def get_by_id(cls, event_id):
         try:
-            ret = cls.objects.get(id=event_id)
+            return cls.objects.get(id=event_id)
         except:
-            ret = None
-        return ret
+            return None
 
     @classmethod
     def get_by_ship_id(cls, ship_id):
         o = cls.objects.filter(ship_id=ship_id).order_by('-id')
         for i in o:
             print(i.event.event_meta.replace("'", "\""))
-            i.event_meta_parsed = loads(i.event.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
+            i.event_meta_parsed = json.loads(i.event.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
             print (i.event_meta_parsed)
         return o
 
@@ -573,37 +611,39 @@ class Action(models.Model):
     @classmethod
     def get(cls, name):
         try:
-            ret = cls.objects.get(name=name)
+            return cls.objects.get(name=name)
         except:
-            ret = None
-        return ret
+            return None
+            
 
-
-class Order(models.Model):
+class Transaction(models.Model):
     game          = models.ForeignKey(Game, on_delete=models.CASCADE)
-    ship_id       = models.IntegerField()
-    action        = models.ForeignKey('GameAbiFunction', on_delete=models.CASCADE)
-    tx_hash       = models.CharField(max_length=128)
+    action        = models.CharField(max_length=128)
+    hash          = models.CharField(max_length=128)
     at_block      = models.IntegerField(blank=True, null=True)
     gas_expended  = models.IntegerField(blank=True, null=True)
+    scanned       = models.BooleanField(default=False)
     creation_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__(self):
-        return self.tx_hash
+        return self.hash
 
     @classmethod
-    def create(cls, game, ship_id, action, tx_hash, at_block, gas_expended):
-        order  = cls()
-        order.game     = game
-        order.ship_id  = ship_id
-        order.action   = action
-        order.action   = action
-        order.tx_hash  = tx_hash
-        order.at_block = at_block
-        order.save()
-        return order
-
-
+    def create(cls, game, action, hash):
+        tx = cls()
+        tx.game     = game
+        tx.action   = action.name
+        tx.hash     = hash
+        tx.save()
+        return tx
+      
+    def scanned(self, block, gas):
+        self.at_block     = block
+        self.gas_expended = gas
+        self.scanned      = True
+        self.save()
+        return self
+        
 
 class Stat(models.Model):
     ship_id                    = models.IntegerField()
@@ -656,20 +696,18 @@ class Stat(models.Model):
 class Ship(models.Model):
     ship_id = models.IntegerField()
     name    = models.CharField(max_length=128)
-    player  = models.ForeignKey(Player, on_delete=models.CASCADE)
     game    = models.ForeignKey(Game, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return str(self.name)
     
     @classmethod
-    def create(cls, ship_id, name, player):
+    def create(cls, ship_id, name):
         ship = cls()
         ship.ship_id = ship_id
         ship.name    = name
-        ship.player  = player
         ship.save()
-        return ship    
+        return ship
     
     @classmethod
     def get_by_id(cls, ship_id):
@@ -678,15 +716,13 @@ class Ship(models.Model):
         except:
             return None
         
-    @classmethod
-    def get_by_player(cls, player, game):
-        try:
-            return cls.objects.get(player=player, game=game)
-        except:
-            return None
-        
     def join_game(self, game):
         self.game = game
+        self.save()
+        return self
+        
+    def exit_game(self):
+        self.game = None
         self.save()
         return self
 
@@ -694,6 +730,9 @@ class Ship(models.Model):
 class GameAbiEvent(models.Model):
     name = models.CharField(max_length=128)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    notif_trigger = models.BooleanField(default=False)
+    join_trigger  = models.BooleanField(default=False)
+    exit_trigger  = models.BooleanField(default=False)
         
     def __str__(self):
         return self.name
@@ -735,10 +774,17 @@ class GameAbiFunction(models.Model):
             return cls.objects.get(hash=hash, game=game)
         except:
             return None
+
+    @classmethod
+    def get_by_name(cls, name, game):
+        try:
+            return cls.objects.get(name=name, game=game)
+        except:
+            return None
             
-    @staticmethod
-    def delete_game(game):
-        GameAbiFunction.objects.filter(game=game).delete()
+    @classmethod
+    def delete_game(cls, game):
+        cls.objects.filter(game=game).delete()
         
 
     
