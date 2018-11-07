@@ -72,7 +72,7 @@ class game(object):
                'countdown_move': data[5],
                'countdown_fleet': data[6],
                'countdown_mode': data[7],
-               'countdown_fire_cannon': data[8],
+               'countdown_fire_wopr': data[8],
                'damage': data[9]}
 
         return ret
@@ -147,7 +147,7 @@ class game(object):
 
         ret = {'warehouse_level': data[0],
                'hangar_level': data[1],
-               'cannon_level': data[2],
+               'wopr_level': data[2],
                'building_upgrading': data[3]}
 
         return ret

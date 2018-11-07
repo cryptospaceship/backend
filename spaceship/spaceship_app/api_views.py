@@ -14,6 +14,8 @@ from .models import Player
 from .models import EventInbox
 from .models import Transaction
 from .models import Message
+from .models import Ship
+from .models import Game
 
 from json import dumps
 from json import loads
@@ -107,36 +109,54 @@ def api_create_message(request):
 
     
 @require_http_methods(['GET'])
-def api_messages_not_read_count(request, game_id, ship_id):
-    ret = {}
-    events = EventInbox.not_read_ids(game_id, ship_id)
-    ret['result'] = {'count': len(events), 'ids': events}
-
-    return HttpResponse(dumps(ret), content_type="application/json", status=http_REQUEST_OK)
+def api_inbox_unread_count(request, game_id):
+    player   = Player.get_by_user(request.user)
+    game     = Game.get_by_id(game_id)
+    ship     = player.get_ship_in_game(game)
+    messages = Message.get_inbox_unread_count(ship.ship_id)
+    return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
     
     
 @require_http_methods(['GET'])
 @login_required(login_url='/signin/')
 def api_get_message(request, msg_id):
-    receiver = Player.get_by_user(request.user)
-    msg = Message.get_by_id(receiver, msg_id)
-    # Consultar quien es el dueño de la nave al contrato.
+    msg = Message.get_by_id(msg_id)
     if msg is None:
+        body = {'status': 'error', 'message': 'invalid message id'}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    player = Player.get_by_user(request.user)
+    ship   = player.get_ship_in_game(msg.game)
+    
+    if ship == msg.sender:
+        body = msg.serialize()
+        status = http_REQUEST_OK
+    elif ship == msg.receiver:
+        body = msg.serialize()
+        status = http_REQUEST_OK
+        msg.mark_as_read()
+    else:
         body = {'status': 'error', 'message': 'permission denied'}
-        return HttpResponse(dumps(body), content_type="application/json", status=http_FORBIDDEN)
+        status = http_FORBIDDEN
         
-    return HttpResponse(dumps(msg.serialize()), content_type="application/json", status=http_REQUEST_OK)
+    return HttpResponse(dumps(body), content_type="application/json", status=status)
 
-@require_http_methods(['GET'])
-@login_required(login_url='/signin/')
-def api_get_inbox_messages(request):
-    receiver = Player.get_by_user(request.user)
-    messages = Message.get_inbox_list(receiver, True)
-    return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
     
 @require_http_methods(['GET'])
 @login_required(login_url='/signin/')
-def api_get_outbox_messages(request):
-    sender = Player.get_by_user(request.user)
-    messages = Message.get_outbox_list(sender, True)
+def api_get_inbox_messages(request, game_id):
+    player   = Player.get_by_user(request.user)
+    game     = Game.get_by_id(game_id)
+    ship     = player.get_ship_in_game(game)
+    messages = Message.get_inbox_list(ship.ship_id, True)
+    return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
+
+    
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')
+def api_get_outbox_messages(request, game_id):
+    player   = Player.get_by_user(request.user)
+    game     = Game.get_by_id(game_id)
+    ship     = player.get_ship_in_game(game)
+    messages = Message.get_outbox_list(ship.ship_id, True)
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)

@@ -1,154 +1,7 @@
+{% extends "game/1.5/tpl_base_game.html" %}
+{% block content %}
 {% load js %}
 {% load boolean %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>CSS Resources</title>
-  <meta name="description" content="Crypto SpaceShip - Resources View">
-  <meta name="author" content="Emiliano Alejandro Billi" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet">
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-  <link rel="stylesheet" media="screen" href="/static/css/style.css">
-  <script
-  src="https://code.jquery.com/jquery-3.3.1.min.js"
-  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  crossorigin="anonymous"></script>
-  <script src="/static/js/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-</head>
-<body>
-
-
-<!-- particles.js container -->
-<div id="particles-js">
-</div>
-    
-    <div  class="container-fluid grid">
-        <div class="row">
-            <div class="col-xs-12 col-lg-12" id="header">
-
-                <div class="row">
-                    <div class="col-md-2 col-lg-2">
-                        <h1 id="conquest-message" class="conquest-message">The planet has been conquered. The game could end in <span id="blocks-to-end" class="end-message"></span> Blocks. YOU ARE <span class="end-message" id="win-condition"></span></h1>
-                    </div>
-                    <div class="col-md-8 col-lg-8">
-                        <div class="resources-general">
-                    <!-- Link Start -->    
-                    <!-- Links End -->
-                   <!-- GUAGE COMBO ENERGY-->
-                        <div class="resource-general" id="general-energy" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
-
-                                <div class="resource-title">
-                                    <div class="icon-ratio ic-energy"></div>
-                                    <div class="title-text">energy</div>
-                                    <div class="stopper"></div>
-                                </div>
-
-                                <div class="gauge">
-                                    <div class="gauge-reflex"></div>
-                                    <div class="gauge-bar energy" id="bar-energy" style="width: 100%;"></div>
-                                    <div class="gauge-background"></div>
-                                    <div class="stopper"></div>
-                                </div>
-                                <div class="amount">
-                                        <span class="amount-current" id="energy-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
-                                </div>
-                                    <div class="stopper"></div>
-
-                        </div>
-                    <!-- GUAGE COMBO END -->
-                    
-                    <!-- GUAGE COMBO GRAPHENE -->
-                        <div class="resource-general" id="general-graphene" data-toggle="tooltip" data-placement="bottom" title="Total units of energy you gathered so far">
-
-                                <div class="resource-title">
-                                    <div class="icon-ratio ic-graphene"></div>
-                                    <div class="title-text">graphene</div>
-                                    <div class="stopper"></div>
-                                </div>
-
-                                <div class="gauge">
-                                    <div class="gauge-reflex"></div>
-                                    <div class="gauge-bar graphene" id="bar-graphene" style="width: 100%;"></div>
-                                    <div class="gauge-background"></div>
-                                    <div class="stopper"></div>
-                                </div>
-                                <div class="amount">
-                                        <span class="amount-current" id="graphene-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
-                                </div>
-                                    <div class="stopper"></div>
-
-                        </div>
-                    <!-- GUAGE COMBO END -->
-                    
-                    <!-- GUAGE COMBO METALS-->
-                        <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Total units of metals you gathered so far">
-
-                                <div class="resource-title">
-                                    <div class="icon-ratio ic-metals"></div>
-                                    <div class="title-text">metals</div>
-                                    <div class="stopper"></div>
-                                </div>
-
-                                <div class="gauge">
-                                    <div class="gauge-reflex"></div>
-                                    <div class="gauge-bar metals" id="bar-metals" style="width: 100%;"></div>
-                                    <div class="gauge-background"></div>
-                                    <div class="stopper"></div>
-                                </div>
-                                <div class="amount">
-                                        <span class="amount-current" id="metals-stock"></span> <span class="amount-total">of  <span id="warehouse-load"></span></span>
-                                </div>
-                                    <div class="stopper"></div>
-
-                        </div>
-                       <!-- GUAGE COMBO END -->
-
-                       <!-- GAUGE COMBO STATUS -->
-                       <div class="resource-general" id="general-metals" data-toggle="tooltip" data-placement="bottom" title="Ship Status">
-
-                            <div class="resource-title">
-                                <div class="icon-ratio ic-status"></div>
-                                <div class="title-text">ship status</div>
-                                <div class="stopper"></div>
-                            </div>
-
-                            <div class="gauge">
-                                <div class="gauge-reflex"></div>
-                                <div class="gauge-bar ship-status" id="bar-ship-status" style="width: 100%;"></div>
-                                <div class="gauge-background"></div>
-                                <div class="stopper"></div>
-                            </div>
-                            <div class="amount">
-                                    <div class="repair-list" id="repair-button" style="display: none;">
-                                            <div class="repair-item can-repair pointer" >
-                                                <div class="icon-ratio ic-repair"></div>
-                                                <div class="title-text fL repair-text">Repair</div>
-                                            </div>
-                                        </div>
-                                    <span class="status-current"><span id="ship-status-value"></span> %</span> 
-                            </div>
-                                <div class="stopper"></div>
-
-                        </div>
-                        <!-- GAUGE COMBO END-->
-                       
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-lg-2">
-                        <div class="game-info">
-                            <p>Game Age: <span id="game-age"></span></p>
-                            <p>Reward: <span id="reward"></span> eth</p>
-                            <p>Players: <span id="players"></span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
         
         <div class="row last-row">
             <div class="col-xs-12 col-md-3-et" >
@@ -628,7 +481,7 @@
                 </div>
             </div> 
 
-            <div class="modal fade" id="modal_upgrading" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="modal-upgrading" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -678,7 +531,7 @@
     window.eventsCount = {{ events_count }};
     
     window.warehouseLevel = {{ warehouse_level }};
-    window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel)
+    window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel);
     
     window.position_x = {{ position_x }};
     window.position_y = {{ position_y }};
@@ -701,4 +554,4 @@
     window.explorer_url = "{{ explorer_url }}";
     window.game = {{ game_id }};
 </script>
-</html>
+{% endblock %}

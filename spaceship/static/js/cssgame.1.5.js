@@ -49,17 +49,17 @@ class CSSGame {
     // Buildings Functions
     upgradeWarehouse(ship,callback){
         let w3 = this.w3;
-        this.contract.upgradeBuilding(ship,0,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.upgradeBuilding(ship,0,0,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     upgradeHangar(ship,callback){
         let w3 = this.w3;
-        this.contract.upgradeBuilding(ship,1,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.upgradeBuilding(ship,1,0,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
-    upgradeCannon(ship,callback){
+    upgradeWopr(ship,role,callback){
         let w3 = this.w3;
-        this.contract.upgradeBuilding(ship,2,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.upgradeBuilding(ship,2,role,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Attack Functions

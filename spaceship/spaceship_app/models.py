@@ -68,8 +68,8 @@ class Message(models.Model):
     def serialize(self):
         ret = {}
         ret['id']      = self.id
-        ret['from']    = self.sender.ship.name
-        ret['to']      = self.receiver.ship.name
+        ret['from']    = self.sender.name
+        ret['to']      = self.receiver.name
         ret['subject'] = self.subject
         ret['message'] = self.message
         return ret
@@ -97,59 +97,67 @@ class Message(models.Model):
     """
     
     @classmethod
-    def get_by_id(cls, ship, id):
-        print(id)
-        
+    def get_by_id(cls, id, ship=None):       
         try:
             msg = cls.objects.get(id=id)
         except:
             return None
                
         if ship == msg.receiver:
-            msg.read = True
-            msg.save()
-            return msg
-        elif ship == msg.sender:
+            msg.mark_as_read()
             return msg
         else:
-            return None
+            return msg
+        
         
     @classmethod
-    def inbox_unread_count(cls, ship):
-        return cls.objects.filter(receiver=ship, game=receiver.game).count()
+    def get_inbox_unread_count(cls, ship_id):
+        ship = Ship.get_by_id(ship_id)
+        return cls.objects.filter(receiver=ship, game=ship.game).count()
         
     @classmethod
-    def outbox_unread_count(cls, ship):
-        return cls.objects.filter(sender=ship, game=sender.game).count()
+    def get_outbox_unread_count(cls, ship_id):
+        ship = Ship.get_by_id(ship_id)
+        return cls.objects.filter(sender=ship, game=ship.game).count()
     
     @classmethod
-    def get_inbox_list(cls, ship, serialized=False):
-        msgs = cls.objects.filter(receiver=ship, game=receiver.game)
+    def get_inbox_list(cls, ship_id, serialized=False):
+        print(ship_id)
+        ship = Ship.get_by_id(ship_id)
+        msgs = cls.objects.filter(receiver=ship, game=ship.game).order_by('-id')
         if serialized:
-            ret = {}
+            ret = []
             for msg in msgs:
-                ret[msg.id] = {'from': msg.sender.ship.name, 'subject': msg.subject, 'read': msg.read}
+                data = {'id': msg.id, 'from': msg.sender.name, 'subject': msg.subject, 'read': msg.read}
+                ret.append(data)
             return ret
         else:
             return msgs
     
     @classmethod
-    def get_outbox_list(cls, ship, serialized=False):
-        msgs = cls.objects.filter(sender=ship, game=sender.game)
+    def get_outbox_list(cls, ship_id, serialized=False):
+        ship = Ship.get_by_id(ship_id)
+        msgs = cls.objects.filter(sender=ship, game=ship.game).order_by('-id')
         if serialized:
-            ret = {}
+            ret = []
             for msg in msgs:
-                ret[msg.id] = {'to': msg.receiver.ship.name, 'subject': msg.subject, 'read': msg.read}
+                data = {'id': msg.id, 'to': msg.receiver.name, 'subject': msg.subject, 'read': msg.read}
+                ret.append(data) 
             return ret
         else:
             return msgs
+            
+    def mark_as_read(self):
+        self.read = True
+        self.save()
+        return self
     
 
 class Player(models.Model):
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
     address     = models.CharField(max_length=42)
     last_block  = models.IntegerField(default=0)
-    messages    = models.ManyToManyField('Message')
+    messages    = models.ManyToManyField('Message', blank=True)
 
     def __str__(self):
         return '%s' % str(self.user.username)
@@ -175,6 +183,15 @@ class Player(models.Model):
         except:
             return None
         return cls.objects.get(user=user)
+        
+    def get_ship_in_game(self, game):
+        try:
+            ship_id = game.connect().get_ship_by_owner(self.address)
+            ship    = Ship.get_by_id(ship_id)
+            return ship
+        except:
+            return None
+        
         
 
 class JSClient(models.Model):
@@ -430,6 +447,7 @@ class Event(models.Model):
     """
     
     game        = models.ForeignKey(Game, on_delete=models.CASCADE)
+    transaction = models.ForeignKey('Transaction', on_delete=models.CASCADE)
     event_type  = models.CharField(max_length=128)
     event_block = models.IntegerField()
     from_ship   = models.IntegerField(blank=True, null=True)
@@ -513,9 +531,10 @@ class Event(models.Model):
         EventInbox.create_to(event, data[0].args._to)
 
     @classmethod
-    def create(cls, game, event_type, data):
+    def create(cls, game, transaction, event_type, data):
         event             = cls()
         event.game        = game
+        event.transaction = transaction
         event.event_type  = event_type
         event.event_block = data[0].blockNumber
         event.from_ship   = dict(data[0].args)['_from']
@@ -525,6 +544,13 @@ class Event(models.Model):
         event.save()
         return event
 
+    @classmethod
+    def get(cls, game, transaction, event_type):
+        try:
+            return cls.objects.get(game=game, transaction=transaction, event_type=event_type)
+        except ObjectDoesNotExist:
+            return None
+        
     def load_meta(self):
         return json.loads(self.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
         
@@ -636,14 +662,29 @@ class Transaction(models.Model):
         tx.hash     = hash
         tx.save()
         return tx
-      
-    def scanned(self, block, gas):
+    
+    @classmethod
+    def delete_in_block(block):
+        Transaction.objects.filter(at_block=block).delete()
+        
+    @classmethod
+    def get_pending_queue(cls, game):
+        return cls.objects.filter(game=game, scanned=False).order_by('-id')
+    
+    def scan(self, block, gas):
         self.at_block     = block
         self.gas_expended = gas
         self.scanned      = True
         self.save()
         return self
-        
+    
+    @classmethod
+    def get(cls, game, hash):
+        try:
+            return cls.objects.get(game=game, hash=hash)
+        except ObjectDoesNotExist:
+            return None
+            
 
 class Stat(models.Model):
     ship_id                    = models.IntegerField()
@@ -785,9 +826,34 @@ class GameAbiFunction(models.Model):
     @classmethod
     def delete_game(cls, game):
         cls.objects.filter(game=game).delete()
-        
 
+        
+class DiscordEvent(models.Model):
+    STATUS = (('P', 'Pending'),
+              ('S', 'Success'),
+              ('E', 'Error'))
+
+    game     = models.ForeignKey(Game, on_delete=models.CASCADE)
+    message  = models.TextField()
+    status   = models.CharField(max_length=1, choices=STATUS, default='P')
+    error    = models.CharField(max_length=128, blank=True)
     
+    def __str__(self):
+        return "%s_%s" % (self.id, self.game.name)
+        
+    @classmethod    
+    def create(cls, game, message):
+        de = cls()
+        de.game    = game
+        de.message = "{\"content\":\":loudspeaker: @everyone %s :rocket:\"}" % message
+        de.save()
+        return de
+        
+    @classmethod
+    def get_pending_queue(cls, game):
+        return cls.objects.filter(game=game, status='P').order_by('-id')
+        
+        
 #class Ranking
 
 #class Battles

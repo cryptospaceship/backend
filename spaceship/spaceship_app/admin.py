@@ -21,6 +21,7 @@ from .models import Message
 from .models import Ship
 from .models import GameAbiEvent
 from .models import GameAbiFunction
+from .models import DiscordEvent
 
 @admin.register(Var)
 class VarAdmin(admin.ModelAdmin):
@@ -111,4 +112,8 @@ class GameAbiFunctionAdmin(admin.ModelAdmin):
         if db_field.name == "events" and getattr(self, 'obj', None):
             kwargs["queryset"] = GameAbiEvent.objects.filter(game=self.obj.game)
         return super(GameAbiFunctionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
-    
+
+@admin.register(DiscordEvent)
+class DiscordEventAdmin(admin.ModelAdmin):
+    list_display = ['id', 'game', 'status']
+        

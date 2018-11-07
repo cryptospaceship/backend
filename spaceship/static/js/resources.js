@@ -71,6 +71,26 @@ window.addEventListener('load', async () => {
             window.id_modal_open = undefined;
         }
 
+
+        function setDamage() {
+            let status = 100 - window.damage;
+            let statusPercentage = status.toString() + '%'
+            $('#bar-ship-status').css('width', statusPercentage);
+            if (status <= 25) {
+                $('#bar-ship-status').css('background-color', '#eb1e0fbd');
+                $('#ship-status-value').css('animation','blinker 1s linear infinite');
+            } else {
+                if (status < 80) {
+                    $('#bar-ship-status').css('background-color', '#d9eb0fbd');
+                }
+            }
+            $('#ship-status-value').text(status);
+
+            if (window.damage != 0 && window.in_port) {
+                $('#repair-button').show();
+            } 
+        }
+
         for ( i = 1; i <= 12; i++ ) {
             panel = '#pe' + i.toString() + '-upgrade-ready';
             $(panel).click(function() {
@@ -202,10 +222,10 @@ window.addEventListener('load', async () => {
                 text = 'Metal Harvesting Module at level ' + (window.metalsCollectorLevel+1).toString();
 
             $('#resource-upgrading').text(text);
-            $('#modal_upgrading').modal('show');
+            $('#modal-upgrading').modal('show');
         }
 
-        $('#modal_upgrading').on('hidden.bs.modal', function() {
+        $('#modal-upgrading').on('hidden.bs.modal', function() {
             $('#resource-upgrading').text('');
         });
 
@@ -547,24 +567,6 @@ window.addEventListener('load', async () => {
             }
         }
         
-        function setDamage() {
-            let status = 100 - window.damage;
-            let statusPercentage = status.toString() + '%'
-            $('#bar-ship-status').css('width', statusPercentage);
-            if (status <= 25) {
-                $('#bar-ship-status').css('background-color', '#eb1e0fbd');
-                $('#ship-status-value').css('animation','blinker 1s linear infinite');
-            } else {
-                if (status < 80) {
-                    $('#bar-ship-status').css('background-color', '#d9eb0fbd');
-                }
-            }
-            $('#ship-status-value').text(status);
-
-            if (window.damage != 0 && window.in_port) {
-                $('#repair-button').show();
-            } 
-        }
 
         // Once Time
         setProduction();
