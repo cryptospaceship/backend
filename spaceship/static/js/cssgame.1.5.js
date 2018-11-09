@@ -18,12 +18,12 @@ class CSSGame {
         w3.eth.getBlockNumber(callback);
     }
 
-    placeShip(ship,callback) {
-        let contract = this.contract;
+    placeShip(ship,qaim1,qaim2,callback) {
         let w3 = this.w3;
+        let contract = this.contract;
         contract.getGame(function(error,ret) {
             if (!error) {
-                contract.placeShip(ship,0,1,{from:w3.eth.accounts[0],gasPrice:1000000000,value:ret[2].toNumber()},callback);
+                contract.placeShip(ship,qaim1,qaim2,{from:w3.eth.accounts[0],gasPrice:1000000000,value:ret[2].toNumber()},callback);
             }
         });
     }

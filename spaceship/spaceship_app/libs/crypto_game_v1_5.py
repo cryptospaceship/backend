@@ -53,7 +53,9 @@ class game(object):
                'position_x': data[1],
                'position_y': data[2],
                'mode': data[3],
-               'in_port': data[4]}
+               'qaim': data[4],
+               'role': data[5],
+               'in_port': data[6]}
 
         return ret
 
@@ -110,13 +112,18 @@ class game(object):
 
     def get_ships_id(self):
         try:
-            data = self.contract.functions.getShipsId().call()
+            return self.contract.functions.getShipsId().call()
         except Exception as e:
             raise gameException(str(e))
 
-        return data
-
-
+            
+    def get_ship_points(self, ship_id):
+        try:
+            return self.contract.functions.getShipPoints(int(ship_id)).call()
+        except Exception as e:
+            raise gameException(str(e))
+            
+            
     def view_fleet(self, ship_id):
         try:
             data = self.contract.functions.viewFleet(int(ship_id)).call()

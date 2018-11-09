@@ -444,6 +444,73 @@
   </div>
 </div>
 
+<div class="modal fade" id="modal-wopr-upgrade-first" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE - ROLE SELECTION</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="modal-body-text">Build WOPR - Select Role</div>
+
+            <div class="row down">
+                <div class="col-md-4">
+                    <p>
+                        It allows to change the production of resources by energy. And the possibility of converting any resource into another.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <p>
+                        With the cannon you can damage other ships and eliminate them from the game.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <p>
+                        The reparer can fix other ships in any places, withstand cannon fire with half of damage.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-info-box-button down">
+                <div class="modal-ship-information-botton">
+                    <button id="converter-selected" type="button" class="btn btn-default">Converter</button>
+                </div>
+                <div class="modal-ship-information-botton">
+                    <button id="cannon-selected" type="button" class="btn btn-default">Cannon</button>
+                </div>
+                <div class="modal-ship-information-botton">
+                    <button id="reparer-selected" type="button" class="btn btn-default">Reparer</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+              <div class="title-text fL"><span id="role-selected"></span></div>
+              <div class="title-text fL">Cost:</div>
+              <div class="ratio-item-modal">
+                  <div class="icon-ratio ic-energy"></div>
+                  <div class="title-text fL"><span id="energy-wopr-upgrade-ft"></span></div>
+                      
+                  <div class="stopper"></div>
+              </div> 
+              <div class="ratio-item-modal">
+                  <div class="icon-ratio ic-graphene"></div>
+                  <div class="title-text fL"><span id="graphene-wopr-upgrade-ft"></span></div>
+                  <div class="stopper"></div>
+              </div>
+              <div class="ratio-item-modal">
+                  <div class="icon-ratio ic-metals"></div>
+                  <div class="title-text fL"><span id="metals-wopr-upgrade-ft"></span></div>
+                  <div class="stopper"></div>
+              </div>  
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="button-upgrade-wopr" class="btn btn-primary">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <div class="modal fade" id="modal-tx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -686,6 +753,8 @@
         window.eventsCount = {{ events_count }};
     
         window.shipName = "{{ ship_name }}";
+        window.qaim = {{ qaim }};
+        window.role = {{ role }};
     
         window.fleetSize = {{ fleet_size }};
         window.fleetQueue = {{ fleet_in_production }};
@@ -701,9 +770,7 @@
         window.fleetEnergyCost = {{ fleet_energy_cost }};
         window.fleetGrapheneCost = {{ fleet_graphene_cost }};
         window.fleetMetalsCost = {{ fleet_metals_cost }};
-    
-    
-    
+
         window.blocksToEndProduction = {{ fleet_blocks_to_end }};
     
         window.buildingBlock = {{ countdown_buildings }};
@@ -714,6 +781,9 @@
         window.explorer_url = "{{ explorer_url }}";
         window.game = {{ game_id }};
         
+
+        window.roleSelected = 'undefined';
+
         </script>
 
 {% endblock %}

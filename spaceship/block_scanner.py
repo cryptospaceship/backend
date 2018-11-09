@@ -13,6 +13,7 @@ from spaceship_app.models import Ship
 from spaceship_app.models import GameAbiEvent
 from spaceship_app.models import GameAbiFunction
 from spaceship_app.models import DiscordEvent
+from spaceship_app.models import Ranking
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # System
@@ -68,7 +69,11 @@ def post_to_discord(de):
         de.save()
         return False
         
-
+def get_ship_points(game, ship_id):
+    try: 
+        return game.connect().get_ship_points(ship_id)
+    except:
+        return None
 
 
 def get_games_addresses(net):
@@ -146,7 +151,7 @@ def create_update_transaction(tx, net, game, function_name=''):
         return transaction
     
     
-def create_event_inbox(event):
+def create_event_inbox(event, abi_event):
     EventInbox.create_from(event)
     logging.info("create_event_inbox(): from_event_inbox created: %s - from: %s" % (event.event_type, event.ship_from))
     if event.to_ship != '':
@@ -155,6 +160,8 @@ def create_event_inbox(event):
     else:
         meta = event.load_meta()
         if '_to' in meta.keys():
+            if type(meta['_to']) is int:
+                meta['_to'] = [meta['_to']]
             for to in meta['_to']:
                 if to != 0:
                     EventInbox.create_to(event, to)
@@ -169,9 +176,21 @@ def create_event_inbox(event):
             else:
                 logging.info("create_event_inbox(): error getting ship ids in game")
                 return False
+                
+    ship = Ship.get_by_id(event.from_ship)
+    if ship is not None:
+        if abi_event.discord:        
+            try:
+                msg_vars = {'ship_name': ship.name, 'ship_id': ship.ship_id}
+                msg = abi_event.discord_template.format_map(msg_vars)
+                de  = DiscordEvent.create(event.game, msg)
+                logging.info("create_event_inbox(): discord event created with id %d" % de.id)
+            except Exception as err:
+                logging.info("create_event_inbox(): error creating discord event: %s" % err)        
     return True
 
-def join_game(event):
+    
+def join_game(event, abi_event):
     ship = Ship.get_by_id(event.from_ship)
     if ship is None:
         logging.info("join_game(): getting ship name for id: %s" % (event.from_ship))
@@ -184,18 +203,38 @@ def join_game(event):
             return False
     ship.join_game(event.game)
     logging.info("join_game(): ship %s joined to %s" % (event.from_ship, event.game.name))
-    message = "%s (NFT: #%d) has arrive" % (ship.name, ship.ship_id)
-    DiscordEvent.create(event.game, message)
+    Ranking.create(ship, event.game)
+    logging.info("join_game(): ranking created for %s in game %s" % (event.from_ship, event.game.name))
+    if abi_event.discord:        
+        try:
+            msg_vars = {'ship_name': ship.name, 'ship_id': ship.ship_id}
+            msg = abi_event.discord_template.format_map(msg_vars)
+            de  = DiscordEvent.create(event.game, msg)
+            logging.info("join_game(): discord event created with id %d" % de.id)
+        except Exception as err:
+            logging.info("join_game(): error creating discord event: %s" % err)
     return True
 
-def exit_game(event):
+    
+def exit_game(event, abi_event):
     ship = Ship.get_by_id(event.from_ship)
     if ship is not None:
         ship.exit_game()
         logging.info("exit_game(): ship %s removed from game %s" % (ship.name, event.game.name))
+        ranking = Ranking.get(ship, event.game)
+        ranking.delete()
+        logging.info("exit_game(): ship %s removed from ranking in game %s" % (ship.name, event.game.name))
     else:
         logging.info("exit_game(): ship %s not found" % event.from_ship)
         return False
+    if abi_event.discord:        
+        try:
+            msg_vars = {'ship_name': ship.name, 'ship_id': ship.ship_id}
+            msg = abi_event.discord_template.format_map(msg_vars)
+            de  = DiscordEvent.create(event.game, msg)
+            logging.info("exit_game(): discord event created with id %d" % de.id)
+        except Exception as err:
+            logging.info("exit_game(): error creating discord event: %s" % err)
     return True   
     
     
@@ -207,11 +246,11 @@ def create_update_event(tx, net, abi_event, receipt):
         if event is None:
             event = Event.create(abi_event.game, tx, abi_event.name, data)
         if abi_event.notif_trigger:
-            ret = create_event_inbox(event)
+            ret = create_event_inbox(event, abi_event)
         elif abi_event.join_trigger:
-            ret = join_game(event)
+            ret = join_game(event, abi_event)
         elif abi_event.exit_trigger:
-            ret = exit_game(event)
+            ret = exit_game(event, abi_event)
     else:
         logging.info("create_event(): error getting events")
         return False
@@ -253,7 +292,7 @@ def scan_transactions(net):
     for game in games:
         transactions = Transaction.get_pending_queue(game)
         for tx in transactions:
-            receipt  = get_transaction_receipt(tx.hash, net)
+            receipt = get_transaction_receipt(tx.hash, net)
             if receipt is not None:
                 if receipt.status == 0:
                     tx.delete()
@@ -266,7 +305,8 @@ def scan_transactions(net):
                 tx.scan(receipt.blockNumber, receipt.gasUsed)
             else:
                 return
-               
+
+                
 def post_discord_events(net):
     games = Game.get_enabled_by_net(net)
     for game in games:
@@ -274,12 +314,42 @@ def post_discord_events(net):
         for event in events:
             post_to_discord(event)
 
-               
+# No se esta usando            
+def get_points_from_event(event):
+    meta = event.load_meta()
+    if '_from' in meta:
+        points = get_ship_points(event.game, meta['_from'])
+        if points is not None:
+            ship    = Ship.get_by_id(meta['_from'])
+            ranking = Ranking.get(ship, event.game)
+            if ranking is not None:
+                r.update(points)
+    if '_to' in meta:
+        if type(meta['_to']) is int:
+            meta['_to'] = [meta['_to']]
+        for to in meta['_to']:
+            ship = Ship.get_by_id(to)
+            if ship is not None:
+                ranking = Ranking.get(ship, event.game)
+                r.update(points)
+    
+                      
+def get_points(net):
+    games = Game.get_enabled_by_net(net)
+    for game in games:
+        ranking = Ranking.list(game)
+        for r in ranking:
+            points = get_ship_points(game, r.ship.ship_id)
+            if points is not None:
+                logging.info("get_points(): update points for ship %s in game %s" % (r.ship.ship_id, game))
+                r.update(points)
+
+            
 def block_scanner_main():
     logging.basicConfig(format   = '%(asctime)s - block_scanner.py -[%(levelname)s]: %(message)s',
                         filename = LOG_FILE,
                         level    = logging.INFO)
-                        
+
     while True:
         net = Network.get_by_net_id(42)
         last_block = get_last_block(net)
@@ -300,9 +370,11 @@ def block_scanner_main():
                         post_discord_events(net)
                     else:
                         logging.info("block_scanner_main(): error scanning block: %s" % last_scanned_block)
-                        break                    
-                
-                
+                        break
+                        
+                    if last_scanned_block % net.points_interval == 0:
+                        get_points(net)
+   
         time.sleep(net.scanner_sleep)
 
 

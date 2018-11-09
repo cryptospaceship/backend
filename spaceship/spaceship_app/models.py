@@ -211,13 +211,14 @@ class Gas(models.Model):
 
        
 class Network(models.Model):
-    name           = models.CharField(max_length=32)
-    gas            = models.ForeignKey(Gas, on_delete=models.CASCADE)
-    net_id         = models.IntegerField()
-    proxy          = models.CharField(max_length=128)
-    explorer       = models.CharField(max_length=256, blank=True)
-    scanned_block  = models.IntegerField(default=0)
-    scanner_sleep  = models.IntegerField(default=5)
+    name            = models.CharField(max_length=32)
+    gas             = models.ForeignKey(Gas, on_delete=models.CASCADE)
+    net_id          = models.IntegerField()
+    proxy           = models.CharField(max_length=128)
+    explorer        = models.CharField(max_length=256, blank=True)
+    scanned_block   = models.IntegerField(default=0)
+    scanner_sleep   = models.IntegerField(default=5)
+    points_interval = models.IntegerField(default=100, help_text="Intervalo en bloques para get_points")
 
     def __str__(self):
         return self.name
@@ -771,9 +772,11 @@ class Ship(models.Model):
 class GameAbiEvent(models.Model):
     name = models.CharField(max_length=128)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    notif_trigger = models.BooleanField(default=False)
-    join_trigger  = models.BooleanField(default=False)
-    exit_trigger  = models.BooleanField(default=False)
+    notif_trigger    = models.BooleanField(default=False)
+    join_trigger     = models.BooleanField(default=False)
+    exit_trigger     = models.BooleanField(default=False)
+    discord          = models.BooleanField(default=False)
+    discord_template = models.TextField(blank=True)
         
     def __str__(self):
         return self.name
@@ -787,8 +790,16 @@ class GameAbiEvent(models.Model):
         return ae
     
     @staticmethod
-    def delete_game(game):
-        GameAbiEvent.objects.filter(game=game).delete()
+    def delete_game(cls, game):
+        cls.objects.filter(game=game).delete()
+    
+    @classmethod
+    def get(cls, game, name):
+        try:
+            return cls.objects.get(game=game, name=name)
+        except:
+            return None
+        
         
 
 class GameAbiFunction(models.Model):
@@ -845,7 +856,7 @@ class DiscordEvent(models.Model):
     def create(cls, game, message):
         de = cls()
         de.game    = game
-        de.message = "{\"content\":\":loudspeaker: @everyone %s :rocket:\"}" % message
+        de.message = "{\"content\":\"%s\"}" % message
         de.save()
         return de
         
@@ -854,7 +865,38 @@ class DiscordEvent(models.Model):
         return cls.objects.filter(game=game, status='P').order_by('-id')
         
         
-#class Ranking
+class Ranking(models.Model):
+    ship   = models.ForeignKey(Ship, on_delete=models.CASCADE)
+    points = models.IntegerField(default=0)
+    game   = models.ForeignKey(Game, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return str(self.id)
 
+    @classmethod
+    def list(cls, game):
+        return cls.objects.filter(game=game)
+        
+    @classmethod
+    def create(cls, ship, game):
+        r = cls()
+        r.ship = ship
+        r.game = game
+        r.save()
+        return r
+    
+    @classmethod
+    def get(cls, ship, game):
+        try:
+            return cls.objects.get(ship=ship, game=game)
+        except:
+            return None
+            
+    def update(self, points):
+        self.points = points
+        self.save()
+        return self
+     
+        
 #class Battles
 

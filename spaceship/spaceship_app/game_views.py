@@ -10,6 +10,7 @@ from .models import EventInbox
 from .models import GameTemplate
 from .models import Var
 from .models import Message
+from .models import Ranking
 
 from json import loads
 
@@ -207,4 +208,27 @@ def play_messages_view(request, net_id, game_id, ship_id):
 
     return render(request, template, context)
 
+@login_required(login_url='/signin/')
+@owner_required
+def play_ranking_view(request, net_id, game_id, ship_id):
+    game = Game.get_by_id(game_id)
+    if game is None:
+        return render(request, html_templates['not_foud'])
+
+    context = {}
+    context['base_url']       = Var.get_var('base_url')
+    context['game_id']        = game_id
+    #context['game_abi']       = loads(game.abi)
+    context['game_address']   = game.address
+    context['game_network']   = net_id
+    context['ship_id']        = ship_id
+    context['events_count']   = EventInbox.not_read_count(game_id, ship_id)
+    context['messages_count'] = Message.get_inbox_unread_count(ship_id)
+    context['inbox_messages'] = Message.get_inbox_list(ship_id, True)
+    context['ranking']        = Ranking.list(game)
+
+    print(context)
+    template = GameTemplate.get(game.version, 'ranking')
+
+    return render(request, template, context)
 

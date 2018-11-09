@@ -36,6 +36,7 @@ from spaceship_app.game_views import play_map_view
 from spaceship_app.game_views import play_buildings_view
 from spaceship_app.game_views import play_events_view
 from spaceship_app.game_views import play_messages_view
+from spaceship_app.game_views import play_ranking_view
 
 # API VIEWS
 from spaceship_app.api_views import api_user_exist_address
@@ -63,6 +64,7 @@ urlpatterns = [
     url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/buildings/$', play_buildings_view),
     url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/events/$', play_events_view),
     url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/messages/$', play_messages_view),
+    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/ranking/$', play_ranking_view),
     url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/$', game_frame_view),
     url(r'^api/userByAddress/(?P<address>.+)/$', api_user_exist_address),
     url(r'^api/events/(?P<game_id>.+)/(?P<ship_id>.+)/unread/count/$', api_events_not_read_count),

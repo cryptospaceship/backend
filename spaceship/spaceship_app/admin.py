@@ -22,6 +22,7 @@ from .models import Ship
 from .models import GameAbiEvent
 from .models import GameAbiFunction
 from .models import DiscordEvent
+from .models import Ranking
 
 @admin.register(Var)
 class VarAdmin(admin.ModelAdmin):
@@ -116,4 +117,8 @@ class GameAbiFunctionAdmin(admin.ModelAdmin):
 @admin.register(DiscordEvent)
 class DiscordEventAdmin(admin.ModelAdmin):
     list_display = ['id', 'game', 'status']
+    
+@admin.register(Ranking)
+class RankingAdmin(admin.ModelAdmin):
+    list_display = ['game', 'ship', 'points']    
         

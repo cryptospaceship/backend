@@ -1,9 +1,9 @@
 class CSSToken {
 
-    constructor(provider,abi,address,web3) {
+    constructor(provider,abi,address) {
         this.access = provider.eth.contract(abi);
         this.contract = this.access.at(address);
-        this.w3 = web3;
+        this.w3 = provider;
     }
 
     createShip(name,color,callback) {
@@ -61,6 +61,16 @@ class CSSToken {
             ret[i] = result[i].toNumber();
         }
         return ret;
+    }
+
+    static formatPoints(p) {
+        if (p < 1000) {
+            if (p < 10) 
+                return '00' + p.toString();
+            if (p < 100)
+                return '0' + p.toString();
+            return p.toString();
+        }
     }
 
     static colorToNumber(color) {

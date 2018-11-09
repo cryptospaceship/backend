@@ -219,16 +219,47 @@ window.addEventListener('load', async () => {
                 // Get Values
                 nextLevel = window.woprLevel+1;
                 mRes = CSSGame.getUpgradeBuildingCost(2,nextLevel);
-                // Render HTML
-                $('#next-wopr-level').text(nextLevel);
-                $('#energy-wopr-upgrade').text(mRes.energy);
-                $('#graphene-wopr-upgrade').text(mRes.graphene);
-                $('#metals-wopr-upgrade').text(mRes.metals);
-                
+
+                if (window.woprLevel == 0) {
+
+                    window.id_modal_open = '#modal-wopr-upgrade-first';
+                    window.role_selected = undefined;
+
+                    $('#energy-wopr-upgrade-ft').text(mRes.energy);
+
+                    $('#graphene-wopr-upgrade-ft').text(mRes.graphene);
+
+                    $('#metals-wopr-upgrade-ft').text(mRes.metals);
+
+                    $('#converter-selected').click(function() {
+                        window.role_selected = 2;
+                        $('#role-selected').text("Converter");
+                    });
+
+                    $('#cannon-selected').click(function() {
+                        window.role_selected = 1;
+                        $('#role-selected').text("Cannon");
+                    });
+
+                    $('#reparer-selected').click(function() {
+                        window.role_selected = 3;
+                        $('#role-selected').text("Reparer");
+                    });
+
+                } else {
+
+                    window.id_modal_open = '#modal-wopr-upgrade';
+                    $('#next-wopr-level').text(nextLevel);
+                    $('#energy-wopr-upgrade').text(mRes.energy);
+                    $('#graphene-wopr-upgrade').text(mRes.graphene);
+                    $('#metals-wopr-upgrade').text(mRes.metals);
+
+                }
                 // Finally Show the Modal
-                window.id_modal_open = '#modal-wopr-upgrade';
+
                 $(window.id_modal_open).modal('show');
             });
+
 
             $('#modal-warehouse-upgrade').on('hidden.bs.modal', function () { 
                 window.id_modal_open = undefined;
@@ -236,6 +267,12 @@ window.addEventListener('load', async () => {
 
             $('#modal-hangar-upgrade').on('hidden.bs.modal', function () { 
                 window.id_modal_open = undefined;
+            });
+
+            $('#modal-wopr-upgrade-first').on('hidden.bs.modal', function () {
+                window.id_modal_open = undefined;
+                window.role_selected = undefined;
+                $('#role-selected').text("");
             });
 
             $('#modal-wopr-upgrade').on('hidden.bs.modal', function () { 
@@ -279,6 +316,7 @@ window.addEventListener('load', async () => {
                         process_order("upgrade_wopr",h);
                 });
             });
+
             $('#button-upgrade-hangar').click(function() {
                 window.cssgame.upgradeHangar(window.ship,function(e,h){
                     if (!e) 

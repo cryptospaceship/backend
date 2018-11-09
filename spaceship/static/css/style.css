@@ -851,12 +851,17 @@ h2{
     color: rgba(147,218,255,1);
 }
 
+#role-selected {
+    color: rgb(0, 232, 123);
+    font-weight: 800;
+}
+
 .bonus-mode-up {
-    color:rgb(0, 232, 123)
+    color:rgb(0, 232, 123);
 }
 
 .bonus-mode-down {
-    color: #E50E32
+    color: #E50E32;
 }
 
 .amount-total{

@@ -7,34 +7,20 @@ window.addEventListener('load', async () => {
 	config.networks = [42,77];
     config.signout  = "/signout/"
 
-    if (window.ethereum) {
-        window.web3 = new Web3(ethereum);
-        try {
-            // Request account access if needed
-            await ethereum.enable();
-            // Acccounts now exposed
-        } catch (error) {
-            // User denied account access...
-        }
-    }
-    // Legacy dapp browsers...
-    else if (window.web3) {
-        window.web3 = new Web3(web3.currentProvider);
-        // Acccounts always exposed
-    }
-    // Non-dapp browsers...
-    else {
-        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
     
-	init = new CSSInit(config,window.web3);
+    init = new CSSInit(config,window.web3);
+    
 	init.init(function(){
-        w3 = window.web3;
-        csstoken = new CSSToken(w3,window.shipAbi,window.shipAddress,web3);
+        $('#ship_points').text(CSSToken.formatPoints(window.points));
+        w3 = this.web3;
+        window.csstoken = new CSSToken(this.web3,window.shipAbi,window.shipAddress);
         
+        window.qaim_1 = undefined;
+        window.qaim_2 = undefined;
+
         function joinGame(gameId) {   
-            cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address'],web3);
-            cssgame.placeShip(window.shipId,function(e,tx){
+            window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address']);
+            window.cssgame.placeShip(window.shipId,window.qaim_1,window.qaim_2,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
@@ -44,11 +30,12 @@ window.addEventListener('load', async () => {
                         });
                     },3000);
                 }
+                concole.log(e);
             });
         }
         
         function exitGame() {            
-            csstoken.exitGame(window.shipId,function(e,tx){
+            window.csstoken.exitGame(window.shipId,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
@@ -62,7 +49,7 @@ window.addEventListener('load', async () => {
         }
         
         function setQaim() {        
-            csstoken.setQAIM(window.shipId,window.qaimAssign,function(e,tx){
+            window.csstoken.setQAIM(window.shipId,window.qaimAssign,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
@@ -130,13 +117,43 @@ window.addEventListener('load', async () => {
             openQaimModal();
         });
 
+        $('#select-game-modal').on('click', function(){
+            window.qaim_1 = undefined;
+            window.qaim_2 = undefined;
+            for (i = 1; i <= 6; i++) {
+                q = '#qaims' + i.toString();
+                $(q).prop('checked', false);
+                $(q).on('click', function(){
+                    checked = $(this).attr('qaim');
+                    if (window.qaim_1 == checked) {
+                        window.qaim_1 = undefined;
+                    } else {
+                        if (window.qaim_2 == checked) {
+                            window.qaim_2 = undefined;
+                        } else {
+                            if (typeof window.qaim_1 !== 'undefined') {
+                                q = '#qaims' + window.qaim_1;
+                                $(q).prop('checked', false);
+                            }
+                            window.qaim_1 = window.qaim_2;
+                            window.qaim_2 = checked;
+                        }
+                    }
+                });
+            }
+            $('body').addClass('blur');
+            $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#join-game"});
+        });
+
         $('#qaim-save-button').on('click', function() {
             setQaim();
         });
         
         $('#join-game-button').on('click', function() {
-            joinGame($('#select-game').val());
+            if (typeof window.qaim_1 !== 'undefined' && typeof window.qaim_2 !== 'undefined')
+                joinGame($('#select-game').val());
         });
+
         $('#exit-game-button').on('click', function() {
             exitGame();
         });

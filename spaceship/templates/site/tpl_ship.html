@@ -51,7 +51,7 @@
                                     </div>
                                     <div class="status">
                                         <p class="info-title">Points :</p>
-                                        <p class="number">1.1K</p>
+                                        <p class="number"><span id="ship_points"></span></p>
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
                             {% else %}
                                 <h3>_Current Mission</h3>
                                 <p>No estas participando de ningun juego</p>
-                                <a class="btn join-game" href="#join-game">join game</a>
+                                <a class="btn join-game" id="select-game-modal" href="#">join game</a>
                             {% endif %}
                         </div>
                     </div>
@@ -177,6 +177,35 @@
                 <h5>Join a game</h5>
                 <p>_Select your next adventure</p>
                 <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore </p>
+
+                <div class="group-input">
+                    <p>Select 2 QAIMS</p>
+                    <div class="inputs">
+                        <input type="checkbox" id="qaims1" qaim="1">
+                        <label for="qaims1">QAIMS 1</label>
+                    </div>
+                    <div class="inputs">
+                        <input type="checkbox" id="qaims2" qaim="2">
+                        <label for="qaims2">QAIMS 2</label>
+                    </div>
+                    <div class="inputs">
+                        <input type="checkbox" id="qaims3" qaim="3">
+                        <label for="qaims3">QAIMS 3</label>
+                    </div>
+                    <div class="inputs">
+                        <input type="checkbox" id="qaims4" qaim="4">
+                        <label for="qaims4">QAIMS 4</label>
+                    </div>
+                    <div class="inputs">
+                        <input type="checkbox" id="qaims5" qaim="5">
+                        <label for="qaims5">QAIMS 5</label>
+                    </div>
+                    <div class="inputs">
+                        <input type="checkbox" id="qaims6" qaim="6">
+                        <label for="qaims6">QAIMS 6</label>
+                    </div>
+                </div>
+
                 <div class="group-input">
                     <label for="address">GAME</label>
                     <select id="select-game">
@@ -260,6 +289,7 @@ window.layer_1 = "/static/site/images/capa1.png";
 {% if ship.qaim is not None %}
     window.shipQaim = {{ ship.qaim }};
 {% endif %}
+window.points = {{ ship.points }};
 window.qaimClean = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 window.qaimAssign = [];
 </script>

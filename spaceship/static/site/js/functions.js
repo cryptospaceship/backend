@@ -4099,7 +4099,7 @@
 
 
     $(".exit-game").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false });
-    $(".join-game").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false });
+    //$(".join-game").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false });
     //$(".modulo-qia").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false });
 
 
