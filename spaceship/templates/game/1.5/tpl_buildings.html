@@ -299,8 +299,8 @@
                             <div class="combo-top">
                                 <div class="resource-title">
                                     <div class="icon ic-time"></div>
-                                    <div class="title-text">WATCH COUNTDOWN</div>
-                                    <div class="resource-name">Blocks to </div>
+                                    <div class="title-text">Watch Countdown</div>
+                                    <div class="resource-name">Blocks to end </div>
                                     <div class="stopper"></div>
                                 </div>
                             </div>
@@ -544,7 +544,7 @@
             <div class="modal-body" id="modal-body">
                 <div class="row">
                     <div class="col-md-1"></div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="modal-body-text">Points available: <span id="available-design-points">100</span></div>
                         <div class="slidecontainer">
                             <p class="design-tag fL">Attack</p>
@@ -667,24 +667,24 @@
               </button>
             </div>
             <div class="modal-body" id="modal-body">
-                <div class="modal-body-text">You are gonna to disassemble your fleet - Warning</div>
-                <div class="modal-body-text">Max: <span id="max-fleet-to-build">15</span></div>
+                <div class="modal-body-text">You are going to disassemble your fleet</div>
+                <div class="modal-body-text">Max: <span id="max-fleet-to-disassemble"></span></div>
                 <div class="slidecontainer">
                     <p class="build-tag fL">Fleet to Disassemble: </p>
-                    <input type="range" min="0" max="15" value="0" step="1" class="slider-build slider-build-fleet" id="range-build-fleet" style="width: 44%;">
-                    <p class="fR"><span id="fleet-to-build">15</span></p>
+                    <input type="range" min="0" max="0" value="0" step="1" class="slider-build slider-build-fleet" id="range-disassemble-fleet" style="width: 44%;">
+                    <p class="fR"><span id="fleet-to-disassemble">0</span></p>
                 </div>
             </div>
             <div class="modal-footer">
                 <div class="title-text fL">Recycled Resources: </div>
                 <div class="ratio-item-modal">
                     <div class="icon-ratio ic-graphene"></div>
-                    <div class="title-text fL"><span id="graphene-build-fleet">78600</span></div>
+                    <div class="title-text fL"><span id="graphene-disassemble-fleet">0</span></div>
                     <div class="stopper"></div>
                 </div>
                 <div class="ratio-item-modal">
                     <div class="icon-ratio ic-metals"></div>
-                    <div class="title-text fL"><span id="metals-build-fleet">97800</span></div>
+                    <div class="title-text fL"><span id="metals-disassemble-fleet">0</span></div>
                     <div class="stopper"></div>
                 </div>  
                  
@@ -718,12 +718,9 @@
 
     </body>
 <!-- scripts -->
-    <script src="/static/js/particles.min.js"></script>
-    <script src="/static/js/app.js"></script>
-    <script src="/static/js/cssgame.1.5.js"></script>
-    <script src="/static/js/backend.js"></script>
-    <script src="/static/js/cssinit.js"></script>
-    <script src="/static/js/buildings.js"></script>
+    {% for js in inject_js %}
+        <script src="{{ js }}"></script>
+    {% endfor %}
     <script>
         window.DEBUG = true;
         window.planetOwner = {{ game_candidate }};
@@ -742,7 +739,7 @@
     
     
         window.warehouseLevel = {{ warehouse_level }};
-        window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel);
+        window.warehouseLoad = CSSGame.getWarehouseLoadByLevel(window.warehouseLevel,{{ game_network }});
         window.hangarLevel = {{ hangar_level }};
         window.woprLevel = {{ wopr_level }};
     

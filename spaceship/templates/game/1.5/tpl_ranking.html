@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Mobile-friendly viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRYPTOSPACESHIP</title>
+    <!-- Style sheet link -->
+    {% for css in inject_css %}
+        <link href="{{ css }}" rel="stylesheet" media="all"></script>
+    {% endfor %}
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/site/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/site/images/favicon-16x16.png">
+    <link href="https://fonts.googleapis.com/css?family=Rajdhani:300,400,500,600" rel="stylesheet">
+</head>
+
+<body>
+    
+        <!-- ACA PONER CONTENIDO-->
+        <div class="container overal-ranking">
+            <div class="section-title">
+                <h2>Overal Ranking</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ranking</th>
+                            <th>Ship ID</th>
+                            <th>Ship Name</th>
+                            <th>Player</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ranking in rankings %}
+                            {% if ranking.owner %}
+                                <tr style="background-color: #ffffff30;">
+                                    <td><b>{{ ranking.position }}</b></td>
+                                    <td><b>{{ ranking.ship.ship_id }}</b></td>
+                                    <td><b>{{ ranking.ship.name }}</b></td>
+                                    {% if ranking.ship.player is not None %}
+                                        <td><b>{{ ranking.ship.player.user.username }}</b></td>
+                                    {% else %}
+                                        <td><b>non-player</b></td>
+                                    {% endif %}    
+                                    <td><b>{{ ranking.points }}</b></td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td>{{ ranking.position }}</td>
+                                    <td>{{ ranking.ship.ship_id }}</td>
+                                    <td>{{ ranking.ship.name }}</td>
+                                    {% if ranking.ship.player is not None %}
+                                        <td>{{ ranking.ship.player.user.username }}</td>
+                                    {% else %}
+                                        <td>non-player</td>
+                                    {% endif %}    
+                                    <td>{{ ranking.points }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="pagination-container">
+                    <p>Page {{ rankings.number }} of {{ rankings.paginator.num_pages }}</p>
+                    <div class="pagination">
+                        <ul>
+                        {% if rankings.has_previous %}
+                            <li><a href="?page={{ rankings.previous_page_number }}" class="arrow-prev"></a></li>
+                        {% else %}
+                            <li><a href="#" class="arrow-prev disable"></a></li>
+                        {% endif %}                            
+                        {% for i in rankings.paginator.page_range %}
+                            {% if rankings.number == i %}
+                                <li><a href="#" class="active">{{ i }}</a></li>
+                            {% else %}
+                                <li><a href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if rankings.has_next %}
+                            <li><a href="?page={{ rankings.next_page_number }}" class="arrow-next"></a></li>
+                        {% else %}
+                            <li><a href="#" class="arrow-next disable"></a></li>
+                        {% endif %}                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+</body>
+</html>

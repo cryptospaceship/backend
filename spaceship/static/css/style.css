@@ -192,7 +192,9 @@ h1{
 }
 
 
-
+.center {
+    text-align: center;
+}
 
 /* header */
 #header{
@@ -244,6 +246,11 @@ h2{
    float:right; 
 }
 
+.fR-converter{
+    float:right; 
+    margin-right: 20px;
+}
+
 .taL{
     text-align: left;
 }
@@ -256,7 +263,7 @@ h2{
 
 /*gauges*/
 .resource-combo{
-    margin-bottom: 30px;    
+    margin-bottom: 20px;    
 }
 
 .gauges-container{
@@ -287,6 +294,12 @@ h2{
     width:auto;
     display:block;
     font-size: 1px;
+}
+
+.icon-right-converter {
+    float: right;
+    animation: blinker 2s linear infinite;
+    cursor: pointer;
 }
 
 .icon-right-2{
@@ -375,8 +388,18 @@ h2{
     max-height: 21px;
 }
 
+.ic-converter::before{
+    content:url("../images/icon-converter.png");
+    max-height: 21px;
+}
+
 .ic-upgrade::after{
     content:url("../images/icon-upgrade.png");
+    max-height: 21px;
+}
+
+.ic-convert::after{
+    content:url("../images/icon-convert.png");
     max-height: 21px;
 }
 
@@ -463,9 +486,23 @@ h2{
     padding-right: 20px;
 }
 
+.converter-tag {
+    width: 15%;
+    font-size: 14px;
+    margin-left: 50px;
+    padding-right: 20px;  
+}
+
 .slidecontainer {
     margin-top:20px;
     width: 100%;
+}
+
+.convertion-tag {
+    width: 15%;
+    font-size: 14px;
+    margin-left: 10px;
+    padding-right: 20px;  
 }
 
 .slider {
@@ -592,6 +629,43 @@ h2{
 }
 
 
+.slider-converter-graphene::-moz-range-thumb {
+    width: 21px;
+    height: 21px;
+    border: 0;
+    background: url("../images/icon-graphene.png");
+    cursor: pointer;
+}
+
+.slider-converter-graphene::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 21px;
+    height: 21px;
+    border: 0;
+    background: url("../images/icon-graphene.png");
+    cursor: pointer;
+}
+
+
+.slider-converter-metal::-moz-range-thumb {
+    width: 21px;
+    height: 21px;
+    border: 0;
+    background: url("../images/icon-metals.png");
+    cursor: pointer;
+}
+
+.slider-converter-metal::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 21px;
+    height: 21px;
+    border: 0;
+    background: url("../images/icon-metals.png");
+    cursor: pointer;
+}
+
 .resource-title {
     font-weight: 800;
     font-size: 18px;
@@ -683,6 +757,12 @@ h2{
     opacity:1;
     margin-top:-12px;
     animation: blinker 1s linear infinite;
+}
+
+.converter-ready{
+    opacity:1;
+    margin-top:-12px;
+    animation: blinker 2s linear infinite;
 }
 
 .can-repair{
@@ -857,6 +937,10 @@ h2{
 }
 
 .bonus-mode-up {
+    color:rgb(0, 232, 123);
+}
+
+#resource-converter-status {
     color:rgb(0, 232, 123);
 }
 
@@ -1112,6 +1196,18 @@ h2{
     display: block;
     position: relative;
     padding-top: 10px;
+}
+
+.modal-label-text {
+    font-weight: 800;
+    font-size: 18px;
+    display: flex;
+    position: relative;
+    padding-top: 10px;
+}
+
+.mtop5 {
+    margin-top: 5px;
 }
 
 .modal-info-data {
@@ -1538,6 +1634,7 @@ button.btn {
 
 .form-control {
     font-size: 12px;
+    line-height: 0px;
 }
 
 .form-container {
@@ -1627,7 +1724,7 @@ button.btn {
     }
     
     .resource-combo {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     .mapContainer {

@@ -10,7 +10,7 @@ window.addEventListener('load', async () => {
     init = new CSSInit(config,window.web3);
 
     init.init(function() {
-        window.cssgame = new CSSGame(this.web3,window.gameAbi,window.gameAddress);
+        window.cssgame = new CSSGame(this.web3,window.gameAbi,window.gameAddress,window.gameNetwork);
         window.backend = new Backend(window.base_url);
 
         function setGameStats() {
@@ -127,15 +127,38 @@ window.addEventListener('load', async () => {
             $('#disassemble-fleet').click(function() {
                 $('#modal-disassemble-fleet').modal('show');
                 window.id_modal_open = '#modal-disassemble-fleet';
+                max = window.fleetSize;
+                $('#range-disassemble-fleet').attr('max', max);                
+                $('#max-fleet-to-disassemble').text(max);
+
+                $('#range-disassemble-fleet').on('input', function(){
+                    let r = window.cssgame.calcReturnResourcesFromFleet(
+                        window.hangarLevel, 
+                        window.fleetAttack, 
+                        window.fleetDefense, 
+                        window.fleetDistance, 
+                        window.fleetLoad, this.value);
+                    $('#fleet-to-disassemble').text(this.value);
+                    $('#graphene-disassemble-fleet').text(r.graphene);
+                    $('#metals-disassemble-fleet').text(r.metals);
+                    window.fleet_to_disassemble = this.value;
+                });
+
                 $('#button-disassemble-fleet').click(function() {
-                    window.cssgame.disassembleFleet(window.ship,function(e,h){
+                    window.cssgame.disassembleFleet(window.ship,window.fleet_to_disassemble,function(e,h){
                         if (!e) 
                             process_order("disassemble_fleet",h);
                     });
                 });
             });
 
-            $('#modal-disassemble-fleet').on('hidden.bs.modal', function () { 
+
+            $('#modal-disassemble-fleet').on('hidden.bs.modal', function () {
+                $('#fleet-to-disassemble').text(0);
+                $('#range-disassemble-fleet').val(0);  
+                $('#max-fleet-to-disassemble').text(max);
+                $('#button-disassemble-fleet').off(); 
+                window.fleet_to_disassemble = 0;
                 window.id_modal_open = undefined;
             });
 
@@ -149,25 +172,26 @@ window.addEventListener('load', async () => {
                 design.distance = parseInt($('#range-distance-points').val());
                 design.load = parseInt($('#range-load-points').val());
                 design.points = design.attack + design.defense + design.distance * 6 + design.load / 80;
-                points = 100 - design.points;
+                points = window.qaim[0] + CSSGame.getPointsByHangarLevel(window.hangarLevel) - design.points;
                 $('#available-design-points').text(points);
                 if (points >= 0) {
                     $('#available-design-points').css("color", "rgb(0, 232, 123)");
                     $('#fleet-type-design').text(CSSGame.getFleetType(design.attack,design.defense,design.distance,design.load));
-                    cost = CSSGame.getFleetCost(design.attack,design.defense,design.distance,design.load);
+                    cost = window.cssgame.getFleetCost(design.attack,design.defense,design.distance,design.load,window.qaim[3]);
+                    cost.valid = true;
                 }
                 else {
                     $('#available-design-points').css("color", "rgba(232,0,87,1)");
                     $('#fleet-type-design').text("ERROR");
                     cost = {};
-                    cost.e = 0;
-                    cost.g = 0;
-                    cost.m = 0;
+                    cost.energy = 0;
+                    cost.graphene = 0;
+                    cost.metals = 0;
                     cost.valid = false;
                 }
-                $('#energy-cost').text(cost.e);
-                $('#graphene-cost').text(cost.g);
-                $('#metals-cost').text(cost.m);
+                $('#energy-cost').text(cost.energy);
+                $('#graphene-cost').text(cost.graphene);
+                $('#metals-cost').text(cost.metals);
 
                 // Disable handler
                 $('#button-design-fleet').off();
@@ -188,7 +212,7 @@ window.addEventListener('load', async () => {
             $('#upgrade-warehouse-ready').click(function() {
                 // Get Values
                 nextLevel = window.warehouseLevel+1;
-                gRes = CSSGame.getUpgradeBuildingCost(0,nextLevel);
+                gRes = window.cssgame.getUpgradeBuildingCost(0,nextLevel,window.qaim[2]);
                 // Render HTML
                 $('#next-warehouse-level').text(nextLevel);
                 $('#energy-warehouse-upgrade').text(gRes.energy);
@@ -203,7 +227,7 @@ window.addEventListener('load', async () => {
             $('#upgrade-hangar-ready').click(function() {
                 // Get Values
                 nextLevel = window.hangarLevel+1;
-                gRes = CSSGame.getUpgradeBuildingCost(1,nextLevel);
+                gRes = window.cssgame.getUpgradeBuildingCost(1,nextLevel,window.qaim[2]);
                 // Render HTML
                 $('#next-hangar-level').text(nextLevel);
                 $('#energy-hangar-upgrade').text(gRes.energy);
@@ -218,7 +242,7 @@ window.addEventListener('load', async () => {
             $('#upgrade-wopr-ready').click(function() {
                 // Get Values
                 nextLevel = window.woprLevel+1;
-                mRes = CSSGame.getUpgradeBuildingCost(2,nextLevel);
+                mRes = window.cssgame.getUpgradeBuildingCost(2,nextLevel,window.qaim[2]);
 
                 if (window.woprLevel == 0) {
 
@@ -472,7 +496,7 @@ window.addEventListener('load', async () => {
                     }
                 } else {
                     if (window.warehouseLevel < 4) {
-                        eRes = CSSGame.getUpgradeBuildingCost(0,window.warehouseLevel+1);
+                        eRes = window.cssgame.getUpgradeBuildingCost(0,window.warehouseLevel+1,window.qaim[2]);
                         if ( eRes.energy <= window.energyStock && 
                             eRes.graphene <= window.grapheneStock && 
                             eRes.metals <= window.metalsStock && 
@@ -486,7 +510,7 @@ window.addEventListener('load', async () => {
 
                     if (window.hangarLevel < 4) {
                         // Building 1 is Hangar
-                        gRes = CSSGame.getUpgradeBuildingCost(1,window.hangarLevel+1);
+                        gRes = window.cssgame.getUpgradeBuildingCost(1,window.hangarLevel+1,window.qaim[2]);
                         if ( gRes.energy <= window.energyStock && 
                             gRes.graphene <= window.grapheneStock && 
                             gRes.metals <= window.metalsStock && 
@@ -499,7 +523,7 @@ window.addEventListener('load', async () => {
                     }
                     
                     if (window.woprLevel < 4) {
-                        mRes = CSSGame.getUpgradeBuildingCost(2,window.woprLevel+1);
+                        mRes = window.cssgame.getUpgradeBuildingCost(2,window.woprLevel+1,window.qaim[2]);
                         
                         if ( mRes.energy <= window.energyStock && 
                             mRes.graphene <= window.grapheneStock && 
@@ -595,7 +619,7 @@ window.addEventListener('load', async () => {
 
             function setUpgradeResourceBar(resource,level)
             {
-                res = CSSGame.getUpgradeBuildingCost(resource,level);        
+                res = window.cssgame.getUpgradeBuildingCost(resource,level,window.qaim[2]);        
                 energy = Math.floor(window.energyStock * 100 / res.energy);
                 graphene = Math.floor(window.grapheneStock * 100 / res.graphene);
                 metals = Math.floor(window.metalsStock * 100 / res.metals);
@@ -713,9 +737,9 @@ window.addEventListener('load', async () => {
 
             function getUpgradeBuildingsCost()
             {
-                let warehouseCost = CSSGame.getUpgradeBuildingCost(0, window.warehouseLevel+1);
-                let hangarCost = CSSGame.getUpgradeBuildingCost(1, window.hangarLevel+1);
-                let woprCost = CSSGame.getUpgradeBuildingCost(2, window.woprLevel+1);
+                let warehouseCost = window.cssgame.getUpgradeBuildingCost(0, window.warehouseLevel+1,window.qaim[2]);
+                let hangarCost = window.cssgame.getUpgradeBuildingCost(1, window.hangarLevel+1,window.qaim[2]);
+                let woprCost = window.cssgame.getUpgradeBuildingCost(2, window.woprLevel+1,window.qaim[2]);
                 
                 if (window.warehouseLevel < 4) {                    
                     $('#warehouse-energy-tooltip').attr('data-original-title', 'Energy required for next level: ' + parseInt(warehouseCost.energy).toString());
@@ -750,6 +774,7 @@ window.addEventListener('load', async () => {
                     $('#wopr-metals-tooltip').attr('data-original-title', 'wopr max level reached');
                 }
             }
+
 
 
             

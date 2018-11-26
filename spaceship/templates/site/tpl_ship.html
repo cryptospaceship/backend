@@ -68,8 +68,8 @@
                             {% if ship.in_game == True %}
                                 <h3>_Current Mission</h3>
                                 <a href="/ui/{{ game_network_id }}/play/{{ game.id }}/{{ ship.id }}/" class="btn resume-game">go to game</a>
-                                <p>started on</br>
-                                    January 12 at 0350 hours</p>
+                                <p>started at</br>
+                                            block {{ game_block }}</p>
                                 <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
                             {% else %}
                                 <h3>_Current Mission</h3>
@@ -181,27 +181,27 @@
                 <div class="group-input">
                     <p>Select 2 QAIMS</p>
                     <div class="inputs">
-                        <input type="checkbox" id="qaims1" qaim="1">
+                        <input type="checkbox" id="qaims0" qaim="0">
                         <label for="qaims1">QAIMS 1</label>
                     </div>
                     <div class="inputs">
-                        <input type="checkbox" id="qaims2" qaim="2">
+                        <input type="checkbox" id="qaims1" qaim="1">
                         <label for="qaims2">QAIMS 2</label>
                     </div>
                     <div class="inputs">
-                        <input type="checkbox" id="qaims3" qaim="3">
+                        <input type="checkbox" id="qaims2" qaim="2">
                         <label for="qaims3">QAIMS 3</label>
                     </div>
                     <div class="inputs">
-                        <input type="checkbox" id="qaims4" qaim="4">
+                        <input type="checkbox" id="qaims3" qaim="3">
                         <label for="qaims4">QAIMS 4</label>
                     </div>
                     <div class="inputs">
-                        <input type="checkbox" id="qaims5" qaim="5">
+                        <input type="checkbox" id="qaims4" qaim="4">
                         <label for="qaims5">QAIMS 5</label>
                     </div>
                     <div class="inputs">
-                        <input type="checkbox" id="qaims6" qaim="6">
+                        <input type="checkbox" id="qaims5" qaim="5">
                         <label for="qaims6">QAIMS 6</label>
                     </div>
                 </div>

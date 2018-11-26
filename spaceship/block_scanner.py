@@ -14,6 +14,8 @@ from spaceship_app.models import GameAbiEvent
 from spaceship_app.models import GameAbiFunction
 from spaceship_app.models import DiscordEvent
 from spaceship_app.models import Ranking
+from spaceship_app.models import Player
+from spaceship_app.models import EventInbox
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # System
@@ -75,6 +77,12 @@ def get_ship_points(game, ship_id):
     except:
         return None
 
+def get_ship(css, ship_id):
+    try:
+        return css.connect().get_ship(int(ship_id))
+    except:
+        return None
+        
 
 def get_games_addresses(net):
     ret = {}
@@ -153,10 +161,10 @@ def create_update_transaction(tx, net, game, function_name=''):
     
 def create_event_inbox(event, abi_event):
     EventInbox.create_from(event)
-    logging.info("create_event_inbox(): from_event_inbox created: %s - from: %s" % (event.event_type, event.ship_from))
+    logging.info("create_event_inbox(): from_event_inbox created: %s - from: %s" % (event.event_type, event.from_ship))
     if event.to_ship != '':
         EventInbox.create_to(event, event.to_ship)
-        logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, event.ship_to))
+        logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, event.to_ship))
     else:
         meta = event.load_meta()
         if '_to' in meta.keys():
@@ -338,12 +346,26 @@ def get_points(net):
     games = Game.get_enabled_by_net(net)
     for game in games:
         ranking = Ranking.list(game)
-        for r in ranking:
+        for r in ranking[0]:
             points = get_ship_points(game, r.ship.ship_id)
             if points is not None:
                 logging.info("get_points(): update points for ship %s in game %s" % (r.ship.ship_id, game))
                 r.update(points)
 
+def get_ships_owner(net):
+    css  = CryptoSpaceShip.get_by_network(net)
+    games = Game.get_enabled_by_net(net)
+    for game in games:
+        ranking = Ranking.list(game)
+        for r in ranking[0]:
+            ship = get_ship(css, int(r.ship.ship_id))
+            if ship is not None:
+                player = Player.get_by_address(ship['owner'].lower())
+                logging.info("get_ships_owner(): update owner for ship %s: %s" % (r.ship.ship_id, player.user.username))
+                r.ship.set_player(player)
+            
+
+   
             
 def block_scanner_main():
     logging.basicConfig(format   = '%(asctime)s - block_scanner.py -[%(levelname)s]: %(message)s',
@@ -373,7 +395,9 @@ def block_scanner_main():
                         break
                         
                     if last_scanned_block % net.points_interval == 0:
+                        get_ships_owner(net)
                         get_points(net)
+                        
    
         time.sleep(net.scanner_sleep)
 

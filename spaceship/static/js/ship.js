@@ -19,14 +19,14 @@ window.addEventListener('load', async () => {
         window.qaim_2 = undefined;
 
         function joinGame(gameId) {   
-            window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address']);
+            window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address'],42);
             window.cssgame.placeShip(window.shipId,window.qaim_1,window.qaim_2,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
                     setInterval(function(){
                         w3.eth.getTransactionReceipt(tx, function(e,h){
-                            if (h && h.blockNumber != null) window.location.href = '/ui/' + window.gameNetwork + '/play/' + window.gamesData[gameId]['id'] + '/' + window.shipId + '/';
+                            if (h && h.blockNumber != null && h.status != "0x0") window.location.href = '/ui/' + window.gameNetwork + '/play/' + window.gamesData[gameId]['id'] + '/' + window.shipId + '/';
                         });
                     },3000);
                 }
@@ -120,7 +120,7 @@ window.addEventListener('load', async () => {
         $('#select-game-modal').on('click', function(){
             window.qaim_1 = undefined;
             window.qaim_2 = undefined;
-            for (i = 1; i <= 6; i++) {
+            for (i = 0; i <= 6-1; i++) {
                 q = '#qaims' + i.toString();
                 $(q).prop('checked', false);
                 $(q).on('click', function(){

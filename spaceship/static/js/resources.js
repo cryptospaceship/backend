@@ -10,7 +10,7 @@ window.addEventListener('load', async () => {
     init = new CSSInit(config,window.web3);
 
     init.init(function() {
-        window.cssgame = new CSSGame(this.web3,window.gameAbi,window.gameAddress);
+        window.cssgame = new CSSGame(this.web3,window.gameAbi,window.gameAddress,window.gameNetwork);
         window.backend = new Backend(window.base_url);
 
         function setGameStats() {
@@ -53,7 +53,7 @@ window.addEventListener('load', async () => {
             });
         },5000);
 
-        function process_order (order, tx) {
+        function process_order (tx) {
             /*
              * Se cierra el modal
              */
@@ -103,7 +103,7 @@ window.addEventListener('load', async () => {
             i = parseInt(n);
             nextLevel = window.energyPanels[i-1]+1;
 
-            eRes = CSSGame.getResourceUpgradeCost(0,nextLevel);
+            eRes = window.cssgame.getUpgradeResourceCost(0,nextLevel,window.qaim[1]);
             // Render HTML
             $('#energy-energy-upgrade').text(eRes.energy);
             $('#graphene-energy-upgrade').text(eRes.graphene);
@@ -116,7 +116,7 @@ window.addEventListener('load', async () => {
             $('#button-upgrade-energy-panel').click(function() {
                 window.cssgame.upgradeEnergy(window.ship,i-1,function(e,h){
                     if (!e) 
-                        process_order("upgrade_energy",h);
+                        process_order(h);
                 });
             });
             $('.solar-panel-cost').css('display','flex');
@@ -132,7 +132,7 @@ window.addEventListener('load', async () => {
                 idNextLevel  = id_prefix + '-nextLevel';
                 $(idPanelLevel).text(window.energyPanels[i-1]);
 
-                eRes = CSSGame.getResourceUpgradeCost(0,window.energyPanels[i-1]+1);
+                eRes = window.cssgame.getUpgradeResourceCost(0,window.energyPanels[i-1]+1,window.qaim[1]);
                 if (eRes.energy <= window.energyStock && 
                     eRes.graphene <= window.grapheneStock && 
                     eRes.metals <= window.metalsStock && 
@@ -157,14 +157,14 @@ window.addEventListener('load', async () => {
         $('#button-upgrade-graphene').click(function() {
             window.cssgame.upgradeGraphene(window.ship,function(e,h){
                 if (!e) 
-                    process_order("upgrade_graphene",h);
+                    process_order(h);
             });
         });
 
         $('#button-upgrade-metals').click(function() {
             window.cssgame.upgradeMetals(window.ship,function(e,h){
                 if (!e) 
-                    process_order("upgrade_metals",h);
+                    process_order(h);
             });
         });
 
@@ -179,10 +179,230 @@ window.addEventListener('load', async () => {
             $('#button-upgrade-energy-panel').addClass('disabled');
         });
 
+        /**
+         * Resource Converter
+         */
+        $('#set-resource-converter').click(()=>{
+            window.id_modal_open = '#modal-resource-converter';
+            let graphene = cssgame.getProductionByLevel(window.grapheneCollectorLevel);
+            let metal = cssgame.getProductionByLevel(window.metalsCollectorLevel);
+
+            let checkvalues = ()=> {
+                let g = $('#range-graphene-to-converter').val();
+                let m = $('#range-metal-to-converter').val();
+                $('#graphene-selected').text(g);
+                $('#metal-selected').text(m);
+                window.grapheneToConverter = parseInt(g);
+                window.metalToConverter = parseInt(m);
+                let e = cssgame.getProductionToConverter(g,m);
+                $('#energy-convertion').text(e);
+            }
+
+
+            $('#range-graphene-to-converter').attr('max',graphene);
+            $('#graphene-to-converter').text(graphene);
+            $('#range-metal-to-converter').attr('max',metal);
+            $('#metal-to-converter').text(metal);
+
+            $('#range-graphene-to-converter').on('input',()=>{
+                checkvalues();
+            });
+
+            $('#range-metal-to-converter').on('input',()=>{
+                checkvalues();
+            });
+
+            $('#button-convert-production').click(()=>{
+                window.cssgame.setProductionResourcesConverter(window.ship,window.grapheneToConverter,window.metalToConverter,(e,h)=>{
+                    if (!e) {
+                        process_order(h);
+                    }
+                });
+            });
+            $(window.id_modal_open).modal('show');
+        });
+
+        $('#set-resource-converter').on('hidden.bs.modal',()=>{
+            clean_modal();
+            window.grapheneToConverter = 0;
+            window.metalToConverter = 0;
+            $('#button-convert-production').off();
+            $('#range-metal-to-converter').off();
+            $('#range-graphene-to-converter').off();
+        });
+
+        /**
+         * Convertidor de Stock de recursos
+         */
+        $('#all-energy').click(()=>{
+            $('#energy-resource-convertion').text(cssgame.getConvertionRate(window.energyStock,window.converterLevel));
+            $('#energy-to-convert').val(window.energyStock);
+        });
+
+        $('#all-graphene').click(()=>{
+            $('#graphene-resource-convertion').text(cssgame.getConvertionRate(window.grapheneStock,window.converterLevel));
+            $('#graphene-to-convert').val(window.grapheneStock);
+        });
+
+        $('#all-metals').click(()=>{
+            $('#metal-resource-convertion').text(cssgame.getConvertionRate(window.metalsStock,window.converterLevel));
+            $('#metals-to-convert').val(window.metalsStock);
+        });
+
+        $('#convert-energy').click(()=>{
+            window.convert_source = 0;
+            window.id_modal_open = '#modal-convert-energy';
+            $('#energy-to-convert').val(0);
+            $('#convert-energy-to-graphene').prop('checked', false);
+            $('#convert-energy-to-metals').prop('checked', false);
+
+            $('#convert-energy-to-graphene').on('click',()=>{
+                window.convert_destination = 1;
+                $('#convert-energy-to-metals').prop('checked',false);
+                $('#icon-energy-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+            });
+
+            $('#convert-energy-to-metals').on('click',()=>{
+                window.convert_destination = 2;
+                $('#convert-energy-to-graphene').prop('checked', false);
+                $('#icon-energy-to-convertion').removeClass().addClass('icon-ratio ic-metals');
+            });
+
+            $('#energy-to-convert').on('input', ()=>{
+                let v = $('#energy-to-convert').val();
+                $('#energy-resource-convertion').text(cssgame.getConvertionRate(v,window.converterLevel));
+            });
+
+            $('#button-convert-energy').on('click',()=>{
+                n = parseInt($('#energy-to-convert').val());
+                if (window.convert_destination != undefined && n > 0) {
+                    window.cssgame.convertResource(window.ship,window.convert_source,window.convert_destination,n,(e,tx)=>{
+                        if (!e)
+                            process_order(tx);
+                    });
+                }
+            });
+
+            $(window.id_modal_open).modal('show');
+        });
+
+        $('#convert-graphene').click(()=>{
+            window.convert_source = 1;
+            window.id_modal_open = '#modal-convert-graphene';
+            $('#graphene-to-convert').val(0);
+            $('#convert-graphene-to-energy').prop('checked', false);
+            $('#convert-graphene-to-metals').prop('checked', false);
+
+            $('#convert-graphene-to-energy').on('click',()=>{
+                window.convert_destination = 0;
+                $('#convert-graphene-to-metals').prop('checked',false);
+                $('#icon-graphene-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+            });
+
+            $('#convert-graphene-to-metals').on('click',()=>{
+                window.convert_destination = 2;
+                $('#convert-graphene-to-energy').prop('checked', false);
+                $('#icon-graphene-to-convertion').removeClass().addClass('icon-ratio ic-metals');
+            });
+
+            $('#graphene-to-convert').on('input', ()=>{
+                let v = $('#graphene-to-convert').val();
+                $('#graphene-resource-convertion').text(cssgame.getConvertionRate(v,window.converterLevel));
+            });
+
+            $('#button-convert-graphene').on('click',()=>{
+                n = parseInt($('#graphene-to-convert').val());
+                if (window.convert_destination != undefined && n > 0) {
+                    window.cssgame.convertResource(window.ship,window.convert_source,window.convert_destination,n,(e,tx)=>{
+                        if (!e)
+                            process_order(tx);
+                    });
+                }
+            });
+
+            $(window.id_modal_open).modal('show');
+        });
+
+
+        $('#convert-metal').click(()=>{
+            window.convert_source = 2;
+            window.id_modal_open = '#modal-convert-metals';
+            $('#metals-to-convert').val(0);
+            $('#convert-metals-to-energy').prop('checked', false);
+            $('#convert-metals-to-graphene').prop('checked', false);
+            
+            $('#convert-metals-to-energy').on('click',()=>{
+                window.convert_destination = 0;
+                $('#convert-metals-to-graphene').prop('checked', false);
+                $('#icon-metals-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+            });
+
+            $('#convert-metals-to-graphene').on('click',()=>{
+                window.convert_destination = 1;
+                $('#convert-metals-to-energy').prop('checked', false);
+                $('#icon-metals-to-convertion').removeClass().addClass('icon-ratio ic-graphene');
+            });
+
+            $('#metals-to-convert').on('input', ()=>{
+                let v = $('#metals-to-convert').val();
+                $('#metal-resource-convertion').text(cssgame.getConvertionRate(v,window.converterLevel));
+            });
+
+            $('#button-convert-metals').on('click',()=>{
+                n = parseInt($('#metals-to-convert').val());
+                if (window.convert_destination != undefined && n > 0) {
+                    window.cssgame.convertResource(window.ship,window.convert_source,window.convert_destination,n,(e,tx)=>{
+                        if (!e)
+                            process_order(tx);
+                    });
+                }
+            });
+
+            $(window.id_modal_open).modal('show');
+        });
+
+        $('#modal-convert-energy').on('hidden.bs.modal',()=>{
+            window.convert_source = undefined;
+            window.convert_destination = undefined;
+            $('#energy-to-convert').val(0);
+            $('#icon-energy-to-convertion').attr('class','');
+            $('#convert-energy-to-metals').off();
+            $('#convert-energy-to-energy').off();
+            $('#button-energy-graphene').off();
+            $('#energy-to-convert').off();
+            $('#energy-resource-convertion').text(0);
+            clean_modal();
+        });
+
+        $('#modal-convert-graphene').on('hidden.bs.modal',()=>{
+            window.convert_source = undefined;
+            window.convert_destination = undefined;
+            $('#icon-graphene-to-convertion').attr('class','');
+            $('#convert-graphene-to-metals').off();
+            $('#convert-graphene-to-energy').off();
+            $('#button-convert-graphene').off();
+            $('#graphene-to-convert').val(0);
+            $('#graphene-to-convert').off();
+            $('#graphene-resource-convertion').text(0);
+            clean_modal();
+        });
+        $('#modal-convert-metals').on('hidden.bs.modal',()=>{
+            window.convert_source = undefined;
+            window.convert_destination = undefined;
+            $('#icon-metals-to-convertion').attr('class','');
+            $('#button-convert-metals').off();
+            $('#metals-to-convert').val(0);
+            $('#convert-metals-to-graphene').off();
+            $('#convert-metals-to-energy').off();
+            $('#metals-to-convert').off();
+            $('#metal-resource-convertion').text(0);
+            clean_modal();
+        });
+
         $('#upgrade-graphene-ready').click(function() {
             // Get Values
             nextLevel = window.grapheneCollectorLevel+1;
-            gRes = CSSGame.getResourceUpgradeCost(1,nextLevel);
+            gRes = window.cssgame.getUpgradeResourceCost(1,nextLevel,window.qaim[1]);
             // Render HTML
             $('#next-graphene-level').text(nextLevel);
             $('#energy-graphene-upgrade').text(gRes.energy);
@@ -232,7 +452,7 @@ window.addEventListener('load', async () => {
         $('#upgrade-metals-ready').click(function() {
             // Get Values
             nextLevel = window.metalsCollectorLevel+1;
-            mRes = CSSGame.getResourceUpgradeCost(2,nextLevel);
+            mRes = window.cssgame.getUpgradeResourceCost(2,nextLevel,window.qaim[1]);
             // Render HTML
             $('#next-metals-level').text(nextLevel);
             $('#energy-metals-upgrade').text(mRes.energy);
@@ -288,7 +508,7 @@ window.addEventListener('load', async () => {
                 
                 // Resource 0 is Energy
                 if (e<10) {
-                    eRes = CSSGame.getResourceUpgradeCost(0,e+1);
+                    eRes = window.cssgame.getUpgradeResourceCost(0,e+1,window.qaim[1]);
                     if ( eRes.energy <= window.energyStock && 
                         eRes.graphene <= window.grapheneStock && 
                         eRes.metals <= window.metalsStock && 
@@ -305,7 +525,7 @@ window.addEventListener('load', async () => {
                 // Resource 1 is Graphene
                 if (window.grapheneCollectorLevel < 10) {
 
-                    gRes = CSSGame.getResourceUpgradeCost(1,window.grapheneCollectorLevel+1);
+                    gRes = window.cssgame.getUpgradeResourceCost(1,window.grapheneCollectorLevel+1,window.qaim[1]);
                     if ( gRes.energy <= window.energyStock && 
                         gRes.graphene <= window.grapheneStock && 
                         gRes.metals <= window.metalsStock && 
@@ -320,7 +540,7 @@ window.addEventListener('load', async () => {
 
                 // Resource 2 is Metals
                 if (window.metalsCollectorLevel < 10) {
-                    mRes = CSSGame.getResourceUpgradeCost(2,window.metalsCollectorLevel+1);
+                    mRes = window.cssgame.getUpgradeResourceCost(2,window.metalsCollectorLevel+1,window.qaim[1]);
                     if ( mRes.energy <= window.energyStock && 
                         mRes.graphene <= window.grapheneStock && 
                         mRes.metals <= window.metalsStock && 
@@ -337,7 +557,7 @@ window.addEventListener('load', async () => {
 
         function setUpgradeResourceBar(resource,level) {
 
-            res = CSSGame.getResourceUpgradeCost(resource,level);        
+            res = window.cssgame.getUpgradeResourceCost(resource,level,window.qaim[1]);        
             energy = Math.floor(window.energyStock * 100 / res.energy);
             graphene = Math.floor(window.grapheneStock * 100 / res.graphene);
             metals = Math.floor(window.metalsStock * 100 / res.metals);
@@ -412,6 +632,19 @@ window.addEventListener('load', async () => {
                 else {
                     console.log(err);
                 }
+            }
+        }
+
+        function checkConverterRole() {
+            if (window.role == 2) {
+                // Falta checkear si el watch esta bien
+                $('#converter-watch').show();
+                $('#convert-energy').show();
+                $('#convert-graphene').show();
+                $('#convert-metal').show();
+            }
+            else {
+                $('#set-resource-converter').hide();
             }
         }
 
@@ -520,18 +753,18 @@ window.addEventListener('load', async () => {
         function getUpgradeResourcesCost()
         {
 
-            let energyCost = CSSGame.getResourceUpgradeCost(0, window.energyMinLevel+1);
+            let energyCost = window.cssgame.getUpgradeResourceCost(0, window.energyMinLevel+1,window.qaim[1]);
             let grapheneCost;
             let metalsCost;
             if (window.resourceUpgrading == 7 && window.resourceBlock != 0)
-                grapheneCost = CSSGame.getResourceUpgradeCost(1, window.grapheneCollectorLevel+2);
+                grapheneCost = window.cssgame.getUpgradeResourceCost(1, window.grapheneCollectorLevel+2,window.qaim[1]);
             else
-                grapheneCost = CSSGame.getResourceUpgradeCost(1, window.grapheneCollectorLevel+1);
+                grapheneCost = window.cssgame.getUpgradeResourceCost(1, window.grapheneCollectorLevel+1,window.qaim[1]);
             
             if (window.resourceUpgrading == 8 && window.resourceBlock != 0)
-                metalsCost = CSSGame.getResourceUpgradeCost(2, window.metalsCollectorLevel+2);  
+                metalsCost = window.cssgame.getUpgradeResourceCost(2, window.metalsCollectorLevel+2,window.qaim[1]);  
             else
-                metalsCost = CSSGame.getResourceUpgradeCost(2, window.metalsCollectorLevel+1);
+                metalsCost = window.cssgame.getUpgradeResourceCost(2, window.metalsCollectorLevel+1,window.qaim[1]);
             
             if (window.energyMinLevel < 10) {
                 $('#energy-panels-energy-tooltip').attr('data-original-title', 'Energy required for next level: ' + parseInt(energyCost.energy).toString());
@@ -569,6 +802,7 @@ window.addEventListener('load', async () => {
         
 
         // Once Time
+        checkConverterRole();
         setProduction();
         setShip();
         setDamage();

@@ -15,7 +15,7 @@
                 <li></li>
                 <li><a href="#" class="anchor">Messages</a></li>
                 <li><a href="#" class="anchor">Events</a></li>
-                <li><a href="#" class="anchor">Stats</a></li>
+                <li id="ranking"><a href="#" class="anchor">Ranking</a></li>
             </ul>
         </div>
 
@@ -39,7 +39,7 @@
     
     
             let change_frame = (view) => {
-                if ( (view == "resources" || view == "map" || view == "buildings") && window.actual != view) {
+                if ( (view == "resources" || view == "map" || view == "buildings" || view == "ranking") && window.actual != view) {
                     window.frame.src = window.location.pathname + view;
                     window.actual = view;
                     document.getElementById("actual").textContent = view;
@@ -56,6 +56,10 @@
     
             document.getElementById("buildings").addEventListener("click",()=>{
                 change_frame("buildings");
+            });
+            
+            document.getElementById("ranking").addEventListener("click",()=> {
+                change_frame("ranking");
             });
         }
     </script>

@@ -54,7 +54,7 @@ class GameTemplateAdmin(admin.ModelAdmin):
     
 @admin.register(GameStatic)
 class GameStaticAdmin(admin.ModelAdmin):
-    list_display = ['name', 'file_type', 'file']
+    list_display = ['name', 'file_type', 'file', 'order']
 
 @admin.register(SiteTemplate)
 class SiteTemplateAdmin(admin.ModelAdmin):
@@ -94,7 +94,7 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(Ship)
 class ShipAdmin(admin.ModelAdmin):
-    list_display = ['ship_id', 'name', 'game']
+    list_display = ['ship_id', 'name', 'game', 'player']
     
 @admin.register(GameAbiEvent)
 class GameAbiEventAdmin(admin.ModelAdmin):

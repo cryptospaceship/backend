@@ -1,11 +1,53 @@
+class Fisics {
+    constructor(net) {
+        switch(net) {
+            case 42:
+                // Kovan
+                this.val = this.kovan_val;
+                break;
+            case 77:
+                // Poa
+                this.val = this.poa_val;
+                break;
+            case 31:
+                // Rsk
+                this.val = this.rsk_testnet;
+                break;
+            default:
+                throw "Wrong Network";
+        }
+    }
+    
+    ethereum_val(v) {
+        return parseInt(v/3);
+    }
+
+    kovan_val(v) {
+        return v;
+    }
+
+    poa_val(v) {
+        return v;
+    }
+
+    rsk_testnet(v) {
+        return parseInt(v/10);
+    }
+
+    rsk(v) {
+        return parseInt(v/2);
+    }
+}
+
+
 class CSSGame {
 
-    constructor(provider,abi,address) {
+    constructor(provider,abi,address,network) {
         this.version = "1.5-AS";
-
 		this.access = provider.eth.contract(abi);
         this.contract = this.access.at(address);
         this.w3 = provider;
+        this.fisics = new Fisics(network);
     }
 
     getNetwork(callback) {
@@ -69,8 +111,14 @@ class CSSGame {
     }
     attackShip(ship, to, callback) {
         let w3 = this.w3;
-        this.contract.attackShip(ship,to,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.attackShip(ship,to,true,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
+
+    raidShip(Ship, to, callback) {
+        let w3 = this.w3;
+        this.contract.attackShip(ship,to,false,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+    }
+
     fireCannon(ship,to,callback){
         let w3 = this.w3;
         this.contract.fireCannon(ship,to,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
@@ -93,9 +141,9 @@ class CSSGame {
         this.contract.buildFleet(_ship,size,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
-    disassembleFleet(_ship,callback) {
+    disassembleFleet(_ship,_size,callback) {
         let w3 = this.w3;
-        this.contract.disassembleFleet(_ship,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.disassembleFleet(_ship,_size,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Movemment Functions
@@ -113,6 +161,17 @@ class CSSGame {
     changeMode(_ship, _mode, callback) {
         let w3 = this.w3;
         this.contract.changeMode(_ship,_mode,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+    }
+
+
+    convertResource(_ship,_src,_dst,_n,callback) {
+        let w3 = this.w3;
+        this.contract.convertResource(_ship,_src,_dst,_n,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+    }
+
+    setProductionResourcesConverter(_ship,_g,_m,callback) {
+        let w3 = this.w3;
+        this.contract.setProductionResourcesConverter(_ship,_g,_m,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Query Functions
@@ -380,14 +439,78 @@ class CSSGame {
         return ret;
     }
 
-    static getWarehouseLoadByLevel(level)
-    {
-        var load = [10000, 50000, 150000, 1300000, 16000000];
-        return load[level];
+    getProductionByLevel(level) {
+        let v = [0,1,2,3,4,7,10,14,20,28,40];
+        return v[level];
+    }
+
+    getProductionToConverter(graphene, metal) {
+        return (parseInt(graphene) + parseInt(metal));
+    }
+
+    getConvertionRate(n,converterLevel) {
+        if (converterLevel == 2)
+            return parseInt(n / 2);
+        else
+            return parseInt(n / 4);
     }
 
 
-    static getResourceUpgradeCost(_type, _level) {
+    getFleetCostBasic(_attack, _defense, _distance, _load) {
+        let r = {};
+        r.energy = this.fisics.val(20) * (_attack + _defense + (_distance*6) + (_load/this.fisics.val(80)));
+        r.graphene = this.fisics.val(70) * (_defense + (_distance*6)) + (this.fisics.val(50)*_attack) + (this.fisics.val(30)*(_load/this.fisics.val(80)));
+        r.metals = this.fisics.val(70) * (_attack + (_load/this.fisics.val(80))) + (this.fisics.val(50)*_defense) + (this.fisics.val(30)*(_distance*6));
+        return r;
+    }
+
+    getFleetCost(_attack,_defense,_distance,_load,_qaim) {
+        let r;
+        r = this.getFleetCostBasic(_attack,_defense,_distance,_load);
+        r.energy = r.energy - this.constructor._percent(r.energy,_qaim);
+        r.graphene = r.graphene - this.constructor._percent(r.graphene,_qaim);
+        r.metals = r.metals - this.constructor._percent(r.metals,_qaim);
+
+        return r;    
+    }
+
+    getResourcesToReturn(level) {
+        if (level == 0) {
+            return 0;
+        }
+        return (level-1) * 10;
+    }
+
+    calcReturnResourcesFromFleet(level, _attack, _defense, _distance, _load, _size) {
+        let r;
+        r = this.getFleetCostBasic(_attack, _defense, _distance, _load);
+        r.energy = 0;
+        r.graphene = parseInt((r.graphene * _size) * this.getResourcesToReturn(level) / 100);
+        r.metals = parseInt((r.metals * _size) * this.getResourcesToReturn(level) / 100);
+        return r;
+    }
+
+    getWarehouseLoadByLevel(level)
+    {
+        var load = [10000, 50000, 150000, 1300000, 16000000];
+        return this.fisics.val(load[level]);
+    }
+
+    static getPointsByHangarLevel(level)
+    {
+        let p = [0,60,70,85,100];
+        return p[level];
+    }
+
+
+    static getWarehouseLoadByLevel(level, network)
+    {
+        let fisics = new Fisics(network);
+        var load = [10000, 50000, 150000, 1300000, 16000000];
+        return fisics.val(load[level]);
+    }
+
+    getUpgradeResourceCost(_type, _level, _qaim) {
         var _typeCost = [0,1200,2520,5292,12171,26168,56263,120965,260076,559164,1202204];
         var r = {};
         if (_type === "energy" || _type == 0) {
@@ -405,21 +528,36 @@ class CSSGame {
             r.graphene = _typeCost[_level];
             r.metals = _typeCost[_level] / 2;
         }
+        r.energy = this.fisics.val(r.energy);
+        r.graphene = this.fisics.val(r.graphene);
+        r.metals = this.fisics.val(r.metals);
+
+        r.energy = parseInt(r.energy - this.constructor._percent(r.energy,_qaim));
+        r.graphene = parseInt(r.graphene - this.constructor._percent(r.graphene,_qaim));
+        r.metals = parseInt(r.metals - this.constructor._percent(r.metals,_qaim));
+
         return r;
     }
 
-    static getUpgradeBuildingCost(_type, _level) {
+    getUpgradeBuildingCost(_type, _level, _qaim) {
         var buildingCost = [0,5292,26168,120965,559164];
         var r = {};
         r.energy = buildingCost[_level];
         r.graphene = buildingCost[_level];
         r.metals = buildingCost[_level];
 
-        if (_type == 2 || _type === 'cannon') {
-            r.energy = r.energy * 3 ;
-            r.graphene = r.graphene * 3;
-            r.metals = r.metals * 3;
+        if (_type == 2) {
+            r.energy = buildingCost[_level+2]*4;
+            r.graphene = buildingCost[_level+2]*4;
+            r.metals = buildingCost[_level+2]*4;
         }
+        r.energy = this.fisics.val(r.energy);
+        r.graphene = this.fisics.val(r.graphene);
+        r.metals = this.fisics.val(r.metals);
+
+        r.energy = parseInt(r.energy - this.constructor._percent(r.energy,_qaim));
+        r.graphene = parseInt(r.graphene - this.constructor._percent(r.graphene,_qaim));
+        r.metals = parseInt(r.metals - this.constructor._percent(r.metals,_qaim));
 
         return r;
     }
@@ -441,6 +579,11 @@ class CSSGame {
                 break;
         }
         return ret;
+    }
+
+    static _percent(n, p)
+    {
+        return parseInt(p*n/100);
     }
 
     static isPort(id) {

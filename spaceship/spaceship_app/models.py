@@ -275,6 +275,7 @@ class Game(models.Model):
     address             = models.CharField(max_length=128)
     abi                 = models.TextField()
     contract_id         = models.IntegerField()
+    deployed_at         = models.IntegerField()
     discord_channel_api = models.CharField(max_length=256, blank=True)
     enabled             = models.BooleanField(default=False)
     load_abi_trigger    = models.BooleanField(default=False)
@@ -357,20 +358,20 @@ class GameTemplate(models.Model):
     @classmethod
     def get(cls, version, view):
         try:
-            return cls.objects.get(version=version, view=view).file
+            return cls.objects.get(version=version, view=view)
         except:
             return None
             
     def get_js(self):
         ret = []
-        gs = GameStatic.objects.filter(game_template=self, file_type='js')
+        gs = GameStatic.objects.filter(game_template=self, file_type='js').order_by("order")
         for js in gs:
             ret.append(js.file)
         return ret
 
     def get_css(self):
         ret = []
-        gs = GameStatic.objects.filter(game_template=self, file_type='css')
+        gs = GameStatic.objects.filter(game_template=self, file_type='css').order_by("order")
         for css in gs:
             ret.append(css.file)
         return ret
@@ -384,6 +385,7 @@ class GameStatic(models.Model):
     game_template = models.ManyToManyField(GameTemplate)
     file_type     = models.CharField(max_length=3, choices=FILE_TYPES)
     file          = models.CharField(max_length=255)
+    order         = models.IntegerField(default=1)
         
     def __str__(self):
         return str(self.name)
@@ -412,14 +414,14 @@ class SiteTemplate(models.Model):
 
     def get_js(self):
         ret = []
-        ss = SiteStatic.objects.filter(site_template=self, file_type='js')
+        ss = SiteStatic.objects.filter(site_template=self, file_type='js').order_by("order")
         for js in ss:
             ret.append(js.file)
         return ret
 
     def get_css(self):
         ret = []
-        ss = SiteStatic.objects.filter(site_template=self, file_type='css')
+        ss = SiteStatic.objects.filter(site_template=self, file_type='css').order_by("order")
         for css in ss:
             ret.append(css.file)
         return ret
@@ -433,6 +435,7 @@ class SiteStatic(models.Model):
     site_template = models.ManyToManyField(SiteTemplate)
     file_type     = models.CharField(max_length=3, choices=FILE_TYPES)
     file          = models.CharField(max_length=255)
+    order         = models.IntegerField(default=1)
     
     def __str__(self):
         return str(self.name)
@@ -739,6 +742,7 @@ class Ship(models.Model):
     ship_id = models.IntegerField()
     name    = models.CharField(max_length=128)
     game    = models.ForeignKey(Game, on_delete=models.CASCADE, null=True)
+    player  = models.ForeignKey(Player, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return str(self.name)
@@ -757,6 +761,18 @@ class Ship(models.Model):
             return cls.objects.get(ship_id=ship_id)
         except:
             return None
+            
+    @classmethod
+    def get_by_player(cls, game, player):
+        try:
+            return cls.objects.get(game=game, player=player)
+        except:
+            return None
+            
+    def set_player(self, player):
+        self.player = player
+        self.save()
+        return self
         
     def join_game(self, game):
         self.game = game
@@ -874,8 +890,25 @@ class Ranking(models.Model):
         return str(self.id)
 
     @classmethod
-    def list(cls, game):
-        return cls.objects.filter(game=game)
+    def list(cls, game, user=None):
+        rankings = cls.objects.filter(game=game).order_by('-points')
+
+        ret = []
+        pp  = 0
+        i = 1
+        for r in rankings: 
+            r.position = i
+            i = i + 1
+            if r.ship.player is None:
+                r.owner = False
+            elif user == r.ship.player.user:
+                pp = r.position
+                r.owner = True
+            else:
+                r.owner = False
+            ret.append(r)
+        
+        return ret, pp
         
     @classmethod
     def create(cls, ship, game):
@@ -891,7 +924,13 @@ class Ranking(models.Model):
             return cls.objects.get(ship=ship, game=game)
         except:
             return None
-            
+    
+    @classmethod
+    def get_by_player(cls, game, player):
+        ship = Ship.get_by_player(game, player)
+        if ship is not None:
+            ranking = cls.objects.get(ship=ship)
+    
     def update(self, points):
         self.points = points
         self.save()

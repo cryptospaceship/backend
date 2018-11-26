@@ -197,6 +197,7 @@ def ship_view(request, net_id, ship_id):
         context['game']                  = game
         context['contract_address']      = game.address
         context['contract_abi']          = loads(game.abi)
+        context['game_block']            = game.deployed_at
     else:
         context['game_list']        = Game.objects.filter(network=ship.network, enabled=True)
         games_data = {}
