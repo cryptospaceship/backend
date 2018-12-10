@@ -89,8 +89,10 @@ def api_create_message(request):
         body = {'status': 'error', 'message': message, "user_message": user_message}
         return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
     
-    sender   = Player.get_by_user(request.user)
-    receiver = Player.get_by_username(data['to'])
+    game   = Game.get_by_id(data['game_id'])
+    player = Player.get_by_user(request.user)
+    sender = Ship.get_by_player(game, player)
+    receiver = Ship.get_by_id(data['to'])
     if receiver is None:
         user_message = "Error sending message. Please try again later."
         message = "user does not exist"
@@ -109,7 +111,10 @@ def api_create_message(request):
 
     
 @require_http_methods(['GET'])
-def api_inbox_unread_count(request, game_id):
+@login_required(login_url='/signin/')
+def api_inbox_unread_count(request, game_id, box):
+    if box == 'outbox':
+        return HttpResponse(dumps(0), content_type="application/json", status=http_REQUEST_OK)
     player   = Player.get_by_user(request.user)
     game     = Game.get_by_id(game_id)
     ship     = player.get_ship_in_game(game)
@@ -138,25 +143,30 @@ def api_get_message(request, msg_id):
     else:
         body = {'status': 'error', 'message': 'permission denied'}
         status = http_FORBIDDEN
-        
+    print(body)    
     return HttpResponse(dumps(body), content_type="application/json", status=status)
 
     
 @require_http_methods(['GET'])
 @login_required(login_url='/signin/')
-def api_get_inbox_messages(request, game_id):
+def api_get_messages(request, game_id, box):
     player   = Player.get_by_user(request.user)
     game     = Game.get_by_id(game_id)
     ship     = player.get_ship_in_game(game)
-    messages = Message.get_inbox_list(ship.ship_id, True)
+    if box == "inbox":
+        messages = Message.get_inbox_list(ship.ship_id, True)
+    else:
+        messages = Message.get_outbox_list(ship.ship_id, True)
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
 
     
 @require_http_methods(['GET'])
-@login_required(login_url='/signin/')
-def api_get_outbox_messages(request, game_id):
+@login_required(login_url='/signin/')    
+def api_get_messages_since(request, game_id, msg_id):
     player   = Player.get_by_user(request.user)
     game     = Game.get_by_id(game_id)
-    ship     = player.get_ship_in_game(game)
-    messages = Message.get_outbox_list(ship.ship_id, True)
+    ship     = player.get_ship_in_game(game)    
+    messages = Message.get_inbox_since_id(ship.ship_id, msg_id, True)
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
+    
+    

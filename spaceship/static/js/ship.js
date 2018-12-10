@@ -8,11 +8,11 @@ window.addEventListener('load', async () => {
     config.signout  = "/signout/"
 
     
-    init = new CSSInit(config,window.web3);
+    init = new CSSInit(config);
     
 	init.init(function(){
         $('#ship_points').text(CSSToken.formatPoints(window.points));
-        w3 = this.web3;
+        let w3 = this.web3;
         window.csstoken = new CSSToken(this.web3,window.shipAbi,window.shipAddress);
         
         window.qaim_1 = undefined;
@@ -20,6 +20,7 @@ window.addEventListener('load', async () => {
 
         function joinGame(gameId) {   
             window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address'],42);
+            console.log('flens');
             window.cssgame.placeShip(window.shipId,window.qaim_1,window.qaim_2,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');

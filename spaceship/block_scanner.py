@@ -143,14 +143,16 @@ def get_block(block, net):
 def create_update_transaction(tx, net, game, function_name=''):
     transaction = Transaction.get(game, tx['hash'].hex())
     if transaction is None:
+        
         if function_name == '':
             function = GameAbiFunction.get_by_hash(tx['input'][0:10], game)
         else:
             function = GameAbiFunction.get_by_name(function_name, game)
       
-        if function is not None:        
-            transaction = Transaction.create(game, function, tx['hash'].hex())
-            logging.info("create_transaction(): TX created for game: %s - address: %s " % (game.name, game.address))
+        if function is not None:
+            ship_id = str(int(tx['input'][10:74], 16))
+            transaction = Transaction.create(game, function, tx['hash'].hex(), tx['from'], ship_id, tx['input'])
+            logging.info("create_transaction(): TX created for game: %s - address: %s - ship_id: %s" % (game.name, game.address, ship_id))
             return transaction
         else:
             logging.info("create_transaction(): abi function not found: %s " % tx['input'][0:10])

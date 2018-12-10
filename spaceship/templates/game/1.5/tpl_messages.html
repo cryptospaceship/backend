@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Mobile-friendly viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRYPTOSPACESHIP</title>
+    <!-- Style sheet link -->
+    {% for css in inject_css %}
+        <link href="{{ css }}" rel="stylesheet" media="all"></script>
+    {% endfor %}
+    <link href="https://fonts.googleapis.com/css?family=Rajdhani:300,400,500,600" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/site/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/site/images/favicon-16x16.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body style="overflow-y: hidden; background-size: cover;">
+    <main id="site-main" role="main">
+        <!-- Container-->
+        <div class="container messages">
+            <div class="messages-page">
+                <div class="tab-container">
+                    <div class="tabs">
+                        {% if message_type == "inbox" %}
+                        <a href="javascript:void(0);" class="tab active">Inbox</a>
+                        <a href="../outbox" class="tab">Outbox</a>
+                        {% elif message_type == "outbox" %}
+                        <a href="../inbox" class="tab">Inbox</a>
+                        <a href="javascript:void(0);" class="tab active">Outbox</a>
+                        {% endif %}
+                    </div>
+                    <a class="btn new-message" href="javascript:void(0);" id="new-message-button">New message</a>
+                </div>
+                <div class="table-container">
+                    <div class="message-box">
+                        <div class="table-header">
+                            {% if message_type == "inbox" %}
+                            <div class="from-to row-header">
+                                From
+                            </div>
+                            {% elif message_type == "outbox" %}
+                            <div class="from-to row-header">
+                                To
+                            </div>
+                            {% endif %}
+                            <div class="subject row-header">
+                                Subject
+                            </div>
+                            <div class="date row-header">
+                                Date
+                            </div>
+                        </div>
+                        <div class="table-body" id="table-body">                  
+                            {% for message in messages %}
+                            {% if message_type == "inbox" %}
+                                {% if message.read %}
+                                    <a class="message-content row-body" id="message-inbox" msg-id={{ message.id }} style= "cursor: pointer;">
+                                {% else %}                        
+                                    <a class="message-content row-body" id="message-inbox" msg-id={{ message.id }} style="background-color: #ffffff30; font-weight: 800; cursor: pointer;">
+                                {% endif %}
+                                <div class="from-to row-table">
+                                {% if message.read %}
+                                    <i class="material-icons" style="vertical-align: middle; display: inline; font-size: 20px"><span id="message-icon-{{ message.id }}">drafts </span></i>
+                                {% else %}
+                                    <i class="material-icons" style="vertical-align: middle; display: inline; font-size: 20px"><span id="message-icon-{{ message.id }}">mail </span></i>
+                                {% endif %}                                    
+                                {{ message.sender.name }}
+                                </div>
+                            {% elif message_type == "outbox" %}
+                                <a class="message-content row-body" id="message-inbox" msg-id={{ message.id }} style= "cursor: pointer;">  
+                                <div class="from-to row-table">
+                                    <i class="material-icons" style="vertical-align: middle; display: inline; font-size: 20px"><span id="message-icon-{{ message.id }}">forward </span></i>
+                                    {{ message.receiver.name }}
+                                </div>
+                            {% endif %}                                
+                                <div class="subject row-table">
+                                    {{ message.subject }}
+                                </div>
+                                <div class="date row-table">
+                                    {{ message.date }}
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    <div class="pagination-container">
+                        <p>Page {{ messages.number }} of {{ messages.paginator.num_pages }}</p>
+                        <div class="pagination">
+                            <ul>
+                            {% if messages.has_previous %}
+                                <li><a href="?page={{ messages.previous_page_number }}" class="arrow-prev"></a></li>
+                            {% else %}
+                                <li><a href="javascript:void(0);" class="arrow-prev disable"></a></li>
+                            {% endif %}                            
+                            {% for i in messages.paginator.page_range %}
+                                {% if messages.number == i %}
+                                    <li><a href="javascript:void(0);" class="active">{{ i }}</a></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if messages.has_next %}
+                                <li><a href="?page={{ messages.next_page_number }}" class="arrow-next"></a></li>
+                            {% else %}
+                                <li><a href="javascript:void(0);" class="arrow-next disable"></a></li>
+                            {% endif %}                            
+                            </ul>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </main>        
+    
+    <!--New Message-->
+    <div style="display:none">
+        <div id="new-message" class="modal">
+            <form action="javascript:void(0);" method="post" class="modal-container email">{% csrf_token %}
+                <div class="form-modal">
+                    <h5>New Message</h5>
+
+                    <div id="new-message-to" class="group-input">
+                        <label for="to">To</label>
+                        <input type="text" required name="" id="to">
+                    </div>
+                    <div class="group-input">
+                        <label for="subject">Subject</label>
+                        <input type="text" required id="subject" placeholder="" />
+                    </div>
+                    <div class="group-input message">
+                        <label for="message">Message</label>
+                        <textarea rows="4" cols="50" required id="message"></textarea>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <input type="submit" id="send-message-button" value="SEND">
+                    <button type="button" class="btn blue closeModal" id="new-message-cancel-button">CANCEL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--Message-->
+    <div style="display:none">
+        <div id="message-content" class="modal">
+            <form action="#" method="post" class="modal-container email">
+                <div class="form-modal">
+                    <h5>Message</h5>
+
+                    <div class="group-input">
+                        <p>From</p>
+                        <div class="info-message"><span id="message-from"></span></div>
+                    </div>
+                    <div class="group-input">
+                        <p>Subject</p>
+                        <div class="info-message"><span id="message-subject"></span></div>
+                    </div>
+                    <div class="group-input message">
+                        <div class="info-message large"><span id="message-text"></span></div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    {% if message_type == "inbox"%}
+                    <a class="new-message row-body btn replay" id="reply-message-button">REPLY</a>
+                    <button type="button" class="btn blue closeModal">CLOSE</button>
+                    {% elif message_type == "outbox"%}
+                    <button type="button" class="btn blue closeModal">CLOSE</button>
+                    <a class="new-message row-body btn replay" href="#new-message" style="display:none;">REPLY</a>                    
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+    {% for js in inject_js %}
+        <script src="{{ js }}"></script>
+    {% endfor %}
+<script>
+window.baseUrl = "{{ base_url }}";
+window.gameId  = {{ game_id }};
+window.messageType = "{{ message_type }}";
+window.shipId = {{ ship_id }};
+window.shipList = {{ ship_list | safe }};
+{% if messages|length > 0 %}
+    window.lastMessage = {{ messages.0 }};
+{% else %}
+    window.lastMessage = 0;
+{% endif %}
+window.totalMessages = {{ messages|length }};
+{% if to_ship %}
+    window.toShip = "{{ to_ship }}"
+{% endif %}
+
+{% if message_type == "inbox" %}
+    window.inbox = true;
+{% else %}
+    window.inbox = false;
+{% endif %}
+
+window.actualPage = {{ messages.number }};
+
+</script>
+</html>

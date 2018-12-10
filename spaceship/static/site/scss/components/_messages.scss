@@ -1,0 +1,224 @@
+/* ******************************************************
+   MESSAGES
+   ****************************************************** */
+
+.messages {
+    .messages-page {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;   
+    }
+
+    .tab-container {
+        float: left;
+        border-bottom:1px solid $color-primary;
+        width: 100%;
+        margin:30px 0 10px ;
+        .tabs {
+            float: left;
+
+            .tab {
+                float: left;
+                text-transform: uppercase;
+                @include x-rem(font-size, 24px);
+                margin:0;
+                text-decoration: none;
+                padding:10px 50px;
+                line-height: 30px;
+                border-right:1px solid $color-primary;
+                border-left:1px solid $color-primary;
+                border-top:1px solid $color-primary;
+                background-color:rgba($color-primary, .25);
+
+                &.active {
+                   background-color:rgba($color-primary, .75);
+                }
+            }
+        }
+        .btn {
+            @include x-rem(font-size, 18px);
+            float: right;
+            height: 40px;
+            padding:10px 25px;
+        }
+    }
+    .table-container {
+        position: relative;
+
+        .message-box {
+            float: left;
+            margin: 20px 0;
+            width: 100%;
+            position: relative;
+
+            &:before {
+                content: '';
+                position: absolute;
+                width: 24px;
+                background-size: auto;
+                background-repeat: no-repeat;
+                background-position: top center;
+                top:-10px;
+                z-index: 2;
+                left: -30px;
+                height: 281px;
+                background-image: url('../images/signup-line-mobile.svg');
+
+                @media (min-width: $bp-m) {
+                    height: 359px;
+                    background-image: url('../images/signup-line-desktop.svg');
+                }
+            }
+
+                   
+
+            .table-header {
+                background-color: rgba($color-primary, 0.75);
+                float: left;
+                width: 100%;
+
+                .row-header {
+                    color: $color-invert;
+                    padding: 7px 14px;
+                    @include x-rem(font-size, 18px);
+                    text-align: left;
+                    font-weight: $fontWeight-medium;
+                    border: 1px solid $color-invert;
+                    float: left;
+
+                    @media (min-width: $bp-mw) {
+                        @include x-rem(font-size, 24px);
+                    }
+
+                    &.from-to {
+                        width:30%; 
+                    }
+                    &.subject {
+                        width: 50%;
+                    }
+                    &.date {
+                        width: 20%;
+                    }
+                }
+            }
+            .table-body {
+                float: left;
+                width: 100%;
+
+                .row-body {
+                    float: left;
+                    width: 100%;
+
+                    &:hover {
+                        .row-table {
+                            background-color:rgba($color-primary, 0.25);
+                        }
+                        
+                    }
+
+                    .row-table {
+                        padding: 7px 14px;
+                        @include x-rem(font-size, 16px);
+                        border: 1px solid $color-invert;
+                        color: $color-invert;
+                        background-color: transparent;
+                        float: left;
+
+                        @media (min-width: $bp-mw) {
+                            @include x-rem(font-size, 18px);
+                        }
+                        &.from-to {
+                            width:30%; 
+                        }
+                        &.subject {
+                            width: 50%;
+                        }
+                        &.date {
+                            width: 20%;
+                        }
+
+
+                    }
+                    
+                }
+                
+            }
+
+        }
+
+
+        .pagination-container {
+            float: left;
+            width:100%;
+            margin:  0;
+
+            p {
+                float: left;
+                margin:0;
+                @include x-rem(font-size, 16px);
+            }
+
+            .pagination {
+                float: right;
+
+                ul {
+                    float: left;
+                    list-style-type: none;
+                    margin:0;
+                    padding:0;
+
+                    li {
+                        float: left;
+                        margin:0 0 0 10px ;
+
+                        a {
+                            color:$color-invert;
+                            float: left;
+                            width:30px;
+                            height: 30px;
+                            background-color:rgba($color-primary, 0.25);
+                            border:1px solid $color-primary;
+                            @include x-rem(font-size, 18px);
+                            line-height: 30px;
+                            text-align: center;
+                            text-decoration: none;
+
+                            &.active, &:hover {
+                                background-color:$color-primary;
+                            }
+                            
+                            &.arrow-prev {
+                                background: url('../images/pag-arrow-prev.svg') center center no-repeat;
+                                border:none;
+                                background-color:none;
+
+                                &:hover {
+                                    background: url('../images/pag-arrow-prev-hover.svg') center center no-repeat;
+                                }
+
+                                &.disable {
+                                    background: url('../images/pag-arrow-prev-disable.svg') center center no-repeat;
+                                }
+                            }
+
+                            &.arrow-next {
+                                background: url('../images/pag-arrow-next.svg') center center no-repeat;
+                                border:none;
+                                background-color:none;
+
+                                &:hover {
+                                    background: url('../images/pag-arrow-next-hover.svg') center center no-repeat;
+                                }
+
+                                &.disable {
+                                    background: url('../images/pag-arrow-next-disable.svg') center center no-repeat;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

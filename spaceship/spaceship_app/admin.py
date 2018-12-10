@@ -82,7 +82,7 @@ class ActionAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['game', 'action', 'hash', 'at_block', 'gas_expended', 'creation_date']
+    list_display = ['game', 'ship_id', 'action', 'hash', 'at_block', 'gas_expended', 'creation_date']
 
 @admin.register(Stat)
 class StatAdmin(admin.ModelAdmin):

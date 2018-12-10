@@ -64,9 +64,11 @@ class CSSGame {
         let w3 = this.w3;
         let contract = this.contract;
         contract.getGame(function(error,ret) {
+            console.log(ret);
             if (!error) {
                 contract.placeShip(ship,qaim1,qaim2,{from:w3.eth.accounts[0],gasPrice:1000000000,value:ret[2].toNumber()},callback);
             }
+            console.log(error);
         });
     }
 

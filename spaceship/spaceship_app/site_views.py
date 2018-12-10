@@ -11,6 +11,7 @@ from .models import Network
 from .models import CryptoSpaceShip
 from .models import Game
 from .models import SiteTemplate
+from .models import Message
 
 from .decorators import owner_required
 
@@ -253,5 +254,14 @@ def change_network_view(request):
 def game_frame_view(request, net_id, game_id, ship_id):
     template = SiteTemplate.get('game_frame')
     context = {}
+    context['game_id'] = game_id
+    context['messages_count'] = Message.get_inbox_unread_count(ship_id)
     context['inject_css'] = template.get_css()
+    return render(request, template.file, context)
+    
+def faq_view(request):
+    template = SiteTemplate.get('faq')
+    context = {}
+    context['inject_css'] = template.get_css()
+    context['inject_js'] = template.get_js()
     return render(request, template.file, context)

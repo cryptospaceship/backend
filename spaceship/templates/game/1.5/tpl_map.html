@@ -510,7 +510,10 @@
                             </div>
                             <div class="col-md-5">
                                 <div class="modal-info-title">
-                                    <span id="other-ship-name"></span>
+                                    <a id="other-ship-name-message" href="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Send Message">
+                                    <i class="material-icons" id="material-icons-message">
+                                        message
+                                    </i> <span id="other-ship-name"></span></a>
                                 </div>
                                 <div class="modal-info-text">       
                                     <div class="icon-ratio ic-distance"></div>
@@ -735,7 +738,7 @@
                     </div>
                     <div class="modal-body" id="modal-body">
                             <div class="modal-body-text">ORDER: <span id="change mode"></span></div>
-                            <div class="modal-body-text">Click <a id="link_to_etherscan" href="">here</a> to verify the transaction status in Etherscan</span></div>
+                            <div class="modal-body-text">Click <a id="link-to-explorer" href="">here</a> to verify the transaction status in Etherscan</span></div>
                         </div>
                         <div class="modal-footer">
                         
@@ -810,8 +813,8 @@
     
     // URL
     window.base_url = "{{ base_url }}";
-    window.etherscan_url = "https://kovan.etherscan.io/tx/";
-
+    // window.etherscan_url = "https://kovan.etherscan.io/tx/";
+    window.explorer_url = "{{ explorer_url }}";
 
     // Constants
     window.ATTACK_MODE = 2;

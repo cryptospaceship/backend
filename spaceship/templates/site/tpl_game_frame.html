@@ -9,13 +9,17 @@
         <div class="main-title about-page">
             <h1 id="actual">Resources</h1>
             <ul class="about-menu resources">
-                <li id="resources"><a href="#" class="anchor">Resources</a></li>
-                <li id="buildings"><a href="#" class="anchor">Buildings</a></li>
-                <li id="map"><a href="#" class="anchor">Map</a></li>
+                <li id="resources"><a href="javascript:void(0);" class="anchor">Resources</a></li>
+                <li id="buildings"><a href="javascript:void(0);" class="anchor">Buildings</a></li>
+                <li id="map"><a href="javascript:void(0);" class="anchor">Map</a></li>
                 <li></li>
-                <li><a href="#" class="anchor">Messages</a></li>
-                <li><a href="#" class="anchor">Events</a></li>
-                <li id="ranking"><a href="#" class="anchor">Ranking</a></li>
+                {% if messages_count == 0 %}
+                    <li id="messages"><a href="javascript:void(0);" class="anchor">Messages </a><div id="unread-messages"></div></li>
+                {% else %}
+                    <li id="messages"><a href="javascript:void(0);" class="anchor">Messages </a><div id="unread-messages" style="background-color: red; border-radius: 50%; width: 23px; height: 23px; display: inline-block;">{{ messages_count }}</div></li>
+                {% endif %}
+                <li><a href="javascript:void(0);" class="anchor">Events</a></li>
+                <li id="ranking"><a href="javascript:void(0);" class="anchor">Ranking</a></li>
             </ul>
         </div>
 
@@ -24,43 +28,99 @@
             id="game-frame"
             class="game-frame" 
             name="Game Frame"
-            sandbox="allow-same-origin allow-scripts allow-top-navigation" 
+            sandbox="allow-same-origin allow-scripts allow-top-navigation allow-forms" 
             src="" 
             style="width: 100%; border: 0; ">
         </iframe>
     </main>
+    <!-- HARDCODING ******** REEMPLAZAR POR VARIABLE ******** -->
+    <script src="/static/js/backend.js"></script>
     <script>
         window.default = "resources";
-        window.actual = "resources";
-    
+        window.game_id = {{ game_id }};
         window.onload = ()=> {
             window.frame = document.getElementById("game-frame");
-            window.frame.src = window.location.pathname + window.default;
-    
-    
+            window.actual = (window.location.hash != "") ? window.location.hash.substring(6) : window.default;
+
+            window.msg_sound = new Audio('/static/sounds/msg.ogg');
+
+            let set_unread_messages = (n) => {
+                let d = document.getElementById("unread-messages");
+                let val = (d.innerText == "") ? 0 : parseInt(d.innerText);
+
+                if ( val != n ) {
+                    if (n > val) 
+                        window.msg_sound.play();
+                    
+                    if (n != 0) {
+                        d.setAttribute("style", "background-color: red; border-radius: 50%; width: 23px; height: 23px; display: inline-block;");
+                        d.innerText = n.toString();
+                    } else {
+                        d.removeAttribute("style");
+                        d.innerText = "";
+                    }
+                }
+            }
+
+            // HARDCODING ******** REEMPLAZAR POR VARIABLE ********
+            window.backend = new Backend('http://dev.cryptospaceship.io:8000');
+            
+            window.check_msg = setInterval(()=>{
+                window.backend.messages.count(window.game_id, (e,c)=>{
+                    if (e == null)
+                        set_unread_messages(c);
+                });
+            }, 5000);
+
             let change_frame = (view) => {
-                if ( (view == "resources" || view == "map" || view == "buildings" || view == "ranking") && window.actual != view) {
-                    window.frame.src = window.location.pathname + view;
+                window.location.hash = 'page=' + view;
+                if (view == "resources" || view == "map" || view == "buildings" || view == "ranking" || view == "messages") {
+                    if (view == "messages")
+                        path = "messages/inbox";
+                    else
+                        path = view;
+                    window.frame.src = window.location.pathname + path;
                     window.actual = view;
                     document.getElementById("actual").textContent = view;
                 }
             }
     
+            window.frame.onload = ()=> {
+                let path = window.frame.contentWindow.location.pathname.split('/');
+                if (window.actual != path[6]) {
+                    document.getElementById("actual").textContent = path[6];
+                    window.location.hash = 'page=' + path[6];
+                    window.actual = path[6];
+                }
+            }
+
+
             document.getElementById("resources").addEventListener("click",()=> {
-                change_frame("resources");
+                if (window.actual != "resources")
+                    change_frame("resources");
             });
     
             document.getElementById("map").addEventListener("click",()=>{
-                change_frame("map");
+                if (window.actual != "map")
+                    change_frame("map");
             });
     
             document.getElementById("buildings").addEventListener("click",()=>{
-                change_frame("buildings");
+                if (window.actual != "buildings")
+                    change_frame("buildings");
             });
             
             document.getElementById("ranking").addEventListener("click",()=> {
-                change_frame("ranking");
+               if (window.actual != "ranking")
+                    change_frame("ranking");
             });
+            
+            document.getElementById("messages").addEventListener("click",()=> {
+                if (window.actual != "messages")
+                    change_frame("messages");
+            });
+
+            change_frame(window.actual);
         }
     </script>
 {% endblock %}

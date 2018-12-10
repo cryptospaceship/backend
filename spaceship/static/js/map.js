@@ -62,7 +62,8 @@ window.addEventListener('load', async () => {
                     if (h && h.blockNumber != null) location.reload();
                 });
             },3000);
-            $('#link-to-explorer').attr('href', window.explorer_url + tx);
+            //$('#link-to-explorer').attr('href', window.explorer_url + tx);
+            $('#link-to-explorer').attr('onclick', "window.parent.open('" + window.explorer_url + tx +  "', '_blank'); return false;");
             $('#modal-tx').modal('show');
         }
         
@@ -411,6 +412,7 @@ window.addEventListener('load', async () => {
                                 if (!e) {
                                     ret = cssgame.viewShipResult(r);
                                     $('#other-ship-name').text(ret.name);
+                                    $('#other-ship-name-message').attr('href', '../messages/inbox/?to=' + ret.name);
                                     $('#other-ship-id').text(window.other_ship);
                                     $('#other-ship-mode').text(CSSGame.getModeName(ret.mode));
                                 }
@@ -724,7 +726,7 @@ window.addEventListener('load', async () => {
                 }
             }
             else {
-                status = "Waiting Blocks";
+                status = "Waiting For Fleet";
             }
             $('#fleet-status').text(status);
 

@@ -13,8 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+#from django.conf.urls import url
 from django.contrib import admin
+
+from django.urls import path, re_path
 
 from spaceship_app.views import home_view
 
@@ -29,6 +31,7 @@ from spaceship_app.site_views import metamask_view
 from spaceship_app.site_views import unlock_metamask_view
 from spaceship_app.site_views import change_network_view
 from spaceship_app.site_views import game_frame_view
+from spaceship_app.site_views import faq_view
 
 # GAME VIEWS
 from spaceship_app.game_views import play_resources_view
@@ -44,35 +47,64 @@ from spaceship_app.api_views import api_events_not_read_count
 from spaceship_app.api_views import api_get_event
 from spaceship_app.api_views import api_create_message
 from spaceship_app.api_views import api_get_message
-from spaceship_app.api_views import api_get_inbox_messages
-from spaceship_app.api_views import api_get_outbox_messages
+from spaceship_app.api_views import api_get_messages
 from spaceship_app.api_views import api_inbox_unread_count
+from spaceship_app.api_views import api_get_messages_since
+
+
 
 urlpatterns = [
-    url(r'^$'                 , home_view),
-    url(r'^signin/'           , signin_view),
-    url(r'^signup/'	          , signup_view),
-    url(r'^signout/'	      , signout_view),
-    url(r'^metamask/'	      , metamask_view),
-    url(r'^unlock/'	          , unlock_metamask_view),
-    url(r'^network/'	      , change_network_view),
-    url(r'^ui/ships'          , ui_view),
-    url(r'^ui/(?P<net_id>.*)/ships', fleet_view),
-    url(r'^ui/(?P<net_id>.+)/ship/(?P<ship_id>.+)/$', ship_view),
-    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/resources/$', play_resources_view),
-    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/map/$', play_map_view),
-    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/buildings/$', play_buildings_view),
-    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/events/$', play_events_view),
-    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/messages/$', play_messages_view),
-    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/ranking/$', play_ranking_view),
-    url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/$', game_frame_view),
-    url(r'^api/userByAddress/(?P<address>.+)/$', api_user_exist_address),
-    url(r'^api/events/(?P<game_id>.+)/(?P<ship_id>.+)/unread/count/$', api_events_not_read_count),
-    url(r'^api/events/(?P<event_id>.+)/$', api_get_event),
-    url(r'^api/message/add/$', api_create_message),
-    url(r'^api/message/get/(?P<msg_id>.+)/$', api_get_message),
-    url(r'^api/message/(?P<game_id>.+)/inbox/$', api_get_inbox_messages),
-    url(r'^api/message/(?P<game_id>.+)/inbox/count/$', api_inbox_unread_count),
-    url(r'^api/message/(?P<game_id>.+)/outbox/$', api_get_outbox_messages),
-    url(r'^admin/'            , admin.site.urls),
+    #url(r'^$'                 , home_view),
+    path(''                 , home_view),
+    #url(r'^signin/'           , signin_view),
+    path('signin/'           , signin_view),
+    #url(r'^signup/'	          , signup_view),
+    path('signup/'	          , signup_view),
+    #url(r'^signout/'	      , signout_view),
+    path('signout/'	      , signout_view),
+    #url(r'^metamask/'	      , metamask_view),
+    path('metamask/'	      , metamask_view),
+    #url(r'^faq/'	          , faq_view),
+    path('faq/'	          , faq_view),
+    #url(r'^unlock/'	          , unlock_metamask_view),
+    path('unlock/'	          , unlock_metamask_view),
+    #url(r'^network/'	      , change_network_view),
+    path('network/'	          , change_network_view),
+    #url(r'^ui/ships'          , ui_view),
+    path('ui/ships/'          , ui_view),
+    #url(r'^ui/(?P<net_id>.*)/ships', fleet_view),
+    re_path(r'^ui/(?P<net_id>.*)/ships', fleet_view),
+    #url(r'^ui/(?P<net_id>.+)/ship/(?P<ship_id>.+)/$', ship_view),
+    path('ui/<int:net_id>/ship/<int:ship_id>/', ship_view),
+    #url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/resources/$', play_resources_view),
+    path('ui/<int:net_id>/play/<int:game_id>/<int:ship_id>/resources/', play_resources_view),
+    #url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/map/$', play_map_view),
+    path('ui/<int:net_id>/play/<int:game_id>/<int:ship_id>/map/', play_map_view),
+    #url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/buildings/$', play_buildings_view),
+    path('ui/<int:net_id>/play/<int:game_id>/<int:ship_id>/buildings/', play_buildings_view),
+    #url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/events/$', play_events_view),
+    path('ui/<int:net_id>/play/<int:game_id>/<int:ship_id>/events/', play_events_view),
+    #url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/messages/(?P<box>.+)/$', play_messages_view),
+    path('ui/<int:net_id>/play/<int:game_id>/<int:ship_id>/messages/<str:box>/', play_messages_view),
+    #url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/ranking/$', play_ranking_view),
+    path('ui/<int:net_id>/play/<int:game_id>/<int:ship_id>/ranking/', play_ranking_view),
+    #url(r'^ui/(?P<net_id>.+)/play/(?P<game_id>.+)/(?P<ship_id>.+)/$', game_frame_view),
+    path('ui/<int:net_id>/play/<int:game_id>/<int:ship_id>/', game_frame_view),
+    #url(r'^api/userByAddress/(?P<address>.+)/$', api_user_exist_address),
+    path('api/userByAddress/<str:address>/', api_user_exist_address),
+    #url(r'^api/events/(?P<game_id>.+)/(?P<ship_id>.+)/unread/count/$', api_events_not_read_count),
+    path('api/events/<int:game_id>/<int:ship_id>/unread/count/', api_events_not_read_count),
+    #url(r'^api/events/(?P<event_id>.+)/$', api_get_event),
+    path('api/events/<int:event_id>/', api_get_event),
+    #url(r'^api/message/new/$', api_create_message),
+    path('api/message/new/', api_create_message),
+    #url(r'^api/message/get/(?P<msg_id>.+)/$', api_get_message),
+    path('api/message/get/<int:msg_id>/', api_get_message),
+    path('api/message/since/<int:game_id>/<int:msg_id>/', api_get_messages_since),
+    #url(r'^api/message/count/(?P<game_id>.+)/(?P<box>.+)/$', api_inbox_unread_count),
+    path('api/message/count/<int:game_id>/<str:box>/', api_inbox_unread_count),
+    #url(r'^api/message/list/(?P<game_id>.+)/(?P<box>.+)/$', api_get_messages),
+    path('api/message/list/<int:game_id>/<str:box>/', api_get_messages),
+    #url(r'^admin/'            , admin.site.urls),
+    path('admin/'            , admin.site.urls),
 ]

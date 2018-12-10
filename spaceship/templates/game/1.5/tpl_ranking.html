@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Rajdhani:300,400,500,600" rel="stylesheet">
 </head>
 
-<body>
+<body style="overflow-y: hidden; background-size: cover;">
     
         <!-- ACA PONER CONTENIDO-->
         <div class="container overal-ranking">
@@ -70,11 +70,11 @@
                         {% if rankings.has_previous %}
                             <li><a href="?page={{ rankings.previous_page_number }}" class="arrow-prev"></a></li>
                         {% else %}
-                            <li><a href="#" class="arrow-prev disable"></a></li>
+                            <li><a href="javascript:void(0);" class="arrow-prev disable"></a></li>
                         {% endif %}                            
                         {% for i in rankings.paginator.page_range %}
                             {% if rankings.number == i %}
-                                <li><a href="#" class="active">{{ i }}</a></li>
+                                <li><a href="javascript:void(0);" class="active">{{ i }}</a></li>
                             {% else %}
                                 <li><a href="?page={{ i }}">{{ i }}</a></li>
                             {% endif %}
@@ -82,7 +82,7 @@
                         {% if rankings.has_next %}
                             <li><a href="?page={{ rankings.next_page_number }}" class="arrow-next"></a></li>
                         {% else %}
-                            <li><a href="#" class="arrow-next disable"></a></li>
+                            <li><a href="javascript:void(0);" class="arrow-next disable"></a></li>
                         {% endif %}                            
                         </ul>
                     </div>

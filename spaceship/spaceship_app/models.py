@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import dateformat
 
 import json
 import web3
@@ -61,17 +62,30 @@ class Message(models.Model):
     subject  = models.CharField(max_length=250)
     message  = models.TextField(max_length=1000)
     read     = models.BooleanField()
+    date     = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
     
-    def serialize(self):
+    def serialize(self, qt=''):
         ret = {}
-        ret['id']      = self.id
-        ret['from']    = self.sender.name
-        ret['to']      = self.receiver.name
-        ret['subject'] = self.subject
-        ret['message'] = self.message
+        ret['id'] = self.id
+        if qt == 'inbox':
+            ret['from']    = self.sender.name
+            ret['subject'] = self.subject
+            ret['date']    = dateformat.format(self.date, 'N j, Y, P')
+            ret['read']    = self.read
+        elif qt == 'outbox':
+            ret['to']    = self.sender.name
+            ret['subject'] = self.subject
+            ret['date']    = dateformat.format(self.date, 'N j, Y, P')
+        else:
+            ret['from']    = self.sender.name
+            ret['to']      = self.receiver.name
+            ret['subject'] = self.subject
+            ret['message'] = self.message
+            ret['date']    = dateformat.format(self.date, 'N j, Y, P')
+            ret['read']    = self.read
         return ret
     
     @classmethod
@@ -104,16 +118,16 @@ class Message(models.Model):
             return None
                
         if ship == msg.receiver:
-            msg.mark_as_read()
-            return msg
-        else:
-            return msg
+            msg.mark_as_read()            
+        
+        return msg
+        
         
         
     @classmethod
     def get_inbox_unread_count(cls, ship_id):
         ship = Ship.get_by_id(ship_id)
-        return cls.objects.filter(receiver=ship, game=ship.game).count()
+        return cls.objects.filter(receiver=ship, game=ship.game, read=False).count()
         
     @classmethod
     def get_outbox_unread_count(cls, ship_id):
@@ -128,7 +142,7 @@ class Message(models.Model):
         if serialized:
             ret = []
             for msg in msgs:
-                data = {'id': msg.id, 'from': msg.sender.name, 'subject': msg.subject, 'read': msg.read}
+                data = msg.serialize('inbox')
                 ret.append(data)
             return ret
         else:
@@ -141,11 +155,26 @@ class Message(models.Model):
         if serialized:
             ret = []
             for msg in msgs:
-                data = {'id': msg.id, 'to': msg.receiver.name, 'subject': msg.subject, 'read': msg.read}
+                data = msg.serialize('outbox')
                 ret.append(data) 
             return ret
         else:
             return msgs
+            
+    @classmethod
+    def get_inbox_since_id(cls, ship_id, msg_id, serialized=False):
+        ship = Ship.get_by_id(ship_id)
+        msgs = cls.objects.filter(receiver=ship, game=ship.game, id__gt=msg_id).order_by('-id')
+        if serialized:
+            ret = []
+            for msg in msgs:
+                #data = {'id': msg.id, 'from': msg.sender.name, 'subject': msg.subject, 'read': msg.read, 'date': msg.date.strftime("%c")}
+                data = msg.serialize('inbox')
+                ret.append(data) 
+            return ret
+        else:
+            return msgs
+    
             
     def mark_as_read(self):
         self.read = True
@@ -648,8 +677,11 @@ class Action(models.Model):
 
 class Transaction(models.Model):
     game          = models.ForeignKey(Game, on_delete=models.CASCADE)
+    from_address  = models.CharField(max_length=42, default='0x0')
+    ship_id       = models.CharField(max_length=4, default="0000")    
     action        = models.CharField(max_length=128)
     hash          = models.CharField(max_length=128)
+    input         = models.TextField(default='')
     at_block      = models.IntegerField(blank=True, null=True)
     gas_expended  = models.IntegerField(blank=True, null=True)
     scanned       = models.BooleanField(default=False)
@@ -659,11 +691,14 @@ class Transaction(models.Model):
         return self.hash
 
     @classmethod
-    def create(cls, game, action, hash):
+    def create(cls, game, action, hash, address, ship_id, input):
         tx = cls()
-        tx.game     = game
-        tx.action   = action.name
-        tx.hash     = hash
+        tx.game         = game
+        tx.action       = action.name
+        tx.hash         = hash
+        tx.from_address = address
+        tx.ship_id      = ship_id
+        tx.input        = input
         tx.save()
         return tx
     
@@ -768,6 +803,16 @@ class Ship(models.Model):
             return cls.objects.get(game=game, player=player)
         except:
             return None
+            
+    @classmethod
+    def get_list(cls, game, exclude=None):
+        ret = []
+        ships = cls.objects.filter(game=game).exclude(ship_id=exclude)
+        for ship in ships:
+            ret.append({'data': ship.ship_id, 'value': ship.name})            
+        return ret
+        
+        
             
     def set_player(self, player):
         self.player = player

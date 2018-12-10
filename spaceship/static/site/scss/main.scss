@@ -15,7 +15,7 @@
 @import "globals/normalize";
 @import "globals/boilerplate";  
 @import "globals/grid"; 
-@import "globals/print";
+@import "globals/print"; 
 @import "globals/forms";
 
 
@@ -34,10 +34,15 @@
 
 
 @import "components/home";
+@import "components/about";
 
 @import "components/login";
 
 @import "components/faq"; 
+
+@import "components/ranking";
+
+@import "components/messages";
 
 //Ships
 @import "components/fleet"; 
@@ -46,12 +51,14 @@
 @import "components/modals"; 
 
 
+ 
 /* ================================================================
    Vendor Imports
    ================================================================ */
 @import "vendor/slick";
 @import "vendor/slick-theme";
 @import "vendor/colorbox";
+@import "vendor/aos";
 
 
 

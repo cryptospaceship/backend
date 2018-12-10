@@ -63,7 +63,8 @@ window.addEventListener('load', async () => {
                     if (h && h.blockNumber != null) location.reload();
                 });
             },3000);
-            $('#link-to-explorer').attr('href', window.explorer_url + tx);
+            //$('#link-to-explorer').attr('href', window.explorer_url + tx);
+            $('#link-to-explorer').attr('onclick', "window.parent.open('" + window.explorer_url + tx +  "', '_blank'); return false;");
             $('#modal-tx').modal('show');
         }
         

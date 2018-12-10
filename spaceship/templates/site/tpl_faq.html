@@ -1,0 +1,89 @@
+{% extends "site/tpl_base.html" %}
+{% block content %}
+{% load js %}
+
+    <!-- MAIN CONTENT -->
+    <main id="site-main" role="main" class="about">
+            <div class="fix-element title"></div>
+            <section class="faqs" id="faqs">
+                <div class="container">
+                    <div class="section-title">
+                        <h2>FAQs</h2>
+                    </div>
+                    <div class="faqs-list">
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="faq-container os-item" data-aos="fade-right">
+                                <h3>What is CryptoSpaceShip ?</h3>
+                                <div class="faq-answer">
+                                    <p>It is a real-time browser multiplayer strategy/role-playing game fully developed with blockchain technology</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="faq-container os-item" data-aos="fade-left">
+                                <h3>What do I need to play CryptoSpaceShip ?</h3>
+                                <div class="faq-answer">
+                                    <p>Use a desktop computer with Chrome or Firefox and install Metamask. Also you must be the owner of a CSS Token </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="faq-container os-item" data-aos="fade-right">
+                                <h3>What is a CSS Token and where can acquire one?</h3>
+                                <div class="faq-answer">
+                                    <p>CSS Token is a Space Ship, compliance with the ERC721 NFT standard, each one is unique, transferable, collectable and evolve as they acquire experience playing on different games. You can acquire your first CSS Token in our site.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="faq-container os-item" data-aos="fade-left">
+                                <h3>How is the gameplay ?</h3>
+                                <div class="faq-answer">
+                                    <p>Each player starts the game as the Captain of your SpaceShip with undeveloped buildings and undeveloped resource collectors. The objective of the game is to evolve the SpaceShip, harvesting the greatest amount of resources (energy, graphene and metals), build a powerful fleet and reach the victory condition. </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="faq-container os-item" data-aos="fade-right">
+                                <h3>What is the reward ?</h3>
+                                <div class="faq-answer">
+                                    <p>The winner takes the accumulated pot (the tickets of all the players). Also each spaceship gain experience points, when the spaceship reaches certain points of experience, it levels up and can train some of the QAI modules giving certain additional skills</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="faq-container os-item" data-aos="fade-left">
+                                <h3>Can I play with several CSS Tokens in the same Game? ?</h3>
+                                <div class="faq-answer">
+                                    <p>You can be the owner of several CSS Tokens. But in a game you can only play with one. </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="whitepaper" id="whitepaper">
+                    <div class="container">
+                        <div class="section-title">
+                            <h2>More Info</h2>
+                        </div>
+                        <div class="download-whitepaper">
+                            <a href="#" data-aos="fade-up">
+                                <img src="assets/images/download-whitepaper.svg" alt="" class="">
+                                _Download PDF
+                            </a>
+                        </div>
+                    </div>
+            </section>
+    
+        </main>
+        <script>
+            window.onload = ()=>{
+                AOS.init({
+                    once: true
+                });
+            }
+        </script>
+
+
+{% endblock %}
