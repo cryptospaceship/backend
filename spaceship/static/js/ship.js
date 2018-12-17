@@ -31,6 +31,10 @@ window.addEventListener('load', async () => {
                         });
                     },3000);
                 }
+                else {
+                    $('#join-game-button').attr("disabled", false);
+                    $('#join-game-button').css({'background-color':'#E50E32'});
+                }
                 concole.log(e);
             });
         }
@@ -62,7 +66,14 @@ window.addEventListener('load', async () => {
                 }
             });            
         }
-            
+           
+        function form_completed() {
+            if ((typeof window.qaim_1 !== 'undefined') && (typeof window.qaim_2 !== 'undefined') && ($('#select-game').val() != 'Select an option'))
+                return true
+            else
+                return false;
+        }
+           
         function assignQaimPoint(index) {
             window.qaimAssign[index]++;
             window.shipRemainingPoints--;
@@ -117,7 +128,7 @@ window.addEventListener('load', async () => {
             window.shipRemainingPoints = window.shipUnassignedPoints;
             openQaimModal();
         });
-
+        /*    
         $('#select-game-modal').on('click', function(){
             window.qaim_1 = undefined;
             window.qaim_2 = undefined;
@@ -145,14 +156,71 @@ window.addEventListener('load', async () => {
             $('body').addClass('blur');
             $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#join-game"});
         });
-
+        */
+        
+        $('#select-game-modal').on('click', function(){
+            window.qaim_1 = undefined;
+            window.qaim_2 = undefined;
+            $('#select-game').val('Select an option');
+            $('#join-game-button').attr("disabled", true);
+            $('#join-game-button').css({'background-color':'#A80621'});
+            for (i = 0; i <= 6-1; i++) {
+                q = '#qaims' + i.toString();
+                $(q).prop('checked', false);
+                $(q).on('click', function(){
+                    checked = $(this).attr('qaim');
+                    if (window.qaim_1 == checked) {
+                        window.qaim_1 = window.qaim_2;
+                        window.qaim_2 = undefined;
+                    } else if (window.qaim_2 == checked) {
+                        window.qaim_2 = undefined;
+                    } else {
+                        if (typeof window.qaim_1 === 'undefined') {
+                            window.qaim_1 = checked;
+                        } else if (typeof window.qaim_2 === 'undefined') {
+                            window.qaim_2 = checked;
+                        } else {
+                            q = '#qaims' + window.qaim_1;
+                            $(q).prop('checked', false);
+                            window.qaim_1 = window.qaim_2;
+                            window.qaim_2 = checked;
+                        }
+                    }
+                    if (form_completed()) {
+                        $('#join-game-button').attr("disabled", false);
+                        $('#join-game-button').css({'background-color':'#E50E32'});
+                    } else {
+                        $('#join-game-button').attr("disabled", true);
+                        $('#join-game-button').css({'background-color':'#A80621'});
+                    }
+                });
+                
+            }
+            $('#select-game').change(function() {
+                if (form_completed()){
+                    $('#join-game-button').attr("disabled", false);
+                    $('#join-game-button').css({'background-color':'#E50E32'});
+                } else {
+                    $('#join-game-button').attr("disabled", true);
+                    $('#join-game-button').css({'background-color':'#A80621'});
+                }
+            });
+            $('body').addClass('blur');
+            $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#join-game"});
+        });
+        
+        
+        
+        
+        
         $('#qaim-save-button').on('click', function() {
             setQaim();
         });
         
         $('#join-game-button').on('click', function() {
-            if (typeof window.qaim_1 !== 'undefined' && typeof window.qaim_2 !== 'undefined')
-                joinGame($('#select-game').val());
+            $('#join-game-button').attr("disabled", true);
+            $('#join-game-button').css({'background-color':'#A80621'});
+            joinGame($('#select-game').val());
         });
 
         $('#exit-game-button').on('click', function() {

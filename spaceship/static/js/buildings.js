@@ -53,7 +53,7 @@ window.addEventListener('load', async () => {
             });
         },5000);
 
-        function process_order (order, tx) {
+        function process_order (tx) {
             /*
              * Se cierra el modal
              */
@@ -148,7 +148,7 @@ window.addEventListener('load', async () => {
                 $('#button-disassemble-fleet').click(function() {
                     window.cssgame.disassembleFleet(window.ship,window.fleet_to_disassemble,function(e,h){
                         if (!e) 
-                            process_order("disassemble_fleet",h);
+                            process_order(h);
                     });
                 });
             });
@@ -203,7 +203,7 @@ window.addEventListener('load', async () => {
                     $('#button-design-fleet').click(function(){
                         window.cssgame.designFleet(window.ship,window.design.attack,window.design.defense,window.design.distance,window.design.load,function(e,h){
                         if (!e) 
-                            process_order("design_fleet",h);
+                            process_order(h);
                         });
                     });
                 }
@@ -258,17 +258,26 @@ window.addEventListener('load', async () => {
 
                     $('#converter-selected').click(function() {
                         window.role_selected = 2;
-                        $('#role-selected').text("Converter");
+                        window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
+                            if (!e) 
+                                process_order(h);
+                        });
                     });
 
                     $('#cannon-selected').click(function() {
                         window.role_selected = 1;
-                        $('#role-selected').text("Cannon");
+                        window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
+                            if (!e) 
+                                process_order(h);
+                        });
                     });
 
                     $('#reparer-selected').click(function() {
                         window.role_selected = 3;
-                        $('#role-selected').text("Reparer");
+                        window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
+                            if (!e) 
+                                process_order(h);
+                        });
                     });
 
                 } else {
@@ -295,9 +304,12 @@ window.addEventListener('load', async () => {
             });
 
             $('#modal-wopr-upgrade-first').on('hidden.bs.modal', function () {
+                $('#converter-selected').off();
+                $('#cannon-selected').off();
+                $('#reparer-selected').off();
+
                 window.id_modal_open = undefined;
                 window.role_selected = undefined;
-                $('#role-selected').text("");
             });
 
             $('#modal-wopr-upgrade').on('hidden.bs.modal', function () { 
@@ -338,20 +350,20 @@ window.addEventListener('load', async () => {
             $('#button-upgrade-wopr').click(function() {
                 window.cssgame.upgradewopr(window.ship,function(e,h){
                     if (!e) 
-                        process_order("upgrade_wopr",h);
+                        process_order(h);
                 });
             });
 
             $('#button-upgrade-hangar').click(function() {
                 window.cssgame.upgradeHangar(window.ship,function(e,h){
                     if (!e) 
-                        process_order("upgrade_hangar",h);
+                        process_order(h);
                 });
             });
             $('#button-upgrade-warehouse').click(function() {
                 window.cssgame.upgradeWarehouse(window.ship,function(e,h){
                     if (!e) 
-                        process_order("upgrade_warehouse",h);
+                        process_order(h);
                 });
             });
 
@@ -423,7 +435,7 @@ window.addEventListener('load', async () => {
                 if (value > 0) {
                     window.cssgame.buildFleet(window.ship,value,function(e,h){
                         if (!e) 
-                            process_order("build_fleet",h);
+                            process_order(h);
                     });
                 }
             });

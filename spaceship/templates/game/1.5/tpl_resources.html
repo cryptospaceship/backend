@@ -283,7 +283,7 @@
                                 </div>
                                 <div class="watch-container watch-right" id="converter-watch" style="display: none;">
                                     <div class="block-amount">
-                                        <span id="countdown-upgrade-blocks">0</span>
+                                        <span id="countdown-converter-blocks"></span>
                                     </div>
                                     <div class="block-amount-title">
                                         Convert
@@ -827,10 +827,6 @@
     window.gameAge = {{ last_block_number }} - {{ game_launch }};
     window.blocksToEnd = {{ game_end_block }} - {{ last_block_number }};
 
-    window.gameAbi = {{ game_abi | js}};
-    window.gameAddress = "{{ game_address }}";
-    window.gameNetwork = {{ game_network }};
-
     window.ship = {{ ship_id }};
     window.damage = {{ damage }};
     window.in_port = {{ in_port | boolean }};
@@ -850,7 +846,7 @@
     window.qaim = {{ qaim }};
     window.role = {{ role }};
     //window.role = 2;
-    //window.converterLevel = 1;
+    window.converterLevel = ( {{ role }} == 2 ) ? {{ wopr_level }} : 0;
 
     window.energyProduction = {{ energy_production }};
     window.grapheneProduction = {{ graphene_production }};
@@ -858,6 +854,7 @@
 
     // Update con setTimer()
     window.resourceBlock = {{ countdown_resources }};
+    window.converterBlock = {{ countdown_wopr }};
     window.grapheneStock = {{ graphene_stock }};
     window.energyStock =  {{ energy_stock }};
     window.metalsStock = {{ metal_stock }};
@@ -868,5 +865,10 @@
     window.base_url = "{{ base_url }}";
     window.explorer_url = "{{ explorer_url }}";
     window.game = {{ game_id }};
+
+
+    window.gameAbi = {{ game_abi | js}};
+    window.gameAddress = "{{ game_address }}";
+    window.gameNetwork = {{ game_network }};
 </script>
 {% endblock %}

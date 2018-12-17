@@ -658,6 +658,7 @@ window.addEventListener('load', async () => {
 
         function setCountdown() {
             $('#countdown-upgrade-blocks').text(window.resourceBlock);
+            $('#countdown-converter-blocks').text(window.converterBlock);
         }
         
         function setEventsCounter() {
@@ -825,6 +826,7 @@ window.addEventListener('load', async () => {
                         location.reload();
                     }
                     window.resourceBlock = ret.countdownToUpgradeResources;
+                    window.converterBlock = ret.countdownToWopr;
                     window.damage = ret.damage;
                     setResourcesStock();
                     checkResourceUpgrade();

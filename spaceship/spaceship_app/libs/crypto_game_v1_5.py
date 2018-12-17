@@ -74,7 +74,7 @@ class game(object):
                'countdown_move': data[5],
                'countdown_fleet': data[6],
                'countdown_mode': data[7],
-               'countdown_fire_wopr': data[8],
+               'countdown_wopr': data[8],
                'damage': data[9]}
 
         return ret

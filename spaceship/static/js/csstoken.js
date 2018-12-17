@@ -36,15 +36,15 @@ class CSSToken {
         for (let i = 6; i <= 32-1; i++) {
             qaim[i] = 0;
         }
-        this.contract.setQAIM(ship,qaim,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.setQAIM(ship,qaim,{from:this.w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     setQAIM(ship,qaim,callback) {
-        this.contract.setQAIM(ship,qaim,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.setQAIM(ship,qaim,{from:this.w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     getShipQAIM(ship,callback) {
-        this.contract.getShipQAIM(ship,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.getShipQAIM(ship,{from:this.w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     getShipQAIMResult(result) {

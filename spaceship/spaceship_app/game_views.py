@@ -252,6 +252,7 @@ def play_messages_view(request, net_id, game_id, ship_id, box=''):
     messages  = paginator.get_page(page)
     
     context['messages'] = messages
+    context['messages_count'] = messages_list.count()
     
     return render(request, template.file, context)
 

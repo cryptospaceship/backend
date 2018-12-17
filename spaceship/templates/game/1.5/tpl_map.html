@@ -250,23 +250,23 @@
                                         <span id="blocks-to-fleet"></span>
                                     </div>
                                     <div class="block-amount-title">
-                                            Fleet
+                                        Fleet
                                     </div>
                                 </div>
                                 <div class="watch-container watch-left">
+                                    <div class="block-amount">
+                                        <span id="blocks-to-mode"></span>
+                                    </div>
+                                    <div class="block-amount-title">
+                                        mode
+                                    </div>
+                                </div>
+                                <div class="watch-container watch-right" id="cannon-reparer-watch">
                                     <div class="block-amount">
                                         <span id="blocks-to-fire"></span>
                                     </div>
                                     <div class="block-amount-title">
                                         fire
-                                    </div>
-                                </div>
-                                <div class="watch-container watch-right">
-                                    <div class="block-amount">
-                                        <span id="blocks-to-mode"></span>
-                                    </div>
-                                    <div class="block-amount-title">
-                                        Mode
                                     </div>
                                 </div>
                             </div>
@@ -541,6 +541,7 @@
                             </div>
                         </div>
                         <div class="row down">
+                            <div class="col-md-1" id="pad-no-wopr" style="display: none;"></div>
                             <div class="col-md-4" id="attack-modal-ship">
                                 <div class="modal-info-title">
                                     Your Fleet
@@ -566,7 +567,11 @@
                                     <div class="stopper"></div>
                                 </div>
                             </div>
+
                             <div class="col-md-4" id="send-resources-modal-ship">
+                                <div class="modal-info-title">
+                                    Resource Logistics
+                                </div>
                                 <div class="modal-info-text">
                                     <div class="icon-ratio-modal ic-energy"></div>
                                     <div class="form-container">
@@ -586,7 +591,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" id="cannon-modal-ship">
+                            <div class="col-md-4" id="wopr-modal-ship">
+                                <div class="modal-info-title">
+                                    Crypto-Ion Cannon
+                                </div>
+                                <div class="modal-info-text">
+                                    <div class="form-group cannon-mode">
+                                        <select class="form-control" id="cannon-target">
+                                            <option id="fire-0">Normal - Ship</option>
+                                            <option id="fire-1">Solar Panel 1</option>
+                                            <option id="fire-2">Solar Panel 2</option>
+                                            <option id="fire-3">Solar Panel 3</option>
+                                            <option id="fire-4">Solar Panel 4</option>
+                                            <option id="fire-5">Solar Panel 5</option>
+                                            <option id="fire-6">Solar Panel 6</option>
+                                            <option id="fire-7">Graphene Collector</option>
+                                            <option id="fire-8">Metal Collector</option>
+                                            <option id="fire-9">Warehouse</option>
+                                            <option id="fire-10">Hangar</option>
+                                            <option id="fire-11">W.O.P.R</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="modal-info-text">       
                                     <div class="title-text-no-icon">Cannon Status</div>
                                     <div class="modal-info-data"><span id="cannon-status">-</span></div>
@@ -613,12 +639,17 @@
                             </div>
                         </div>
                         <div class="row down">
-                            <div class="col-md-4 center">
+                            <div class="col-md-1" id="pad-no-wopr" style="display: none;"></div>
+                            <div class="col-md-4 center" id="attack-modal-ship" >
                                 <button id="attack-button" type="button" class="btn btn-primary">Attack</button>
                                 <button id="raid-button" type="button" class="btn btn-primary">Raid</button>
                             </div>
-                            <div class="col-md-4 center"><button id="send-resources-button" type="button" class="btn btn-primary">Send Resources</button></div>
-                            <div class="col-md-4 center"><button id="fire-cannon-button" type="button" class="btn btn-primary">Fire Cannon</button></div>
+                            <div class="col-md-4 center" id="send-resources-modal-ship">
+                                <button id="send-resources-button" type="button" class="btn btn-primary">Send Resources</button>
+                            </div>
+                            <div class="col-md-4 center" id="wopr-modal-ship">
+                                <button id="fire-cannon-button" type="button" class="btn btn-primary">Fire Cannon</button>
+                            </div>
                         </div>
                     
                     </div>
@@ -794,11 +825,13 @@
     window.blocks_to_fleet = {{ countdown_fleet }};
     //window.blocks_to_fire = {{ countdown_fire_cannon }};
     window.damage = {{ damage }};
-    window.cannon_level = 1; // {{ cannon_level }};
+    
     window.in_port = {{ in_port | boolean }};
 
     // Si tiene cañon
-    window.cannon = window.cannon_level > 0 ? true : false;
+    window.cannon_level = 1; // {{ cannon_level }};
+    window.cannon = window.cannon_level > 0 ? false : false;
+    window.target = 0; 
 
     // Stock of resources       
     window.grapheneStock = {{ graphene_stock }};

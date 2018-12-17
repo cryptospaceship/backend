@@ -127,18 +127,27 @@ class Message(models.Model):
     @classmethod
     def get_inbox_unread_count(cls, ship_id):
         ship = Ship.get_by_id(ship_id)
-        return cls.objects.filter(receiver=ship, game=ship.game, read=False).count()
+        if ship is not None:
+            return cls.objects.filter(receiver=ship, game=ship.game, read=False).count()
+        else:
+            return 0
         
     @classmethod
     def get_outbox_unread_count(cls, ship_id):
         ship = Ship.get_by_id(ship_id)
-        return cls.objects.filter(sender=ship, game=ship.game).count()
+        if ship is not None:
+            return cls.objects.filter(sender=ship, game=ship.game).count()
+        else:
+            return 0
     
     @classmethod
     def get_inbox_list(cls, ship_id, serialized=False):
         print(ship_id)
         ship = Ship.get_by_id(ship_id)
-        msgs = cls.objects.filter(receiver=ship, game=ship.game).order_by('-id')
+        if ship is not None:
+            msgs = cls.objects.filter(receiver=ship, game=ship.game).order_by('-id')
+        else:
+            msgs = []
         if serialized:
             ret = []
             for msg in msgs:
@@ -151,7 +160,10 @@ class Message(models.Model):
     @classmethod
     def get_outbox_list(cls, ship_id, serialized=False):
         ship = Ship.get_by_id(ship_id)
-        msgs = cls.objects.filter(sender=ship, game=ship.game).order_by('-id')
+        if ship is not None:
+            msgs = cls.objects.filter(sender=ship, game=ship.game).order_by('-id')
+        else:
+            msgs = []
         if serialized:
             ret = []
             for msg in msgs:
@@ -164,7 +176,10 @@ class Message(models.Model):
     @classmethod
     def get_inbox_since_id(cls, ship_id, msg_id, serialized=False):
         ship = Ship.get_by_id(ship_id)
-        msgs = cls.objects.filter(receiver=ship, game=ship.game, id__gt=msg_id).order_by('-id')
+        if ship is not None:
+            msgs = cls.objects.filter(receiver=ship, game=ship.game, id__gt=msg_id).order_by('-id')
+        else:
+            msgs = []
         if serialized:
             ret = []
             for msg in msgs:

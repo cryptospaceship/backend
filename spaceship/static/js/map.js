@@ -303,15 +303,28 @@ window.addEventListener('load', async () => {
             $('#confirm-change-default-mode').removeClass('disabled');
         });
 
-        function cannonInModal() {
-            let p = parseInt((window.energyStock * 100 / 2000000));
+        function cannonInModal(target) {
+            let p;
+            let damage;
+            if (target == 0)
+                p = parseInt((window.energyStock * 100 / 2000000));
+            else
+                p = parseInt((window.energyStock * 100 / 3000000));
+
             if (p > 100) {
                 p = 100;
             }
             let pstr = p.toString() + '%';
-            let damage = CSSGame.getCannonDamage([window.position_x,window.position_y],[x,y], window.cannon_level);
+
+            if (target == 0)
+                damage = CSSGame.getCannonDamage([window.position_x,window.position_y],[x,y], window.cannon_level, false);
+            else
+                damage = CSSGame.getCannonDamage([window.position_x,window.position_y],[x,y], window.cannon_level, true);
+
             $('#data-cannon-to-fire').text(pstr);
             $('#bar-cannon-to-fire').css('width',pstr);
+
+
             if (CSSGame.checkCannonRange([window.position_x,window.position_y],[x,y], window.cannon_level)) {
                 if (!window.in_port) {
                     if (window.blocks_to_fire == 0) {
@@ -423,16 +436,37 @@ window.addEventListener('load', async () => {
                              */ 
                             $('#fire-cannon-button').addClass('disabled');
                             if (window.cannon == false) {
-                                //$('#cannon-modal-ship').hide();    
+                                $('[id=pad-no-wopr]').show();
+                                $('[id=wopr-modal-ship]').hide();   
+                                $('[id=send-resources-modal-ship]').removeClass('col-md-4');
+                                $('[id=attack-modal-ship]').removeClass('col-md-4');
+                                $('[id=send-resources-modal-ship]').addClass('col-md-5');
+                                $('[id=attack-modal-ship]').addClass('col-md-5');
                             }
                             else {
                                 /*
                                  * Dibuja los atributos del cañon
                                  */
-                                if (cannonInModal()) {                                                
+                                $('#cannon-target').on('change',()=>{
+                                    let t = $('#cannon-target').val();
+                                    window.target = CSSGame.valueToTarget(t);
+                                    $('#fire-cannon-button').off();
+                                    if (cannonInModal(window.target)) {                                                
+                                        $('#fire-cannon-button').removeClass('disabled');
+                                        $('#fire-cannon-button').click(function() {
+                                            cssgame.fireCannon(window.ship,window.other_ship, window.target,function(e,h) {
+                                                if (!e) {
+                                                    process_order(h);
+                                                }
+                                            });
+                                        });
+                                    }
+                                });
+
+                                if (cannonInModal(window.target)) {                                                
                                     $('#fire-cannon-button').removeClass('disabled');
                                     $('#fire-cannon-button').click(function() {
-                                        cssgame.fireCannon(window.ship,window.other_ship, function(e,h) {
+                                        cssgame.fireCannon(window.ship,window.other_ship, window.target,function(e,h) {
                                             if (!e) {
                                                 process_order(h);
                                             }
@@ -700,6 +734,7 @@ window.addEventListener('load', async () => {
             $('#attack-button').off();
             $('#raid-button').off();
             $('#fire-cannon-button').off();
+            $('#cannon-target').off();
             $('#attack-button').removeClass('disabled');
             $('#send-resources-button').removeClass('disabled');
             $('#raid-button').removeClass('disabled');

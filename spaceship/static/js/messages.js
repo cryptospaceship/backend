@@ -20,7 +20,7 @@ $(document).ready(function(){
         icons.setAttribute("class", "material-icons");
         icons.setAttribute("style", "vertical-align: middle; display: inline; font-size: 20px");
         
-        console.log(read);
+        //console.log(read);
         if (read == false) {
             a.setAttribute("style", "background-color: #ffffff30; font-weight: 800; cursor: pointer;");
             span.setAttribute("id", "message-icon-80");
@@ -44,7 +44,25 @@ $(document).ready(function(){
         a.appendChild(subject_div);
         a.appendChild(date_div);
         return a;
-    }         
+    }
+
+    function renderPaginator(pages) {
+        let li = document.createElement('li');
+        let a  = document.createElement('a');
+        
+        a.setAttribute("href", "?page=" + pages);
+        
+        a.appendChild(document.createTextNode(pages))
+        li.appendChild(a);
+        
+        $(li).insertAfter('#page-number-' + (pages - 1));
+        $('#next-page-arrow').attr('class', 'arrow-next');
+        $('#next-page-arrow').attr('href', '?page=2');
+        $('#total-pages').text("Page 1 of " + pages)
+        
+        window.lastPage = pages;
+    }
+    
 
     function openMessageModal(msg){
         window.backend.messages.get($(msg).attr('msg-id'), function(e,r) {
@@ -178,10 +196,12 @@ $(document).ready(function(){
                 last = 0;
             else
                 last = window.lastMessage;
+                //last = 68;
 
             window.backend.messages.getsince(window.gameId,last,(e,m)=>{
                 if (e == null) 
                     if (m.length > 0) {
+                        window.totalMessages = window.totalMessages + m.length;
                         for (i = m.length -1; i >= 0; i-- ) {
                             msg = renderMessage(m[i].id,m[i].from,m[i].subject,m[i].date, m[i].read);
                             $('#table-body').prepend(msg);
@@ -190,15 +210,16 @@ $(document).ready(function(){
                         if ( elements.length > 10 ) {
                             for (i = 10; i <= elements.length-1; i++) 
                                 elements[i].remove();
+                            pages = parseInt((window.totalMessages + m.length) / 10) + 1;
+                            console.log(pages + " of " + window.lastPage);
+                            if (pages > window.lastPage)
+                                renderPaginator(pages);                            
                         }
                         window.lastMessage = m[0].id;
                         $('[id="message-inbox"]').off();
                         $('[id="message-inbox"]').click(function() {         
                             openMessageModal(this);
                         });
-
-                        let pages = parseInt((window.totalMessages + m.length) / 10) + 1;
-                        console.log(pages);
                     }
             });
         },5000);

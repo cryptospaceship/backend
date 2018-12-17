@@ -1486,6 +1486,9 @@ button.btn {
 }
 
 
+input[type=submit]:disabled {
+    background-color: #A80621 !important;
+}
 
 /*-- MAP ----*/
 
@@ -1638,6 +1641,11 @@ button.btn {
 
 .form-group {
     margin-left: 56px;
+}
+
+.cannon-mode {
+    margin-left: 0px;
+    margin-bottom: 0px;
 }
 
 .form-control {

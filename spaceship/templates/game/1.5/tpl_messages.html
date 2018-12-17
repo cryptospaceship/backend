@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="pagination-container">
-                        <p>Page {{ messages.number }} of {{ messages.paginator.num_pages }}</p>
+                        <p id="total-pages">Page {{ messages.number }} of {{ messages.paginator.num_pages }}</p>
                         <div class="pagination">
                             <ul>
                             {% if messages.has_previous %}
@@ -98,15 +98,15 @@
                             {% endif %}                            
                             {% for i in messages.paginator.page_range %}
                                 {% if messages.number == i %}
-                                    <li><a href="javascript:void(0);" class="active">{{ i }}</a></li>
+                                    <li><a href="javascript:void(0);" class="active" id="page-number-{{ i }}">{{ i }}</a></li>
                                 {% else %}
-                                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                    <li><a href="?page={{ i }}" id="page-number-{{ i }}">{{ i }}</a></li>
                                 {% endif %}
                             {% endfor %}
                             {% if messages.has_next %}
                                 <li><a href="?page={{ messages.next_page_number }}" class="arrow-next"></a></li>
                             {% else %}
-                                <li><a href="javascript:void(0);" class="arrow-next disable"></a></li>
+                                <li><a href="javascript:void(0);" class="arrow-next disable" id="next-page-arrow"></a></li>
                             {% endif %}                            
                             </ul>
                         </div>
@@ -190,7 +190,7 @@ window.shipList = {{ ship_list | safe }};
 {% else %}
     window.lastMessage = 0;
 {% endif %}
-window.totalMessages = {{ messages|length }};
+window.totalMessages = {{ messages_count }};
 {% if to_ship %}
     window.toShip = "{{ to_ship }}"
 {% endif %}
@@ -202,6 +202,7 @@ window.totalMessages = {{ messages|length }};
 {% endif %}
 
 window.actualPage = {{ messages.number }};
+window.lastPage = {{ messages.paginator.num_pages }};
 
 </script>
 </html>

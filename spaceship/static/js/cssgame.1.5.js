@@ -121,9 +121,9 @@ class CSSGame {
         this.contract.attackShip(ship,to,false,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
-    fireCannon(ship,to,callback){
+    fireCannon(ship,to,target,callback){
         let w3 = this.w3;
-        this.contract.fireCannon(ship,to,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.fireCannon(ship,to,target,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Send Resources
@@ -317,7 +317,7 @@ class CSSGame {
         ret.countdownToMove = result[5].toNumber();
         ret.countdownToFleet = result[6].toNumber();
         ret.countdownToMode = result[7].toNumber();
-        ret.countdownToFireCannon = result[8].toNumber();
+        ret.countdownToWopr = result[8].toNumber();
         ret.damage = result[9].toNumber();
         return ret;
     }
@@ -374,14 +374,21 @@ class CSSGame {
         return (level > 0 && (d == 1 || (d == 2 && level == 4)));
     }
 
-    static getCannonDamage(from, to, level) {
+    static getCannonDamage(from, to, level, accuracy) {
         let d = this.getDistance(from,to);
+        let ret = 0;
         if (this.checkCannonRange(from,to,level)) {
-            if (d == 2)
-                return 10;
-            else
-                return 20;
+            if (accuracy) {
+                if (d == 2)
+                    ret = 50;
+                else
+                    ret = 100;
+            }
+            else {
+                ret = (level * 10)/d;
+            }
         }
+        return ret;
     }
 
     static energyToFire(energy) {
@@ -415,6 +422,35 @@ class CSSGame {
             }
         }
         return ftstr[fleetType];
+    }
+
+    static valueToTarget(t) {
+        switch (t) {
+            case "Normal - Ship":
+                return 0;
+            case "Solar Panel 1":
+                return 1;
+            case "Solar Panel 2":
+                return 2;
+            case "Solar Panel 3":
+                return 3;
+            case "Solar Panel 4":
+                return 4;
+            case "Solar Panel 5":
+                return 5;
+            case "Solar Panel 6":
+                return 6;
+            case "Graphene Collector":
+                return 7;
+            case "Metal Collector":
+                return 8;
+            case "Warehouse":
+                return 9;
+            case "Hangar":
+                return 10;
+            case "W.O.P.R":
+                return 11;
+        }
     }
 
     static getFleetTypeName(type)
