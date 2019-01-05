@@ -498,13 +498,20 @@ class Event(models.Model):
     transaction = models.ForeignKey('Transaction', on_delete=models.CASCADE)
     event_type  = models.CharField(max_length=128)
     event_block = models.IntegerField()
-    from_ship   = models.IntegerField(blank=True, null=True)
-    to_ship     = models.IntegerField(blank=True, null=True)
+    from_ship   = models.ForeignKey('Ship', related_name='event_from', on_delete=models.CASCADE)
+    #to_ship     = models.ForeignKey('Ship', related_name='event_to', on_delete=models.CASCADE)
     event_meta  = models.TextField()
 
     def __str__(self):
         return str(self.id)
 
+    @classmethod
+    def get_by_id(cls, event_id):
+        try:
+            return cls.objects.get(id=event_id)
+        except:
+            return None
+    """    
     @classmethod
     def create_attack_ship(cls, tx, data):
         event             = cls()
@@ -577,17 +584,18 @@ class Event(models.Model):
 
         EventInbox.create_from(event, data[0].args._from)
         EventInbox.create_to(event, data[0].args._to)
-
+    """
+    
     @classmethod
-    def create(cls, game, transaction, event_type, data):
+    def create(cls, game, transaction, ship, event_type, data):
         event             = cls()
         event.game        = game
         event.transaction = transaction
         event.event_type  = event_type
         event.event_block = data[0].blockNumber
-        event.from_ship   = dict(data[0].args)['_from']
-        if '_to' in dict(data[0].args):
-            event.to_ship     = dict(data[0].args)['_to']
+        event.from_ship   = ship
+        #if '_to' in dict(data[0].args):
+        #    event.to_ship     = Ship.get_by_id(dict(data[0].args)['_to'])
         event.event_meta  = dict(data[0].args)
         event.save()
         return event
@@ -600,15 +608,19 @@ class Event(models.Model):
             return None
         
     def load_meta(self):
-        return json.loads(self.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
-        
+        try:
+            return json.loads(self.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
+        except Exception as e:
+            print(str(self.event_meta))
+            print(str(e))     
+            return self.event_meta
         
 class EventInbox(models.Model):
     INBOX_TYPE = (('F', 'From'),
                   ('T', 'To'))
 
     game          = models.ForeignKey(Game, on_delete=models.CASCADE)
-    ship_id       = models.IntegerField()
+    ship          = models.ForeignKey('Ship', on_delete=models.CASCADE)
     event         = models.ForeignKey(Event, on_delete=models.CASCADE)
     inbox_type    = models.CharField(max_length=1, choices=INBOX_TYPE)
     viewed        = models.BooleanField(default=False)
@@ -617,7 +629,7 @@ class EventInbox(models.Model):
     def __str__(self):
         return '%s_%s_%s' %(self.id, self.event, self.ship_id)
 
-    def view(self):
+    def mark_as_viewed(self):
         self.viewed = True
         self.save()
 
@@ -625,7 +637,7 @@ class EventInbox(models.Model):
     def create_from(cls, event):
         event_inbox            = cls()
         event_inbox.game       = event.game
-        event_inbox.ship_id    = event.from_ship
+        event_inbox.ship       = event.from_ship
         event_inbox.event      = event
         event_inbox.inbox_type = 'F'
         event_inbox.viewed     = False
@@ -635,47 +647,52 @@ class EventInbox(models.Model):
     def create_to(cls, event, ship_id):
         event_inbox            = cls()
         event_inbox.game       = event.game
-        event_inbox.ship_id    = ship_id
+        event_inbox.ship       = Ship.get_by_id(ship_id)
         event_inbox.event      = event
         event_inbox.inbox_type = 'T'
         event_inbox.viewed     = False
         event_inbox.save()
 
     @classmethod
-    def not_read_count(cls, game_id, ship_id):
+    def unread_count(cls, game_id, ship):
         game = Game.get_by_id(game_id)
         if game is not None:
-            return cls.objects.filter(game=game, ship_id=ship_id, viewed=False).count()
+            return cls.objects.filter(game=game, ship=ship, viewed=False).count()
         else:
             return 0
 
+    """        
     @classmethod
-    def not_read_ids(cls, game_id, ship_id):
+    def not_read_ids(cls, game_id, ship):
         ret  = []
         game = Game.get_by_id(game_id)
         if game is not None:
-            events = cls.objects.filter(game=game, ship_id=ship_id, viewed=False)
+            events = cls.objects.filter(game=game, ship=ship, viewed=False)
             for event in events:
                 ret.append(event.id)
         return ret
-
-
+    """
+        
     @classmethod
     def get_by_id(cls, event_id):
         try:
-            return cls.objects.get(id=event_id)
+            ei = cls.objects.get(id=event_id)
+            ei.mark_as_viewed()
+            return ei
         except:
             return None
 
     @classmethod
     def get_by_ship_id(cls, ship_id):
-        o = cls.objects.filter(ship_id=ship_id).order_by('-id')
+        ship = Ship.get_by_id(ship_id)
+        o = cls.objects.filter(ship=ship).order_by('-id')
         for i in o:
             print(i.event.event_meta.replace("'", "\""))
             i.event_meta_parsed = json.loads(i.event.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
             print (i.event_meta_parsed)
         return o
 
+        
 class Action(models.Model):
     name = models.CharField(max_length=32)
 
@@ -804,6 +821,16 @@ class Ship(models.Model):
         ship.name    = name
         ship.save()
         return ship
+
+    @classmethod
+    def is_in_game(cls, ship_id, game_id):
+        ret = False
+        try:
+            cls.objects.get(ship_id=ship_id, game=game_id)
+            ret = True
+        except:
+            pass
+        return ret
     
     @classmethod
     def get_by_id(cls, ship_id):
@@ -827,7 +854,14 @@ class Ship(models.Model):
             ret.append({'data': ship.ship_id, 'value': ship.name})            
         return ret
         
-        
+    @classmethod
+    def get_names(cls, game):
+        ret = {}
+        ships = cls.objects.filter(game=game)
+        for ship in ships:
+            ret[ship.ship_id] = ship.name
+        return ret
+            
             
     def set_player(self, player):
         self.player = player

@@ -112,7 +112,12 @@ class game(object):
 
     def get_ships_id(self):
         try:
-            return self.contract.functions.getShipsId().call()
+            ships = self.contract.functions.getShipsId().call()
+            cleanlist = []
+            for ship in ships:
+                if ship != 0 and ship not in cleanlist:
+                    cleanlist.append(ship)
+            return cleanlist
         except Exception as e:
             raise gameException(str(e))
 

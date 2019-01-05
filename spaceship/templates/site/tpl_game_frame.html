@@ -18,7 +18,12 @@
                 {% else %}
                     <li id="messages"><a href="javascript:void(0);" class="anchor">Messages </a><div id="unread-messages" style="background-color: red; border-radius: 50%; width: 23px; height: 23px; display: inline-block;">{{ messages_count }}</div></li>
                 {% endif %}
-                <li><a href="javascript:void(0);" class="anchor">Events</a></li>
+
+                {% if events_count == 0 %}
+                    <li id="events"><a href="javascript:void(0);" class="anchor">Events </a><div id="unread-events"></div></li>
+                {% else %}
+                    <li id="events"><a href="javascript:void(0);" class="anchor">Events </a><div id="unread-events" style="background-color: red; border-radius: 50%; width: 23px; height: 23px; display: inline-block;">{{ events_count }}</div></li>
+                {% endif %}
                 <li id="ranking"><a href="javascript:void(0);" class="anchor">Ranking</a></li>
             </ul>
         </div>
@@ -39,10 +44,13 @@
         window.default = "resources";
         window.game_id = {{ game_id }};
         window.onload = ()=> {
+
             window.frame = document.getElementById("game-frame");
             window.actual = (window.location.hash != "") ? window.location.hash.substring(6) : window.default;
 
             window.msg_sound = new Audio('/static/sounds/msg.ogg');
+            window.event_sound = new Audio('/static/sounds/msg.ogg'); // Cambiar de ser necesario
+
 
             let set_unread_messages = (n) => {
                 let d = document.getElementById("unread-messages");
@@ -62,19 +70,48 @@
                 }
             }
 
+            let set_unread_events = (n) => {
+                console.log(n);
+                let d = document.getElementById("unread-events");
+                let val = (d.innerText == "") ? 0 : parseInt(d.innerText);
+
+                if ( val != n ) {
+                    if (n > val) 
+                        window.event_sound.play();
+                    
+                    if (n != 0) {
+                        d.setAttribute("style", "background-color: red; border-radius: 50%; width: 23px; height: 23px; display: inline-block;");
+                        d.innerText = n.toString();
+                    } else {
+                        d.removeAttribute("style");
+                        d.innerText = "";
+                    }
+                }
+            }
+
             // HARDCODING ******** REEMPLAZAR POR VARIABLE ********
             window.backend = new Backend('http://dev.cryptospaceship.io:8000');
             
-            window.check_msg = setInterval(()=>{
+            window.check_in = setInterval(()=>{
+
+                // Messages
                 window.backend.messages.count(window.game_id, (e,c)=>{
                     if (e == null)
                         set_unread_messages(c);
                 });
+
+                // Events
+                window.backend.events.count(window.game_id, (e,c) => {
+                    if (e == null)
+                        set_unread_events(c);
+                });
+
+
             }, 5000);
 
             let change_frame = (view) => {
                 window.location.hash = 'page=' + view;
-                if (view == "resources" || view == "map" || view == "buildings" || view == "ranking" || view == "messages") {
+                if ( view == "resources" || view == "map" || view == "buildings" || view == "ranking" || view == "messages" || view == "events" ) {
                     if (view == "messages")
                         path = "messages/inbox";
                     else
@@ -95,29 +132,34 @@
             }
 
 
-            document.getElementById("resources").addEventListener("click",()=> {
+            document.getElementById("resources").addEventListener("click", ()=> {
                 if (window.actual != "resources")
                     change_frame("resources");
             });
     
-            document.getElementById("map").addEventListener("click",()=>{
+            document.getElementById("map").addEventListener("click", ()=> {
                 if (window.actual != "map")
                     change_frame("map");
             });
     
-            document.getElementById("buildings").addEventListener("click",()=>{
+            document.getElementById("buildings").addEventListener("click", ()=> {
                 if (window.actual != "buildings")
                     change_frame("buildings");
             });
             
-            document.getElementById("ranking").addEventListener("click",()=> {
+            document.getElementById("ranking").addEventListener("click", ()=> {
                if (window.actual != "ranking")
                     change_frame("ranking");
             });
             
-            document.getElementById("messages").addEventListener("click",()=> {
+            document.getElementById("messages").addEventListener("click", ()=> {
                 if (window.actual != "messages")
                     change_frame("messages");
+            });
+
+            document.getElementById("events").addEventListener("click", ()=> {
+                if (window.actual != "events")
+                    change_frame("events");
             });
 
             change_frame(window.actual);

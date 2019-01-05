@@ -112,24 +112,43 @@ def play_events_view(request, net_id, game_id, ship_id):
     game = Game.get_by_id(game_id)
     if game is None:
         return render(request, html_templates['not_foud'])
+        
+    page_fields = 10
+        
+    template = GameTemplate.get(game.version, 'events')
 
     context = {}
     context['base_url']     = Var.get_var('base_url')
     context['game_id']      = game_id
-    context['game_abi']     = loads(game.abi)
+    #context['game_abi']     = loads(game.abi)
     context['game_address'] = game.address
     context['game_network'] = net_id
     context['ship_id']      = ship_id
-    context['events_count'] = EventInbox.not_read_count(game_id, ship_id)
+    #context['events_count'] = EventInbox.unread_count(game_id, ship_id)
+    context['ships_name']    = Ship.get_names(game)
     
     context.update(__get_events(game, ship_id))
     
-    context['events'] = []
-    for o in EventInbox.get_by_ship_id(ship_id):
-        context['events'].append(o)
-
-    template = GameTemplate.get(game.version, 'events')
-        
+    #context['events_list'] = []
+    #for events in EventInbox.get_by_ship_id(ship_id):
+    #    context['events_list'].append(events)
+    events_list = EventInbox.get_by_ship_id(ship_id)
+    
+    context['inject_js']      = template.get_js()
+    context['inject_css']     = template.get_css()
+    
+    paginator = Paginator(events_list, page_fields)
+    page      = request.GET.get('page')
+    events    = paginator.get_page(page)
+    
+    for ei in events:
+        meta = ei.event.load_meta()
+        if '_to' in meta:
+            if type(meta['_to']).__name__ != 'list':
+                ei.to_ship = Ship.get_by_id(meta['_to'])
+    print(events)
+    context['events'] = events
+    
     return render(request, template.file, context)
 
 
@@ -150,7 +169,7 @@ def play_resources_view(request, net_id, game_id, ship_id):
     context['game_address'] = game.address
     context['game_network'] = net_id
     context['ship_id']      = ship_id
-    context['events_count'] = EventInbox.not_read_count(game_id, ship_id)
+    #context['events_count'] = EventInbox.unread_count(game_id, ship_id)
 
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
@@ -175,7 +194,7 @@ def play_map_view(request, net_id, game_id, ship_id):
     context['game_address'] = game.address
     context['game_network'] = net_id
     context['ship_id']      = ship_id
-    context['events_count'] = EventInbox.not_read_count(game_id, ship_id)
+    #context['events_count'] = EventInbox.unread_count(game_id, ship_id)
 
     context.update(__get_map(game, ship_id))
     
@@ -201,7 +220,7 @@ def play_buildings_view(request, net_id, game_id, ship_id):
     context['game_address'] = game.address
     context['game_network'] = net_id
     context['ship_id']      = ship_id
-    context['events_count'] = EventInbox.not_read_count(game_id, ship_id)
+    #context['events_count'] = EventInbox.unread_count(game_id, ship_id)
 
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css() 
@@ -228,7 +247,7 @@ def play_messages_view(request, net_id, game_id, ship_id, box=''):
     context['game_address']   = game.address
     context['game_network']   = net_id
     context['ship_id']        = ship_id
-    context['events_count']   = EventInbox.not_read_count(game_id, ship_id)
+    #context['events_count']   = EventInbox.unread_count(game_id, ship_id)
     context['messages_count'] = Message.get_inbox_unread_count(ship_id)
 
     if "to" in request.GET:
@@ -275,7 +294,7 @@ def play_ranking_view(request, net_id, game_id, ship_id):
     context['game_address']   = game.address
     context['game_network']   = net_id
     context['ship_id']        = ship_id
-    context['events_count']   = EventInbox.not_read_count(game_id, ship_id)
+    #context['events_count']   = EventInbox.unread_count(game_id, ship_id)
     context['messages_count'] = Message.get_inbox_unread_count(ship_id)
     context['inbox_messages'] = Message.get_inbox_list(ship_id, True)
     

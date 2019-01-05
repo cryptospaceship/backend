@@ -3,8 +3,8 @@ class Events {
         this.baseurl = baseurl;
     }
 
-    count(gameId,shipId,callback) {
-        let ep = '/api/events/' + gameId.toString() + '/' + shipId.toString() + '/unread/count';
+    count(gameId,callback) {
+        let ep = '/api/event/count/' + gameId.toString() + '/' ;
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if(this.readyState == XMLHttpRequest.DONE) {
@@ -19,13 +19,29 @@ class Events {
     }
 
     get(eventId, callback) {
-        let ep = '/api/events/' + eventId.toString();
+        let ep = '/api/event/' + eventId.toString() + '/';
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if(this.readyState == XMLHttpRequest.DONE) {
                 if (this.status == 200) 
                     callback(null,JSON.parse(xhr.response));
                 else
+                    callback(xhr.response,null);
+            }   
+        }
+        xhr.open('GET', this.baseurl + ep, true);
+        xhr.send();
+    }
+
+    getsince(gameId, eventId, callback) {
+        let ep = '/api/event/since/' + gameId.toString() + '/' + eventId.toString() + '/';
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if(this.readyState == XMLHttpRequest.DONE) {
+                if (this.status == 200){
+                    callback(null,JSON.parse(xhr.response));
+                }
+                else 
                     callback(xhr.response,null);
             }   
         }
@@ -98,7 +114,6 @@ class Messages {
         xhr.onreadystatechange = function() {
             if(this.readyState == XMLHttpRequest.DONE) {
                 if (this.status == 200){
-                    console.log(xhr.response);
                     callback(null,xhr.response);
                 }
                 else 
@@ -115,5 +130,23 @@ class Backend {
     constructor(baseurl) {
         this.events = new Events(baseurl);
         this.messages = new Messages(baseurl);
+        this.baseurl = baseurl;
     }
+
+    shipingame(shipId,gameId, callback) {
+        let ep = '/api/ship/ingame/' + shipId.toString() + '/' + gameId.toString() + '/';
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if(this.readyState == XMLHttpRequest.DONE) {
+                if (this.status == 200){
+                    callback(null,JSON.parse(xhr.response));
+                }
+                else 
+                    callback(xhr.response,null);
+            }   
+        }
+        xhr.open('GET', this.baseurl + ep, true);
+        xhr.send();
+    }
+
 }

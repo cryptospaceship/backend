@@ -836,17 +836,6 @@ window.addEventListener('load', async () => {
             });
         }, 5000);
 
-        /*
-            * Check Events
-            */ 
-        setInterval(function() {
-            backend.events.count(game,ship,function(e,r) {
-                if (!e) {
-                    window.eventsCount = r.result.count;
-                    setEventsCounter();
-                }
-            });
-        },5000);
 
         /* tooltips */
         $('[data-toggle="tooltip"]').tooltip();

@@ -14,20 +14,31 @@ window.addEventListener('load', async () => {
         $('#ship_points').text(CSSToken.formatPoints(window.points));
         let w3 = this.web3;
         window.csstoken = new CSSToken(this.web3,window.shipAbi,window.shipAddress);
-        
+        window.backend = new Backend(window.base_url);
         window.qaim_1 = undefined;
         window.qaim_2 = undefined;
 
         function joinGame(gameId) {   
             window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address'],42);
-            console.log('flens');
+
             window.cssgame.placeShip(window.shipId,window.qaim_1,window.qaim_2,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
+                    
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
                     setInterval(function(){
                         w3.eth.getTransactionReceipt(tx, function(e,h){
-                            if (h && h.blockNumber != null && h.status != "0x0") window.location.href = '/ui/' + window.gameNetwork + '/play/' + window.gamesData[gameId]['id'] + '/' + window.shipId + '/';
+                            if (h && h.blockNumber != null && h.status != "0x0") {
+                                // En esta instancia la transaccion esta confirmada
+                                $('#step').text("2");
+                                $('#step_1').hide();
+                                $('#step_2').show();
+                                window.backend.shipingame(shipId,window.gamesData[gameId]['id'],(err,ret)=>{
+                                    if (err == null && ret['in_game']) {
+                                        window.location.href = '/ui/' + window.gameNetwork + '/play/' + window.gamesData[gameId]['id'] + '/' + window.shipId + '/';
+                                    }
+                                });                                                
+                            }         
                         });
                     },3000);
                 }
@@ -35,7 +46,6 @@ window.addEventListener('load', async () => {
                     $('#join-game-button').attr("disabled", false);
                     $('#join-game-button').css({'background-color':'#E50E32'});
                 }
-                concole.log(e);
             });
         }
         
@@ -43,7 +53,7 @@ window.addEventListener('load', async () => {
             window.csstoken.exitGame(window.shipId,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
-                    $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
+                    $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation-exit"});
                     setInterval(function(){
                         w3.eth.getTransactionReceipt(tx, function(e,h){
                             if (h && h.blockNumber != null) window.location.reload();

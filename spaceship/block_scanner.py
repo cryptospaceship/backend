@@ -139,6 +139,19 @@ def get_block(block, net):
     except:
         return None
 
+def get_create_ship(game, ship_id):
+    ship = Ship.get_by_id(ship_id)
+    if ship is None:
+        logging.info("get_create_ship(): getting ship name for id: %s" % (ship_id))
+        ship_data = get_ship_info(game, ship_id)
+        if ship_data is not None:
+            ship = Ship.create(event.from_ship, ship_data['ship_name'])
+            logging.info("get_create_ship()(): ship name created: %s" % (ship.name))
+        else:
+            logging.info("get_create_ship()(): error getting ship name from ship_id %s" % ship_id)
+            return None
+    return ship
+    
         
 def create_update_transaction(tx, net, game, function_name=''):
     transaction = Transaction.get(game, tx['hash'].hex())
@@ -162,62 +175,47 @@ def create_update_transaction(tx, net, game, function_name=''):
     
     
 def create_event_inbox(event, abi_event):
+    meta = event.load_meta()
     EventInbox.create_from(event)
     logging.info("create_event_inbox(): from_event_inbox created: %s - from: %s" % (event.event_type, event.from_ship))
-    if event.to_ship != '':
-        EventInbox.create_to(event, event.to_ship)
-        logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, event.to_ship))
+    
+    if '_to' in meta.keys():
+        if type(meta['_to']) is int:
+            meta['_to'] = [meta['_to']]
+        for to in meta['_to']:
+            if to != 0:
+                EventInbox.create_to(event, to)
+                logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, to))
     else:
-        meta = event.load_meta()
-        if '_to' in meta.keys():
-            if type(meta['_to']) is int:
-                meta['_to'] = [meta['_to']]
-            for to in meta['_to']:
-                if to != 0:
-                    EventInbox.create_to(event, to)
-                    logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, to))
+        ships_id = get_ships_in_game(event.game)
+        if ships_id is not None:
+            for ship_id in ships_id:
+                if ship_id != event.from_ship.ship_id:
+                    EventInbox.create_to(event, ship_id)
+                    logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, ship_id))
         else:
-            ships_id = get_ships_in_game(event.game)
-            if ships_id is not None:
-                for ship_id in ships_id:
-                    if ship_id != event.from_ship:
-                        EventInbox.create_to(event, ship_id)
-                        logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, ship_id))
-            else:
-                logging.info("create_event_inbox(): error getting ship ids in game")
-                return False
+            logging.info("create_event_inbox(): error getting ship ids in game")
+            return False
                 
-    ship = Ship.get_by_id(event.from_ship)
-    if ship is not None:
-        if abi_event.discord:        
-            try:
-                msg_vars = {'ship_name': ship.name, 'ship_id': ship.ship_id}
-                msg = abi_event.discord_template.format_map(msg_vars)
-                de  = DiscordEvent.create(event.game, msg)
-                logging.info("create_event_inbox(): discord event created with id %d" % de.id)
-            except Exception as err:
-                logging.info("create_event_inbox(): error creating discord event: %s" % err)        
+    if abi_event.discord:        
+        try:
+            msg_vars = {'ship_name': event.from_ship.name, 'ship_id': event.from_ship.ship_id}
+            msg = abi_event.discord_template.format_map(msg_vars)
+            de  = DiscordEvent.create(event.game, msg)
+            logging.info("create_event_inbox(): discord event created with id %d" % de.id)
+        except Exception as err:
+            logging.info("create_event_inbox(): error creating discord event: %s" % err)        
     return True
 
     
 def join_game(event, abi_event):
-    ship = Ship.get_by_id(event.from_ship)
-    if ship is None:
-        logging.info("join_game(): getting ship name for id: %s" % (event.from_ship))
-        ship_data = get_ship_info(event.game, event.from_ship)
-        if ship_data is not None:
-            ship      = Ship.create(event.from_ship, ship_data['ship_name'])
-            logging.info("join_game(): ship name created: %s" % (ship.name))
-        else:
-            logging.info("join_game(): error getting ship name from ship_id %s" % event.from_ship)
-            return False
-    ship.join_game(event.game)
-    logging.info("join_game(): ship %s joined to %s" % (event.from_ship, event.game.name))
-    Ranking.create(ship, event.game)
-    logging.info("join_game(): ranking created for %s in game %s" % (event.from_ship, event.game.name))
+    event.from_ship.join_game(event.game)
+    logging.info("join_game(): ship %s joined to %s" % (event.from_ship.ship_id, event.game.name))
+    Ranking.create(event.from_ship, event.game)
+    logging.info("join_game(): ranking created for %s in game %s" % (event.from_ship.ship_id, event.game.name))
     if abi_event.discord:        
         try:
-            msg_vars = {'ship_name': ship.name, 'ship_id': ship.ship_id}
+            msg_vars = {'ship_name': event.from_ship.name, 'ship_id': event.from_ship.ship_id}
             msg = abi_event.discord_template.format_map(msg_vars)
             de  = DiscordEvent.create(event.game, msg)
             logging.info("join_game(): discord event created with id %d" % de.id)
@@ -227,19 +225,15 @@ def join_game(event, abi_event):
 
     
 def exit_game(event, abi_event):
-    ship = Ship.get_by_id(event.from_ship)
-    if ship is not None:
-        ship.exit_game()
-        logging.info("exit_game(): ship %s removed from game %s" % (ship.name, event.game.name))
-        ranking = Ranking.get(ship, event.game)
-        ranking.delete()
-        logging.info("exit_game(): ship %s removed from ranking in game %s" % (ship.name, event.game.name))
-    else:
-        logging.info("exit_game(): ship %s not found" % event.from_ship)
-        return False
+    event.from_ship.exit_game()
+    logging.info("exit_game(): ship %s removed from game %s" % (event.from_ship.name, event.game.name))
+    ranking = Ranking.get(event.from_ship, event.game)
+    ranking.delete()
+    logging.info("exit_game(): ship %s removed from ranking in game %s" % (event.from_ship.name, event.game.name))
+    
     if abi_event.discord:        
         try:
-            msg_vars = {'ship_name': ship.name, 'ship_id': ship.ship_id}
+            msg_vars = {'ship_name': event.from_ship.name, 'ship_id': event.from_ship.ship_id}
             msg = abi_event.discord_template.format_map(msg_vars)
             de  = DiscordEvent.create(event.game, msg)
             logging.info("exit_game(): discord event created with id %d" % de.id)
@@ -254,7 +248,8 @@ def create_update_event(tx, net, abi_event, receipt):
     if data is not None:
         event = Event.get(abi_event.game, tx, abi_event.name)
         if event is None:
-            event = Event.create(abi_event.game, tx, abi_event.name, data)
+            ship  = get_create_ship(abi_event.game, dict(data[0].args)['_from'])
+            event = Event.create(abi_event.game, tx, ship, abi_event.name, data)
         if abi_event.notif_trigger:
             ret = create_event_inbox(event, abi_event)
         elif abi_event.join_trigger:
@@ -310,8 +305,8 @@ def scan_transactions(net):
                 function = GameAbiFunction.get_by_name(tx.action, game)
                 for abi_event in function.events.all():
                     event_created = create_update_event(tx, net, abi_event, receipt)
-                    if not event_created:
-                        return                
+                    #if not event_created:
+                    #    return                
                 tx.scan(receipt.blockNumber, receipt.gasUsed)
             else:
                 return
@@ -353,6 +348,7 @@ def get_points(net):
             if points is not None:
                 logging.info("get_points(): update points for ship %s in game %s" % (r.ship.ship_id, game))
                 r.update(points)
+               
 
 def get_ships_owner(net):
     css  = CryptoSpaceShip.get_by_network(net)
@@ -388,10 +384,10 @@ def block_scanner_main():
                     block_scanned = scan_block(block, net)
                     if block_scanned:
                         net.scanned_block = last_scanned_block
-                        net.save()
                         logging.info("block_scanner_main(): block scanned: %s " % net.scanned_block)
                         scan_transactions(net)
                         post_discord_events(net)
+                        net.save()
                     else:
                         logging.info("block_scanner_main(): error scanning block: %s" % last_scanned_block)
                         break

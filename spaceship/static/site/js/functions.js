@@ -4447,7 +4447,11 @@
     //$(".modulo-qia").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false });
     //$(".new-message").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false });
     //$(".message-content").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false });
-    
+    //$(".cannon-fired").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: true });
+    //$(".sent-resources").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: true });
+    //$(".ship-battle").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: true });
+    //$(".port-battle").colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: true });
+   
     $(".closeModal").click(function(e) {
         $.colorbox.close();
     });

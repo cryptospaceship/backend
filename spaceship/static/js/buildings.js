@@ -256,30 +256,6 @@ window.addEventListener('load', async () => {
 
                     $('#metals-wopr-upgrade-ft').text(mRes.metals);
 
-                    $('#converter-selected').click(function() {
-                        window.role_selected = 2;
-                        window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
-                            if (!e) 
-                                process_order(h);
-                        });
-                    });
-
-                    $('#cannon-selected').click(function() {
-                        window.role_selected = 1;
-                        window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
-                            if (!e) 
-                                process_order(h);
-                        });
-                    });
-
-                    $('#reparer-selected').click(function() {
-                        window.role_selected = 3;
-                        window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
-                            if (!e) 
-                                process_order(h);
-                        });
-                    });
-
                 } else {
 
                     window.id_modal_open = '#modal-wopr-upgrade';
@@ -287,6 +263,17 @@ window.addEventListener('load', async () => {
                     $('#energy-wopr-upgrade').text(mRes.energy);
                     $('#graphene-wopr-upgrade').text(mRes.graphene);
                     $('#metals-wopr-upgrade').text(mRes.metals);
+                    switch(window.role) {
+                        case 3:
+                            $('#wopr-role').text('Reparer');
+                            break;
+                        case 2:
+                            $('#wopr-role').text('Resource Converter');
+                            break;
+                        case 1:
+                            $('#wopr-role').text('Crypto Ion-Cannon');
+                            break;
+                    }
 
                 }
                 // Finally Show the Modal
@@ -304,10 +291,6 @@ window.addEventListener('load', async () => {
             });
 
             $('#modal-wopr-upgrade-first').on('hidden.bs.modal', function () {
-                $('#converter-selected').off();
-                $('#cannon-selected').off();
-                $('#reparer-selected').off();
-
                 window.id_modal_open = undefined;
                 window.role_selected = undefined;
             });
@@ -348,11 +331,36 @@ window.addEventListener('load', async () => {
             });
 
             $('#button-upgrade-wopr').click(function() {
-                window.cssgame.upgradewopr(window.ship,function(e,h){
+                window.cssgame.upgradeWopr(window.ship,window.role,function(e,h){
                     if (!e) 
                         process_order(h);
                 });
             });
+
+            $('#converter-selected').click(function() {
+                window.role_selected = 2;
+                window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
+                    if (!e) 
+                        process_order(h);
+                });
+            });
+
+            $('#cannon-selected').click(function() {
+                window.role_selected = 1;
+                window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
+                    if (!e) 
+                        process_order(h);
+                });
+            });
+
+            $('#reparer-selected').click(function() {
+                window.role_selected = 3;
+                window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
+                    if (!e) 
+                        process_order(h);
+                });
+            });
+            
 
             $('#button-upgrade-hangar').click(function() {
                 window.cssgame.upgradeHangar(window.ship,function(e,h){
@@ -831,19 +839,8 @@ window.addEventListener('load', async () => {
                 });
             }, 5000);
 
-            /*
-             * Check Events
-             */ 
-            setInterval(function() {
-                backend.events.count(game,ship,function(e,r) {
-                    if (!e) {
-                        window.eventsCount = r.result.count;
-                        setEventsCounter();
-                    }
-                });
-            },5000);
 
-                   /* tooltips */
+            /* tooltips */
             $('[data-toggle="tooltip"]').tooltip();
             
             $('[id=warehouse-load]').text(window.warehouseLoad);

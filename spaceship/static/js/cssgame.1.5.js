@@ -101,7 +101,7 @@ class CSSGame {
         this.contract.upgradeBuilding(ship,1,0,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
-    upgradeWopr(ship,role,callback){
+    upgradeWopr(ship,role,callback){ 
         let w3 = this.w3;
         this.contract.upgradeBuilding(ship,2,role,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
@@ -174,6 +174,11 @@ class CSSGame {
     setProductionResourcesConverter(_ship,_g,_m,callback) {
         let w3 = this.w3;
         this.contract.setProductionResourcesConverter(_ship,_g,_m,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+    }
+
+    repairShip(_ship,_to,_units, callback) {
+        let w3 = this.w3;
+        this.contract.repairShip(_ship,_to,_units,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     // Query Functions
@@ -546,6 +551,14 @@ class CSSGame {
         let fisics = new Fisics(network);
         var load = [10000, 50000, 150000, 1300000, 16000000];
         return fisics.val(load[level]);
+    }
+
+    getRepareCost(units) {
+        let ret = {}; 
+        ret.energy = this.fisics.val(100000) * units;
+        ret.graphene = this.fisics.val(200000) * units;
+        ret.metal = this.fisics.val(200000) * units;
+        return ret;
     }
 
     getUpgradeResourceCost(_type, _level, _qaim) {

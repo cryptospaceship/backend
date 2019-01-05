@@ -327,7 +327,7 @@ window.addEventListener('load', async () => {
 
             if (CSSGame.checkCannonRange([window.position_x,window.position_y],[x,y], window.cannon_level)) {
                 if (!window.in_port) {
-                    if (window.blocks_to_fire == 0) {
+                    if (window.blocks_to_wopr == 0) {
                         if (CSSGame.energyToFire(window.energyStock)) {
                             if (window.mode == 2) {
                                 $('#cannon-status').text('Ready');
@@ -411,8 +411,8 @@ window.addEventListener('load', async () => {
                         /*
                          * Se muestra el modal
                          */ 
-                        window.id_modal_open = '#modalMapEmpty';
-                        $('#modalMapEmpty').modal('show');
+                        window.id_modal_open = '#modal-map-empty';
+                        $('#modal-map-empty').modal('show');
                     }
                     else {
                         if (CSSGame.isShip(ret.id) && ret.id != window.ship) {
@@ -435,22 +435,37 @@ window.addEventListener('load', async () => {
                              * Si tiene cañon lo muestra
                              */ 
                             $('#fire-cannon-button').addClass('disabled');
-                            if (window.cannon == false) {
+                            if (window.cannon == false && window.reparer == false) {
                                 $('[id=pad-no-wopr]').show();
-                                $('[id=wopr-modal-ship]').hide();   
+                                $('[id=wopr-modal-ship]').hide();
+                                $('#wopr-modal-ship-cannon').hide();
+                                $('#wopr-modal-ship-reparer').hide();
                                 $('[id=send-resources-modal-ship]').removeClass('col-md-4');
                                 $('[id=attack-modal-ship]').removeClass('col-md-4');
                                 $('[id=send-resources-modal-ship]').addClass('col-md-5');
                                 $('[id=attack-modal-ship]').addClass('col-md-5');
                             }
                             else {
-                                /*
-                                 * Dibuja los atributos del cañon
-                                 */
-                                $('#cannon-target').on('change',()=>{
-                                    let t = $('#cannon-target').val();
-                                    window.target = CSSGame.valueToTarget(t);
-                                    $('#fire-cannon-button').off();
+                                if (window.cannon) {
+                                    /*
+                                    * Dibuja los atributos del cañon
+                                    */
+                                    $('#cannon-target').on('change',()=>{
+                                        let t = $('#cannon-target').val();
+                                        window.target = CSSGame.valueToTarget(t);
+                                        $('#fire-cannon-button').off();
+                                        if (cannonInModal(window.target)) {                                                
+                                            $('#fire-cannon-button').removeClass('disabled');
+                                            $('#fire-cannon-button').click(function() {
+                                                cssgame.fireCannon(window.ship,window.other_ship, window.target,function(e,h) {
+                                                    if (!e) {
+                                                        process_order(h);
+                                                    }
+                                                });
+                                            });
+                                        }
+                                    });
+
                                     if (cannonInModal(window.target)) {                                                
                                         $('#fire-cannon-button').removeClass('disabled');
                                         $('#fire-cannon-button').click(function() {
@@ -461,20 +476,62 @@ window.addEventListener('load', async () => {
                                             });
                                         });
                                     }
-                                });
+                                }
+                                else {
+                                    $('#wopr-modal-ship-cannon').hide();
+                                    $('#wopr-modal-ship-reparer').show();
+                                    $('#fire-cannon-button').hide();
+                                    $('#repare-ship-button').show();
 
-                                if (cannonInModal(window.target)) {                                                
-                                    $('#fire-cannon-button').removeClass('disabled');
-                                    $('#fire-cannon-button').click(function() {
-                                        cssgame.fireCannon(window.ship,window.other_ship, window.target,function(e,h) {
-                                            if (!e) {
-                                                process_order(h);
-                                            }
-                                        });
+                                    if (window.reparer_level == 2)
+                                        $('#range-to-repare').attr('max', 20);
+                                    else
+                                        $('#range-to-repare').attr('max', 10);
+                                    
+                                    $('#range-to-repare').on('input',()=>{
+                                        let v = $('#range-to-repare').val();
+                                        let cost = cssgame.getRepareCost(parseInt(v));
+
+                                        if (cost.energy <= window.energyStock && 
+                                            cost.graphene <= window.grapheneStock &&
+                                            cost.metal <= window.metalsStock && parseInt(v) != 0) {
+                                            window.to_fix = v;
+                                            $('#repare-ship-button').removeClass("disabled");
+                                        } else {
+                                            window.to_fix = 0;
+                                            $('#repare-ship-button').addClass("disabled");
+                                        }
+
+                                        if (cost.energy <= window.energyStock)
+                                            $('#energy-fix-cost').text(cost.energy);
+                                        else
+                                            $('#energy-fix-cost').text("Insufficient");
+                                        
+                                        if (cost.graphene <= window.grapheneStock)
+                                            $('#graphene-fix-cost').text(cost.graphene);
+                                        else
+                                            $('#graphene-fix-cost').text("Insufficient");
+
+                                        if (cost.metal <= window.metalsStock)
+                                            $('#metal-fix-cost').text(cost.metal);
+                                        else
+                                            $('#metal-fix-cost').text("Insufficient");
+
+                                        $('#data-to-repare').text(v);
+                                    });
+
+                                    $('#repare-ship-button').click(()=>{
+                                        if (window.to_fix != 0) {
+                                            cssgame.repairShip(window.ship,window.other_ship,window.to_fix,(e,h)=>{
+                                                if (!e)
+                                                    process_order(h);
+                                            });
+                                        }
                                     });
                                 }
                             }
                             
+
                             if (window.fleet_type > 0) {
                                 $('#own-fleet-type').text(CSSGame.getFleetTypeName(window.fleet_type));
                                 $('#own-fleet-size').text(window.fleet_size);
@@ -698,8 +755,8 @@ window.addEventListener('load', async () => {
                                 $("#button-land-to").addClass('disabled');
                                 $("#planet-ship-status").text("Out of range");
                             }              
-                            window.id_modal_open = '#modalMapPlanet';
-                            $('#modalMapPlanet').modal("show");
+                            window.id_modal_open = '#modal-map-planet';
+                            $('#modal-map-planet').modal("show");
                         }
                     }
                 }
@@ -709,13 +766,13 @@ window.addEventListener('load', async () => {
         /*
          * Limpia el handler para el boton de move-to-location
          */
-        $('#modalMapEmpty').on('hidden.bs.modal',function() {
+        $('#modal-map-empty').on('hidden.bs.modal',function() {
             clean_modal();
             $('#move-to-location').off();
             $('#move-to-location').removeClass('disabled');
         });
 
-         $('#modalMapPlanet').on('hidden.bs.modal',function() {
+         $('#modal-map-planet').on('hidden.bs.modal',function() {
             clean_modal();
             window.is_defender = undefined;
             $("#button-land-to").off();
@@ -730,6 +787,14 @@ window.addEventListener('load', async () => {
         $('#modal-map-other-ship').on('hidden.bs.modal',function() {
             clean_modal();
             window.other_ship = undefined;
+            $('#range-to-repare').off();
+            $('#range-to-repare').val("0");
+            $('#energy-fix-cost').text(0);
+            $('#graphene-fix-cost').text(0);
+            $('#metal-fix-cost').text(0);
+            $('#repare-ship-button').off();
+            window.to_fix = 0;
+            $('#data-to-repare').text("0");
             $('#send-resources-button').off();
             $('#attack-button').off();
             $('#raid-button').off();
@@ -859,8 +924,8 @@ window.addEventListener('load', async () => {
                 $('#blocks-to-move').text(window.blocks_to_move.toString());
             if (typeof window.blocks_to_fleet !== 'undefined')
                 $('#blocks-to-fleet').text(window.blocks_to_fleet.toString());
-            if (typeof window.blocks_to_fire !== 'undefined')
-                $('#blocks-to-fire').text(window.blocks_to_fire.toString());
+            if (typeof window.blocks_to_wopr !== 'undefined')
+                $('#blocks-to-fire').text(window.blocks_to_wopr.toString());
             if (typeof window.blocks_to_mode !== 'undefined')
                 $('#blocks-to-mode').text(window.blocks_to_mode.toString());
         }

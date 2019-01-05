@@ -12,6 +12,7 @@ from .models import CryptoSpaceShip
 from .models import Game
 from .models import SiteTemplate
 from .models import Message
+from .models import EventInbox
 
 from .decorators import owner_required
 
@@ -214,6 +215,7 @@ def ship_view(request, net_id, ship_id):
     context['game_network_id']       = net_id
     context['inject_js']             = template.get_js()
     context['inject_css']            = template.get_css()
+    context['base_url']              = 'http://dev.cryptospaceship.io:8000'
     
     player = Player.get_by_user(request.user)
     if player is not None:
@@ -251,11 +253,13 @@ def change_network_view(request):
     context['inject_css'] = template.get_css()
     return render(request, template.file, context)
 
+@login_required(login_url='/signin/')
 def game_frame_view(request, net_id, game_id, ship_id):
     template = SiteTemplate.get('game_frame')
     context = {}
     context['game_id'] = game_id
     context['messages_count'] = Message.get_inbox_unread_count(ship_id)
+    context['events_count'] = EventInbox.unread_count(game_id, ship_id)
     context['inject_css'] = template.get_css()
     return render(request, template.file, context)
     

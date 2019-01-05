@@ -239,13 +239,25 @@
     </div>
 </div>
 
-<!-- Waiting Confirmation Modal-->
+<!-- Waiting Confirmation Modal -->
 <div style="display:none">
-    <div id="waiting-confirmation" class="modal">
+    <div id="waiting-confirmation-exit" class="modal">
         <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
             <div class="form-modal">
                 <h5>Waiting confirmation</h5>
                 <p>_waiting for transaction confirmation</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="display:none">
+    <div id="waiting-confirmation" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
+            <div class="form-modal">
+                <h5>Step <span id="step">1</span>/2</h5>
+                <p id="step_1">_waiting for transaction confirmation</p>
+                <p id="step_2" style="display:none;">_waiting for backend</p>
             </div>
         </form>
     </div>
@@ -289,6 +301,8 @@ window.layer_1 = "/static/site/images/capa1.png";
 {% if ship.qaim is not None %}
     window.shipQaim = {{ ship.qaim }};
 {% endif %}
+
+window.base_url = "{{ base_url }}";
 window.points = {{ ship.points }};
 window.qaimClean = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 window.qaimAssign = [];

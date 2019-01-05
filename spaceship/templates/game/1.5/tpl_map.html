@@ -418,7 +418,7 @@
 
     <!-- Modal for Map Position -->
     <!-- Empty Space -->
-    <div class="modal fade" id="modalMapEmpty" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modal-map-empty" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -591,7 +591,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" id="wopr-modal-ship">
+                            <div class="col-md-4" id="wopr-modal-ship-cannon">
                                 <div class="modal-info-title">
                                     Crypto-Ion Cannon
                                 </div>
@@ -637,6 +637,39 @@
                                     <div class="stopper"></div>
                                 </div>
                             </div>
+                            <div class="col-md-4" id="wopr-modal-ship-reparer"  style="display:none;">
+                                    <div class="modal-info-title">
+                                           Ship Reparer
+                                    </div>
+                                    <div class="modal-info-text">       
+                                        <div class="slidecontainer" style="
+                                            margin-top: 10px;
+                                        ">
+                                            <p class="design-tag fL">Ship Fix</p>
+                                            <input type="range" min="0" max="100" value="0" class="slider slider-design-fix" id="range-to-repare" style="width: 50%;">
+                                            <div class="modal-info-data fR"><span id="data-to-repare">0</span>%</div>                           
+                                        </div>
+                                    </div>
+                                    <div class="modal-info-text">
+                                        <div class="icon-ratio-modal ic-energy"></div>
+                                        <div class="title-text"> energy cost</div>
+                                        <div class="modal-info-data" id="energy-fix-cost">0</div>
+                                        <div class="stopper"></div>
+                                    </div>
+                                    
+                                    <div class="modal-info-text">
+                                        <div class="icon-ratio-modal ic-graphene"></div>
+                                        <div class="title-text" > graphene cost</div>
+                                        <div class="modal-info-data" id="graphene-fix-cost">0</div>
+                                        <div class="stopper"></div>
+                                    </div>
+                                    <div class="modal-info-text">
+                                        <div class="icon-ratio-modal ic-energy"></div>
+                                        <div class="title-text"> metal cost</div>
+                                        <div class="modal-info-data" id="metal-fix-cost">0</div>
+                                        <div class="stopper"></div>
+                                    </div>
+                                </div>
                         </div>
                         <div class="row down">
                             <div class="col-md-1" id="pad-no-wopr" style="display: none;"></div>
@@ -649,6 +682,7 @@
                             </div>
                             <div class="col-md-4 center" id="wopr-modal-ship">
                                 <button id="fire-cannon-button" type="button" class="btn btn-primary">Fire Cannon</button>
+                                <button id="repare-ship-button" type="button" class="btn btn-primary disabled" style="display: none">Repare Ship</button>
                             </div>
                         </div>
                     
@@ -661,7 +695,7 @@
         </div>
             
         <!-- Planet -->
-        <div class="modal fade" id="modalMapPlanet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="modal-map-planet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -799,7 +833,7 @@
     
     window.ship = {{ ship_id }};
 
-    window.eventsCount = {{ events_count }};
+    //window.eventsCount = {{ events_count }};
     
     window.position_x = {{ position_x }};
     window.position_y = {{ position_y }};
@@ -823,15 +857,25 @@
     window.blocks_to_move = {{ countdown_move }};
     window.blocks_to_mode = {{ countdown_mode }};
     window.blocks_to_fleet = {{ countdown_fleet }};
-    //window.blocks_to_fire = {{ countdown_fire_cannon }};
+    window.blocks_to_wopr = {{ countdown_wopr }}
     window.damage = {{ damage }};
     
     window.in_port = {{ in_port | boolean }};
 
     // Si tiene cañon
-    window.cannon_level = 1; // {{ cannon_level }};
-    window.cannon = window.cannon_level > 0 ? false : false;
-    window.target = 0; 
+    window.role = {{ role }};
+    window.cannon_level = ( {{ role }} == 1 ) ? {{ wopr_level }} : 0;
+    window.reparer_level = ( {{ role }} == 3 ) ? {{ wopr_level }} : 0;
+    window.cannon = window.cannon_level > 0 ? true : false;
+    window.reparer = window.reparer_level > 0 ? true : false;
+    window.target = 0;
+    window.to_fix = 0;
+
+    // Eliminar
+    //window.cannon = false;
+    //window.cannon_level = 0;
+    //window.reparer = true;
+    //window.reparer_level = 1;
 
     // Stock of resources       
     window.grapheneStock = {{ graphene_stock }};

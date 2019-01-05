@@ -80,7 +80,7 @@ $(document).ready(function(){
     function markAsRead(msg){
         let msgId = $(msg).attr('msg-id');
         if (window.messageType == "inbox") {
-            $(msg).removeAttr("style");
+            $(msg).attr("style", "cursor: pointer;")
             $('#message-icon-' + msgId.toString()).text("drafts ");
         }
     }

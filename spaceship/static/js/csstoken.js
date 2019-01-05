@@ -17,7 +17,7 @@ class CSSToken {
     }
 
     exitGame(ship,callback) {
-        this.contract.exitGame(ship,{from:w3.eth.accounts[0],gasPrice:1000000000},callback);
+        this.contract.exitGame(ship,{from:this.w3.eth.accounts[0],gasPrice:1000000000},callback);
     }
 
     getShipsByOwner(address,callback) {

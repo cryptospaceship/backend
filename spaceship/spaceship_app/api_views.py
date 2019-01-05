@@ -31,6 +31,12 @@ http_SERVER_ERROR         = 500
 # Create your views here.
 
 @require_http_methods(['GET'])
+def api_ship_in_game(request, ship_id, game_id):
+    ret = {}
+    ret['in_game'] = Ship.is_in_game(ship_id, game_id)
+    return HttpResponse(dumps(ret), content_type="application/json", status=http_REQUEST_OK)
+
+@require_http_methods(['GET'])
 def api_user_exist_address(request, address):
     ret    = {}
     player = Player.get_by_address(address)
@@ -43,37 +49,49 @@ def api_user_exist_address(request, address):
 
 
 @require_http_methods(['GET'])
-def api_events_not_read_count(request, game_id, ship_id):
-    ret = {}
-    events = EventInbox.not_read_ids(game_id, ship_id)
-    ret['result'] = {'count': len(events), 'ids': events}
-
-    return HttpResponse(dumps(ret), content_type="application/json", status=http_REQUEST_OK)
+@login_required(login_url='/signin/')
+def api_events_unread_count(request, game_id):
+    player   = Player.get_by_user(request.user)
+    game     = Game.get_by_id(game_id)
+    ship     = player.get_ship_in_game(game)
+    events   = EventInbox.unread_count(game_id, ship)
+    return HttpResponse(dumps(events), content_type="application/json", status=http_REQUEST_OK)
 
 
 @require_http_methods(['GET'])
 @login_required(login_url='/signin/')
 def api_get_event(request, event_id):
-    ret = {}
-    player = Player.get_by_user(request.user)
-
-    if player is None:
-        return HttpResponse(status=http_UNAUTHORIZED)
-
     ei = EventInbox.get_by_id(event_id)
     if ei is None:
-        return HttpResponse(status=http_BAD_REQUEST)
+        body = {'status': 'error', 'message': 'invalid event id'}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
 
-    ship = ei.game.connect().get_ship_by_owner(player.address)
+    player = Player.get_by_user(request.user)
+    ship   = player.get_ship_in_game(ei.game)  
     
-    if ship == ei.ship_id:
-        ret['result'] = {'meta': ei.event.load_meta()}
-        ret['result']['event_type'] = ei.event.event_type
-        ei.view()
+    if ship == ei.ship:
+        ret = {}
+        meta = ei.event.load_meta()
+        ret['meta'] = meta
+        ret['from'] = Ship.get_by_id(meta['_from']).name
+        if '_to' in meta:
+            if type(meta['_to']).__name__ == 'list':
+                ret['to'] = {}
+                for ship_id in meta['_to']:
+                    if ship_id != 0:
+                        ship_name = Ship.get_by_id(ship_id).name
+                        ret['to'][ship_id] = ship_name
+                    else:
+                        ret['to'][ship_id] = ''
+            else:
+                ret['to']   = Ship.get_by_id(meta['_to']).name
+        ret['event_type'] = ei.event.event_type
+        status = http_REQUEST_OK
     else:
-        return HttpResponse(status=http_UNAUTHORIZED)
+        body = {'status': 'error', 'message': 'permission denied'}
+        status = http_FORBIDDEN
 
-    return HttpResponse(dumps(ret), content_type="application/json", status=http_REQUEST_OK)
+    return HttpResponse(dumps(ret), content_type="application/json", status=status)
 
 
    

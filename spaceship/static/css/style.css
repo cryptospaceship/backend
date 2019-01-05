@@ -564,6 +564,24 @@ h2{
     cursor: pointer;
 }
 
+.slider-design-fix::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 21px;
+    height: 21px;
+    border: 0;
+    background: url("../images/icon-repair.png");
+    cursor: pointer;
+}
+
+.slider-design-fix::-moz-range-thumb {
+    width: 21px;
+    height: 21px;
+    border: 0;
+    background: url("../images/icon-repair.png");
+    cursor: pointer;
+}
+
 .slider-design-defense::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
