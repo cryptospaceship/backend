@@ -290,7 +290,7 @@ class CSSGame {
 
     static checkCannonRange(from, to, level) {
         let d = this.getDistance(from,to);
-        return (level > 0 && (d == 1 || (d == 2 && level == 4)));
+        return (level > 0 && (d == 1 || (d == 2 && level == 2)));
     }
 
     static getCannonDamage(from, to, level) {
@@ -303,8 +303,16 @@ class CSSGame {
         }
     }
 
-    static energyToFire(energy) {
-        return (energy >= 2000000)
+    static energyToFire(energy, target) {
+        if (target == 0)
+            return (energy >= 2000000);
+        return (energy >= 3000000);
+    }
+
+    static energyToFireCost(target) {
+        if (target == 0)
+            return 2000000;
+        return 3000000;
     }
 
     static getFleetType(_attack, _defense, _distance, _load) {

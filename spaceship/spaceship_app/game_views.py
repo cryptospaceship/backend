@@ -129,25 +129,20 @@ def play_events_view(request, net_id, game_id, ship_id):
     
     context.update(__get_events(game, ship_id))
     
-    #context['events_list'] = []
-    #for events in EventInbox.get_by_ship_id(ship_id):
-    #    context['events_list'].append(events)
     events_list = EventInbox.get_by_ship_id(ship_id)
     
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
-    
+
     paginator = Paginator(events_list, page_fields)
     page      = request.GET.get('page')
     events    = paginator.get_page(page)
     
     for ei in events:
-        meta = ei.event.load_meta()
-        if '_to' in meta:
-            if type(meta['_to']).__name__ != 'list':
-                ei.to_ship = Ship.get_by_id(meta['_to'])
-    print(events)
+        ei.title = ei.build_title()
+    
     context['events'] = events
+    context['events_count'] = events_list.count()
     
     return render(request, template.file, context)
 

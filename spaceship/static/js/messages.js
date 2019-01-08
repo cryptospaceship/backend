@@ -67,7 +67,13 @@ $(document).ready(function(){
     function openMessageModal(msg){
         window.backend.messages.get($(msg).attr('msg-id'), function(e,r) {
             if (!e) {
-                $('#message-from').text(r.from);
+                if (window.inbox) {
+                    $('#message-from-to').text('From');
+                    $('#message-from-to-text').text(r.from);
+                } else {
+                    $('#message-from-to').text('To');
+                    $('#message-from-to-text').text(r.to);
+                }
                 $('#message-subject').text(r.subject);
                 $('#message-text').text(r.message);
                 $.colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: false, href:"#message-content" });
@@ -161,7 +167,7 @@ $(document).ready(function(){
     });
     
     $('#reply-message-button').on('click', function() {
-        document.getElementById("to").value = $('#message-from').text();
+        document.getElementById("to").value = $('#message-from-to-text').text();
         document.getElementById("subject").value = "RE: " + $('#message-subject').text();
         replyMessage();
     });

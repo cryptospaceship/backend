@@ -45,6 +45,7 @@ from spaceship_app.game_views import play_ranking_view
 from spaceship_app.api_views import api_user_exist_address
 from spaceship_app.api_views import api_events_unread_count
 from spaceship_app.api_views import api_get_event
+from spaceship_app.api_views import api_get_events_since
 from spaceship_app.api_views import api_create_message
 from spaceship_app.api_views import api_get_message
 from spaceship_app.api_views import api_get_messages
@@ -97,6 +98,7 @@ urlpatterns = [
     path('api/event/count/<int:game_id>/', api_events_unread_count),
     #url(r'^api/events/(?P<event_id>.+)/$', api_get_event),
     path('api/event/<int:event_id>/', api_get_event),
+    path('api/event/since/<int:game_id>/<int:event_id>/', api_get_events_since),
     #url(r'^api/message/new/$', api_create_message),
     path('api/message/new/', api_create_message),
     #url(r'^api/message/get/(?P<msg_id>.+)/$', api_get_message),

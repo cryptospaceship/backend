@@ -145,7 +145,8 @@ def get_create_ship(game, ship_id):
         logging.info("get_create_ship(): getting ship name for id: %s" % (ship_id))
         ship_data = get_ship_info(game, ship_id)
         if ship_data is not None:
-            ship = Ship.create(event.from_ship, ship_data['ship_name'])
+            #ship = Ship.create(event.from_ship, ship_data['ship_name'])
+            ship = Ship.create(ship_id, ship_data['ship_name'])
             logging.info("get_create_ship()(): ship name created: %s" % (ship.name))
         else:
             logging.info("get_create_ship()(): error getting ship name from ship_id %s" % ship_id)

@@ -420,6 +420,7 @@ window.addEventListener('load', async () => {
                 window.blocksToEndProduction == 0 &&
                 window.fleetEnergyCost != 0 &&
                 window.fleetGrapheneCost != 0 &&
+                window.hangarLevel > 0 &&
                 window.fleetMetalsCost != 0) {
                 $('#build-fleet-ready').click(function(){
                     let max = calcBuildFleet();

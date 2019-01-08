@@ -396,8 +396,16 @@ class CSSGame {
         return ret;
     }
 
-    static energyToFire(energy) {
-        return (energy >= 2000000)
+    static energyToFire(energy, target) {
+        if (target == 0)
+            return (energy >= 2000000);
+        return (energy >= 3000000);
+    }
+
+    static energyToFireCost(target) {
+        if (target == 0)
+            return 2000000;
+        return 3000000;
     }
 
     static getFleetType(_attack, _defense, _distance, _load) {

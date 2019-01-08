@@ -76,7 +76,7 @@ class Message(models.Model):
             ret['date']    = dateformat.format(self.date, 'N j, Y, P')
             ret['read']    = self.read
         elif qt == 'outbox':
-            ret['to']    = self.sender.name
+            ret['to']      = self.sender.name
             ret['subject'] = self.subject
             ret['date']    = dateformat.format(self.date, 'N j, Y, P')
         else:
@@ -174,12 +174,8 @@ class Message(models.Model):
             return msgs
             
     @classmethod
-    def get_inbox_since_id(cls, ship_id, msg_id, serialized=False):
-        ship = Ship.get_by_id(ship_id)
-        if ship is not None:
-            msgs = cls.objects.filter(receiver=ship, game=ship.game, id__gt=msg_id).order_by('-id')
-        else:
-            msgs = []
+    def get_inbox_since_id(cls, ship, msg_id, serialized=False):
+        msgs = cls.objects.filter(receiver=ship, game=ship.game, id__gt=msg_id).order_by('-id')
         if serialized:
             ret = []
             for msg in msgs:
@@ -504,7 +500,7 @@ class Event(models.Model):
 
     def __str__(self):
         return str(self.id)
-
+        
     @classmethod
     def get_by_id(cls, event_id):
         try:
@@ -627,12 +623,46 @@ class EventInbox(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__(self):
-        return '%s_%s_%s' %(self.id, self.event, self.ship_id)
+        return str(self.id)
 
     def mark_as_viewed(self):
         self.viewed = True
         self.save()
-
+    
+    def build_title(self):
+        to_ship_name = ''
+        meta = self.event.load_meta()
+        if '_to' in meta:
+            if type(meta['_to']).__name__ != 'list':
+                to_ship_name = Ship.get_by_id(meta['_to']).name
+                
+        title = {
+                'AttackShipEvent': {'T': '%s attacked you' % self.event.from_ship.name, 
+                                    'F': 'Attack to %s' % to_ship_name},
+                'SentResourcesEvent': {'T': '%s sent you resources' % self.event.from_ship.name, 
+                                       'F': 'Resources sent to %s' % to_ship_name},
+                'FireCannonEvent': {'T': '%s shot you' % self.event.from_ship.name, 
+                                    'F': 'Cannon fired to %s' % to_ship_name},
+                'FireCannonEventAccuracy': {'T': '%s shot you' % self.event.from_ship.name, 
+                                            'F': 'Cannon fired to %s' % to_ship_name},
+                'AttackPortEvent': {'T': '%s attacked Port' % self.event.from_ship.name, 
+                                    'F': '%s attacked Port' % self.event.from_ship.name},
+                'PortConquestEvent': {'T': '%s conquest the port!!!' % self.event.from_ship.name, 
+                                      'F': '%s conquest the port!!!' % self.event.from_ship.name}
+                }      
+         
+        return title[self.event.event_type][self.inbox_type]
+            
+    def serialize(self):
+        ret = {}
+        ret['id']     = self.id
+        ret['type']   = self.inbox_type
+        ret['viewed'] = self.viewed
+        ret['block']  = self.event.event_block
+        ret['from']   = self.event.from_ship.name
+        ret['title']  = self.build_title()
+        return ret
+        
     @classmethod
     def create_from(cls, event):
         event_inbox            = cls()
@@ -692,6 +722,19 @@ class EventInbox(models.Model):
             print (i.event_meta_parsed)
         return o
 
+    @classmethod
+    def get_since_id(cls, ship, event_id, serialized=False):
+        events = cls.objects.filter(ship=ship, game=ship.game, id__gt=event_id).order_by('-id')
+        if serialized:
+            ret = []
+            for event in events:
+                data = event.serialize()
+                ret.append(data) 
+            return ret
+        else:
+            return events    
+        
+        
         
 class Action(models.Model):
     name = models.CharField(max_length=32)

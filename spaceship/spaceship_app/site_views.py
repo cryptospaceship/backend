@@ -10,6 +10,7 @@ from .models import Var
 from .models import Network
 from .models import CryptoSpaceShip
 from .models import Game
+from .models import Ship
 from .models import SiteTemplate
 from .models import Message
 from .models import EventInbox
@@ -255,6 +256,9 @@ def change_network_view(request):
 
 @login_required(login_url='/signin/')
 def game_frame_view(request, net_id, game_id, ship_id):
+    if not Ship.is_in_game(ship_id, game_id):
+        return redirect('/ui/%d/ship/%d/' % (net_id, ship_id))
+
     template = SiteTemplate.get('game_frame')
     context = {}
     context['game_id'] = game_id

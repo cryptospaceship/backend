@@ -306,10 +306,14 @@ window.addEventListener('load', async () => {
         function cannonInModal(target) {
             let p;
             let damage;
+
+            /*
             if (target == 0)
                 p = parseInt((window.energyStock * 100 / 2000000));
             else
                 p = parseInt((window.energyStock * 100 / 3000000));
+            */
+            p = parseInt((window.energyStock * 100 / CSSGame.energyToFireCost(target)));
 
             if (p > 100) {
                 p = 100;
@@ -328,7 +332,7 @@ window.addEventListener('load', async () => {
             if (CSSGame.checkCannonRange([window.position_x,window.position_y],[x,y], window.cannon_level)) {
                 if (!window.in_port) {
                     if (window.blocks_to_wopr == 0) {
-                        if (CSSGame.energyToFire(window.energyStock)) {
+                        if (CSSGame.energyToFire(window.energyStock,target)) {
                             if (window.mode == 2) {
                                 $('#cannon-status').text('Ready');
                                 $('#cannon-damage-percentage').text(damage + '%');
@@ -364,9 +368,6 @@ window.addEventListener('load', async () => {
                 return false;
             }
         }
-
-
-
 
         function mapHandler(id) {
             type = $(id).attr("map-type");

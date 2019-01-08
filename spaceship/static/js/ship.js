@@ -20,8 +20,10 @@ window.addEventListener('load', async () => {
 
         function joinGame(gameId) {   
             window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address'],42);
-
-            window.cssgame.placeShip(window.shipId,window.qaim_1,window.qaim_2,function(e,tx){
+            console.log("La concha de tu hermana");
+            window.cssgame.placeShip(window.shipId,window.qaim_1,window.qaim_2,function(e,tx) {
+                
+                console.log(e);
                 if (!e) {
                     $('body').addClass('blur');
                     
@@ -67,7 +69,7 @@ window.addEventListener('load', async () => {
             window.csstoken.setQAIM(window.shipId,window.qaimAssign,function(e,tx){
                 if (!e) {
                     $('body').addClass('blur');
-                    $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
+                    $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation-qaim"});
                     setInterval(function(){
                         w3.eth.getTransactionReceipt(tx, function(e,h){
                             if (h && h.blockNumber != null) window.location.reload();

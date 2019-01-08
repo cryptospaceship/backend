@@ -1,6 +1,55 @@
 $(document).ready(function(){
     window.backend = new Backend(window.baseUrl);
 
+    function renderEvent(event_id, type, title, block, viewed) {
+        let block_div = document.createElement('div');
+        let title_div = document.createElement('div');
+        let type_div = document.createElement('div');
+        let a = document.createElement('a');
+    
+        a.setAttribute("class", "message-content row-body");
+        a.setAttribute("id", "event");
+        a.setAttribute("event-id", event_id);
+    
+        type_div.setAttribute("class", "from-to row-table");
+    
+        if (viewed == false)
+            a.setAttribute("style", "background-color: #ffffff30; font-weight: 800; cursor: pointer;");
+        else
+            a.setAttribute("style", "cursor: pointer;");
+            
+        type_div.appendChild(document.createTextNode(type));
+    
+        block_div.setAttribute("class", "date row-table");
+        block_div.innerText = block;
+        title_div.setAttribute("class", "subject row-table");
+        title_div.innerText = title;
+    
+        a.appendChild(type_div);
+        a.appendChild(title_div);
+        a.appendChild(block_div);
+        return a;
+    }
+
+    function renderPaginator(pages) {
+        let li = document.createElement('li');
+        let a  = document.createElement('a');
+        
+        a.setAttribute("href", "?page=" + pages);
+        
+        a.appendChild(document.createTextNode(pages))
+        li.appendChild(a);
+        
+        $(li).insertAfter('#page-number-' + (pages - 1));
+        $('#next-page-arrow').attr('class', 'arrow-next');
+        $('#next-page-arrow').attr('href', '?page=2');
+        $('#total-pages').text("Page 1 of " + pages)
+        
+        window.lastPage = pages;
+    }
+    
+    
+    
     function openShipBattleModal(data){
         $('#ship-battle-attacker').text(data.from + ' attacks');
         $('#ship-battle-attacker-fleet').text(data.meta._attacker_size);
@@ -151,5 +200,42 @@ $(document).ready(function(){
            closePortBattleModal();
         }
     });
+    
+    if (window.actualPage == 1) {
+        window.rm = setInterval(()=>{
+            let last;
+            if (typeof window.lastEvent == 'undefined')
+                last = 0;
+            else
+                last = window.lastEvent;
+                //last = 540;
+
+            window.backend.events.getsince(window.gameId,last,(e,m)=>{
+                if (e == null) 
+                    if (m.length > 0) {
+                        window.totalEvents = window.totalEvents + m.length;
+                        for (i = m.length -1; i >= 0; i-- ) {
+                            event = renderEvent(m[i].id,m[i].type,m[i].title,m[i].block, m[i].viewed);
+                            $('#table-body').prepend(event);
+                        }
+                        let elements = $('[id="event"]');
+                        if ( elements.length > 10 ) {
+                            for (i = 10; i <= elements.length-1; i++) 
+                                elements[i].remove();
+                            pages = parseInt((window.totalEvents + m.length) / 10) + 1;
+                            console.log(pages + " of " + window.lastPage);
+                            if (pages > window.lastPage)
+                                renderPaginator(pages);                            
+                        }
+                        window.lastMessage = m[0].id;
+                        $('[id="event"]').off();
+                        $('[id="event"]').click(function() {         
+                            openEventModal(this);
+                        });
+                    }
+            });
+        },5000);
+    }
+    
     
 });

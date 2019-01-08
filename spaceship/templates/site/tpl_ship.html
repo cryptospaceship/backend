@@ -252,6 +252,17 @@
 </div>
 
 <div style="display:none">
+    <div id="waiting-confirmation-qaim" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
+            <div class="form-modal">
+                <h5>Training QAIM</h5>
+                <p>_waiting for transaction confirmation</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="display:none">
     <div id="waiting-confirmation" class="modal">
         <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
             <div class="form-modal">

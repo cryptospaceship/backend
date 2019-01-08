@@ -36,7 +36,7 @@
                                 Block
                             </div>
                         </div>
-                        <div class="table-body">
+                        <div class="table-body" id="table-body">
                             {% for ei in events %}
                             {% if ei.viewed %}
                             <a class="message-content row-body" id="event" event-id={{ ei.id }} style="cursor: pointer;">
@@ -47,37 +47,7 @@
                                     {{ ei.inbox_type }}
                                 </div>
                                 <div class="subject row-table">
-                                    {% if ei.event.event_type == "AttackShipEvent" %}
-                                        {% if ei.inbox_type == 'T' %}
-                                            {{ ei.event.from_ship.name }} attacked you
-                                        {% else %}
-                                            Attack to {{ ei.to_ship.name }}
-                                        {% endif %}
-                                    {% elif ei.event.event_type == "SentResourcesEvent" %}
-                                        {% if ei.inbox_type == 'T' %}
-                                            {{ ei.event.from_ship.name }} sent you resources
-                                        {% else %}
-                                           Resources sent to {{ ei.to_ship.name }}
-                                        {% endif %}
-                                    {% elif ei.event.event_type == "FireCannonEvent" %}
-                                        {% if ei.inbox_type == 'T' %}
-                                            {{ ei.event.from_ship.name }} shot you
-                                        {% else %}
-                                           Cannon fired to {{ ei.to_ship.name }}
-                                        {% endif %}
-                                    {% elif ei.event.event_type == "FireCannonEventAccuracy" %}
-                                        {% if ei.inbox_type == 'T' %}
-                                            {{ ei.event.from_ship.name }} shot you
-                                        {% else %}
-                                            Cannon fired to {{ ei.to_ship.name }}
-                                        {% endif %}   
-                                    {% elif ei.event.event_type == "AttackPortEvent" %}
-                                        {{ ei.event.from_ship.name }} attacked Port
-                                    {% elif ei.event.event_type == "PortConquestEvent" %}
-                                        {{ ei.event.from_ship.name }} conquest the port!!!    
-                                    {% else %}
-                                        {{ ei.event.event_type }}
-                                    {% endif %}
+                                    {{ ei.title }}
                                 </div>
                                 <div class="date row-table">
                                     {{ ei.event.event_block }}
@@ -393,5 +363,15 @@
 </body>
 <script>
 window.baseUrl = "{{ base_url }}";
+window.gameId  = {{ game_id }};
+{% if events|length > 0 %}
+    window.lastEvent = {{ events.0 }};
+{% else %}
+    window.lastEvent = 0;
+{% endif %}
+window.totalEvents = {{ events_count }};
+
+window.actualPage = {{ events.number }};
+window.lastPage = {{ events.paginator.num_pages }};
 </script>
 </html>

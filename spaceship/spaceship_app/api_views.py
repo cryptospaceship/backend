@@ -93,7 +93,15 @@ def api_get_event(request, event_id):
 
     return HttpResponse(dumps(ret), content_type="application/json", status=status)
 
-
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')    
+def api_get_events_since(request, game_id, event_id):
+    player = Player.get_by_user(request.user)
+    game   = Game.get_by_id(game_id)
+    ship   = player.get_ship_in_game(game)    
+    events = EventInbox.get_since_id(ship, event_id, True)
+    return HttpResponse(dumps(events), content_type="application/json", status=http_REQUEST_OK)
+        
    
 @require_http_methods(['POST'])
 @csrf_exempt
@@ -184,7 +192,7 @@ def api_get_messages_since(request, game_id, msg_id):
     player   = Player.get_by_user(request.user)
     game     = Game.get_by_id(game_id)
     ship     = player.get_ship_in_game(game)    
-    messages = Message.get_inbox_since_id(ship.ship_id, msg_id, True)
+    messages = Message.get_inbox_since_id(ship, msg_id, True)
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
     
     
