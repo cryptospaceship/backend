@@ -31,7 +31,7 @@ from spaceship_app.site_views import metamask_view
 from spaceship_app.site_views import unlock_metamask_view
 from spaceship_app.site_views import change_network_view
 from spaceship_app.site_views import game_frame_view
-from spaceship_app.site_views import faq_view
+from spaceship_app.site_views import support_view
 
 # GAME VIEWS
 from spaceship_app.game_views import play_resources_view
@@ -67,7 +67,7 @@ urlpatterns = [
     #url(r'^metamask/'	      , metamask_view),
     path('metamask/'	      , metamask_view),
     #url(r'^faq/'	          , faq_view),
-    path('faq/'	          , faq_view),
+    path('support/'	          , support_view),
     #url(r'^unlock/'	          , unlock_metamask_view),
     path('unlock/'	          , unlock_metamask_view),
     #url(r'^network/'	      , change_network_view),

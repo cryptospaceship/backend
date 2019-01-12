@@ -1078,6 +1078,8 @@ window.addEventListener('load', async () => {
             return true;
         }
 
+        if (window.cannon == false && window.reparer == false)
+            $('#cannon-reparer-watch').hide();
 
         var mapType="3D";
         $(".panel").addClass("p3d");// this adds 3d effect to panel hovering

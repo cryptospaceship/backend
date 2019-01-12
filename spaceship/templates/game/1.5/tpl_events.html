@@ -62,19 +62,27 @@
                         <div class="pagination">
                             <ul>
                             {% if events.has_previous %}
-                                <li><a href="?page={{ events.previous_page_number }}" class="arrow-prev"></a></li>
+                                <li><a href="?page=1" class="arrow-prev"></a></li>
+                                <!--li><a href="?page={{ events.previous_page_number }}" class="arrow-prev"></a></li-->
                             {% else %}
                                 <li><a href="javascript:void(0);" class="arrow-prev disable"></a></li>
-                            {% endif %}                            
+                            {% endif %}
+                            {% if events.number|add:page_limit_left >= 1 %}
+                                <li><a href="?page={{ events.number|add:page_limit_left }}">&hellip;</a></li>
+                            {% endif %}
                             {% for i in events.paginator.page_range %}
                                 {% if events.number == i %}
                                     <li><a href="javascript:void(0);" class="active" id="page-number-{{ i }}">{{ i }}</a></li>
-                                {% else %}
+                                {% elif i > events.number|add:page_limit_left and i < events.number|add:page_limit_right %}
                                     <li><a href="?page={{ i }}" id="page-number-{{ i }}">{{ i }}</a></li>
                                 {% endif %}
                             {% endfor %}
+                            {% if events.paginator.num_pages >= events.number|add:page_limit_right %}
+                                <li><a href="?page={{ events.number|add:page_limit_right }}">&hellip;</a></li>
+                            {% endif %}
                             {% if events.has_next %}
-                                <li><a href="?page={{ events.next_page_number }}" class="arrow-next"></a></li>
+                                <!--li><a href="?page={{ events.next_page_number }}" class="arrow-next"></a></li-->
+                                <li><a href="?page={{ events.paginator.num_pages }}" class="arrow-next" id="next-page-arrow"></a></li>
                             {% else %}
                                 <li><a href="javascript:void(0);" class="arrow-next disable" id="next-page-arrow"></a></li>
                             {% endif %}                            
@@ -83,13 +91,13 @@
                     </div>
                 </div>
             </div>
-            <div>
+            <!--div>
                 
                 <a class="btn port-battle" href="#port-battle">Port Battle</a>
                 <a class="btn ship-battle" href="#ship-battle">Ship Battle</a>
                 <a class="btn sent-resources" href="#sent-resources">Sent Resources</a>
                 <a class="btn cannon-fired" href="#cannon-fired">Cannon Fired</a>
-            </div>
+            </div-->
         </div>
     </main>
 
@@ -373,5 +381,6 @@ window.totalEvents = {{ events_count }};
 
 window.actualPage = {{ events.number }};
 window.lastPage = {{ events.paginator.num_pages }};
+window.pageRange = {{ page_limit_right }};
 </script>
 </html>

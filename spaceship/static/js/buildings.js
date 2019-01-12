@@ -645,7 +645,8 @@ window.addEventListener('load', async () => {
                 energy = Math.floor(window.energyStock * 100 / res.energy);
                 graphene = Math.floor(window.grapheneStock * 100 / res.graphene);
                 metals = Math.floor(window.metalsStock * 100 / res.metals);
-
+                let max_level = 0
+                
                 if (energy > 100) energy = 100;
                 if (graphene > 100) graphene = 100;
                 if (metals > 100) metals = 100;
@@ -658,6 +659,7 @@ window.addEventListener('load', async () => {
                         amount_graphene = '#amount-graphene1';
                         bar_metals = '#bar-metals1';
                         amount_metals = '#amount-metals1';
+                        max_level = 4;
                         break;
                     case 1:
                         bar_energy = '#bar-energy2';
@@ -666,6 +668,7 @@ window.addEventListener('load', async () => {
                         amount_graphene = '#amount-graphene2';
                         bar_metals = '#bar-metals2';
                         amount_metals = '#amount-metals2';
+                        max_level = 4;
                         break;
                     case 2:
                         bar_energy = '#bar-energy3';
@@ -674,9 +677,10 @@ window.addEventListener('load', async () => {
                         amount_graphene = '#amount-graphene3';
                         bar_metals = '#bar-metals3';
                         amount_metals = '#amount-metals3';
+                        max_level = 2;
                         break;
                 }
-                if (level < 5) {
+                if (level <= max_level) {
                     $(amount_energy).text(energy.toString()+'%');
                     $(amount_graphene).text(graphene.toString()+'%');
                     $(amount_metals).text(metals.toString()+'%');

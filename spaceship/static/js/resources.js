@@ -184,8 +184,14 @@ window.addEventListener('load', async () => {
          */
         $('#set-resource-converter').click(()=>{
             window.id_modal_open = '#modal-resource-converter';
+
             let graphene = cssgame.getProductionByLevel(window.grapheneCollectorLevel);
             let metal = cssgame.getProductionByLevel(window.metalsCollectorLevel);
+
+            if (window.converterLevel == 1) {
+                graphene = parseInt(graphene / 2);
+                metal = parseInt(metal / 2);
+            }
 
             let checkvalues = ()=> {
                 let g = $('#range-graphene-to-converter').val();

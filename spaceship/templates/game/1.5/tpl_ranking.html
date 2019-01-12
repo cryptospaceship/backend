@@ -68,19 +68,27 @@
                     <div class="pagination">
                         <ul>
                         {% if rankings.has_previous %}
-                            <li><a href="?page={{ rankings.previous_page_number }}" class="arrow-prev"></a></li>
+                            <li><a href="?page=1" class="arrow-prev"></a></li>
+                            <!--li><a href="?page={{ rankings.previous_page_number }}" class="arrow-prev"></a></li-->
                         {% else %}
                             <li><a href="javascript:void(0);" class="arrow-prev disable"></a></li>
-                        {% endif %}                            
+                        {% endif %}
+                        {% if rankings.number|add:page_limit_left >= 1 %}
+                            <li><a href="?page={{ rankings.number|add:page_limit_left }}">&hellip;</a></li>
+                        {% endif %}
                         {% for i in rankings.paginator.page_range %}
                             {% if rankings.number == i %}
                                 <li><a href="javascript:void(0);" class="active">{{ i }}</a></li>
-                            {% else %}
+                            {% elif i > rankings.number|add:page_limit_left and i < rankings.number|add:page_limit_right %}
                                 <li><a href="?page={{ i }}">{{ i }}</a></li>
                             {% endif %}
                         {% endfor %}
+                        {% if rankings.paginator.num_pages >= rankings.number|add:page_limit_right %}
+                            <li><a href="?page={{ rankings.number|add:page_limit_right }}">&hellip;</a></li>
+                        {% endif %}
                         {% if rankings.has_next %}
-                            <li><a href="?page={{ rankings.next_page_number }}" class="arrow-next"></a></li>
+                            <!--li><a href="?page={{ rankings.next_page_number }}" class="arrow-next"></a></li-->
+                            <li><a href="?page={{ rankings.paginator.num_pages }}" class="arrow-next" id="next-page-arrow"></a></li>
                         {% else %}
                             <li><a href="javascript:void(0);" class="arrow-next disable"></a></li>
                         {% endif %}                            

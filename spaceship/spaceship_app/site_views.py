@@ -267,8 +267,8 @@ def game_frame_view(request, net_id, game_id, ship_id):
     context['inject_css'] = template.get_css()
     return render(request, template.file, context)
     
-def faq_view(request):
-    template = SiteTemplate.get('faq')
+def support_view(request):
+    template = SiteTemplate.get('support')
     context = {}
     context['inject_css'] = template.get_css()
     context['inject_js'] = template.get_js()
