@@ -105,6 +105,46 @@ def __calc_page(position, fields_page):
     if r > 0:
         d = d + 1
     return int(d)
+
+def __calc_pagination_limits(page, pages_range, total_pages):
+    ret = {}
+    r = pages_range // 2
+
+    if page is None:
+        page = 1
+    else:
+        page = int(page)
+
+    if page < pages_range:
+        ll = 1
+        if pages_range > total_pages:
+            lr = total_pages
+        else:
+            lr = pages_range
+    elif (page + r) > total_pages:
+        diff = page + r - total_pages
+        ll = page - r - diff
+        lr = total_pages
+    elif page < total_pages:
+        ll = page - r
+        if (page + r) < total_pages:
+            lr = page + r
+        else:
+            lr = total_pages
+
+    if ll > 1:
+        ret['ellipsis_left']  = ll
+        ll = ll + 1
+    if lr < total_pages:
+        ret['ellipsis_right'] = lr
+        lr = lr - 1
+
+    pages = []
+    for i in range(ll, lr + 1):
+        pages.append(i)
+    ret['range'] = pages
+
+    return ret
     
 @login_required(login_url='/signin/')
 @owner_required
@@ -114,6 +154,7 @@ def play_events_view(request, net_id, game_id, ship_id):
         return render(request, html_templates['not_foud'])
         
     page_fields = 10
+    page_range = 5
         
     template = GameTemplate.get(game.version, 'events')
 
@@ -143,8 +184,7 @@ def play_events_view(request, net_id, game_id, ship_id):
     
     context['events'] = events
     context['events_count'] = events_list.count()
-    context['page_limit_right'] = 4
-    context['page_limit_left'] = -4
+    context['pagination'] = __calc_pagination_limits(page, page_range, events.paginator.num_pages)
     
     return render(request, template.file, context)
 
@@ -234,7 +274,8 @@ def play_messages_view(request, net_id, game_id, ship_id, box=''):
     if game is None:
         return render(request, html_templates['not_foud'])
 
-    page_fields = 10    
+    page_fields = 10
+    page_range  = 5    
         
     template = GameTemplate.get(game.version, 'messages')    
         
@@ -269,8 +310,7 @@ def play_messages_view(request, net_id, game_id, ship_id, box=''):
     
     context['messages'] = messages
     context['messages_count'] = messages_list.count()
-    context['page_limit_right'] = 4
-    context['page_limit_left'] = -4
+    context['pagination'] = __calc_pagination_limits(page, page_range, messages.paginator.num_pages)
     
     return render(request, template.file, context)
 
@@ -283,6 +323,7 @@ def play_ranking_view(request, net_id, game_id, ship_id):
         return render(request, html_templates['not_foud'])
 
     page_fields = 10
+    page_range  = 5
     
     template  = GameTemplate.get(game.version, 'ranking')    
         
@@ -309,8 +350,7 @@ def play_ranking_view(request, net_id, game_id, ship_id):
     rankings  = paginator.get_page(page) 
     
     context['rankings'] = rankings    
-    context['page_limit_right'] = 4
-    context['page_limit_left'] = -4
+    context['pagination'] = __calc_pagination_limits(page, page_range, rankings.paginator.num_pages)
 
     return render(request, template.file, context)
 

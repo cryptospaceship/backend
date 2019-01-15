@@ -73,18 +73,18 @@
                         {% else %}
                             <li><a href="javascript:void(0);" class="arrow-prev disable"></a></li>
                         {% endif %}
-                        {% if rankings.number|add:page_limit_left >= 1 %}
-                            <li><a href="?page={{ rankings.number|add:page_limit_left }}">&hellip;</a></li>
+                        {% if 'ellipsis_left' in pagination %}
+                            <li><a href="?page={{ pagination.ellipsis_left }}">&hellip;</a></li>
                         {% endif %}
-                        {% for i in rankings.paginator.page_range %}
+                        {% for i in pagination.range %}
                             {% if rankings.number == i %}
                                 <li><a href="javascript:void(0);" class="active">{{ i }}</a></li>
-                            {% elif i > rankings.number|add:page_limit_left and i < rankings.number|add:page_limit_right %}
+                            {% else %}
                                 <li><a href="?page={{ i }}">{{ i }}</a></li>
                             {% endif %}
                         {% endfor %}
-                        {% if rankings.paginator.num_pages >= rankings.number|add:page_limit_right %}
-                            <li><a href="?page={{ rankings.number|add:page_limit_right }}">&hellip;</a></li>
+                        {% if 'ellipsis_right' in pagination %}
+                            <li><a href="?page={{ pagination.ellipsis_right }}">&hellip;</a></li>
                         {% endif %}
                         {% if rankings.has_next %}
                             <!--li><a href="?page={{ rankings.next_page_number }}" class="arrow-next"></a></li-->

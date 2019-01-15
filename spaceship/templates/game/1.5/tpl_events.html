@@ -67,18 +67,18 @@
                             {% else %}
                                 <li><a href="javascript:void(0);" class="arrow-prev disable"></a></li>
                             {% endif %}
-                            {% if events.number|add:page_limit_left >= 1 %}
-                                <li><a href="?page={{ events.number|add:page_limit_left }}">&hellip;</a></li>
+                            {% if 'ellipsis_left' in pagination %}
+                                <li><a href="?page={{ pagination.ellipsis_left }}">&hellip;</a></li>
                             {% endif %}
-                            {% for i in events.paginator.page_range %}
+                            {% for i in pagination.range %}
                                 {% if events.number == i %}
                                     <li><a href="javascript:void(0);" class="active" id="page-number-{{ i }}">{{ i }}</a></li>
-                                {% elif i > events.number|add:page_limit_left and i < events.number|add:page_limit_right %}
-                                    <li><a href="?page={{ i }}" id="page-number-{{ i }}">{{ i }}</a></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}" id="page-number-{{ i }}">{{ i }}</a></li>                                    
                                 {% endif %}
                             {% endfor %}
-                            {% if events.paginator.num_pages >= events.number|add:page_limit_right %}
-                                <li><a href="?page={{ events.number|add:page_limit_right }}">&hellip;</a></li>
+                            {% if 'ellipsis_right' in pagination %}
+                                <li><a href="?page={{ pagination.ellipsis_right }}">&hellip;</a></li>
                             {% endif %}
                             {% if events.has_next %}
                                 <!--li><a href="?page={{ events.next_page_number }}" class="arrow-next"></a></li-->
