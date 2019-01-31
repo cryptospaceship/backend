@@ -162,10 +162,13 @@ def api_get_message(request, msg_id):
     if ship == msg.sender:
         body = msg.serialize()
         status = http_REQUEST_OK
+        if ship == msg.receiver and not msg.read:
+            msg.mark_as_read()
     elif ship == msg.receiver:
         body = msg.serialize()
         status = http_REQUEST_OK
-        msg.mark_as_read()
+        if not msg.read:
+            msg.mark_as_read()
     else:
         body = {'status': 'error', 'message': 'permission denied'}
         status = http_FORBIDDEN

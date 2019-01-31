@@ -23,7 +23,16 @@ window.addEventListener('load', async () => {
                     $('#win-condition').text("LOSING");
                 else
                     $('#win-condition').text("WINNING");
-                $('#conquest-message').show();
+
+                if (window.blocksToEnd == 0) {
+                    $('#claim-victory').show();
+                    $('#conquest-message').hide();
+                }
+                else {
+                    $('#conquest-message').show();
+                    $('#claim-victory').hide();
+                }
+    
             }
             $('#reward').text(window.reward/1000000000000000000);
             $('#game-age').text(window.gameAge);
@@ -71,6 +80,7 @@ window.addEventListener('load', async () => {
             window.id_modal_open = undefined;
         }
 
+        
 
         function setDamage() {
             let status = 100 - window.damage;
@@ -85,10 +95,6 @@ window.addEventListener('load', async () => {
                 }
             }
             $('#ship-status-value').text(status);
-
-            if (window.damage != 0 && window.in_port) {
-                $('#repair-button').show();
-            } 
         }
 
         for ( i = 1; i <= 12; i++ ) {
@@ -154,6 +160,15 @@ window.addEventListener('load', async () => {
             energyModalHandler();
         });
 
+        // Claim victory
+        $('#claim-victory').click(()=>{
+            window.cssgame.claimVictory((e,g)=>{
+                if (!e) {
+                    process_order (h);
+                }    
+            });
+        });
+
         $('#button-upgrade-graphene').click(function() {
             window.cssgame.upgradeGraphene(window.ship,function(e,h){
                 if (!e) 
@@ -188,10 +203,17 @@ window.addEventListener('load', async () => {
             let graphene = cssgame.getProductionByLevel(window.grapheneCollectorLevel);
             let metal = cssgame.getProductionByLevel(window.metalsCollectorLevel);
 
-            if (window.converterLevel == 1) {
-                graphene = parseInt(graphene / 2);
-                metal = parseInt(metal / 2);
-            }
+            $('#range-metal-to-converter').val(window.mConverter);
+            $('#range-graphene-to-converter').val(window.gConverter);
+            $('#graphene-selected').text(window.gConverter);
+            $('#metal-selected').text(window.mConverter);
+            $('#energy-convertion').text(window.mConverter + window.gConverter);
+
+            if (window.gConverter > 0 || window.mConverter > 0)
+                $('#converter-status').text('Working');
+            else
+                $('#converter-status').text('Off');
+
 
             let checkvalues = ()=> {
                 let g = $('#range-graphene-to-converter').val();
@@ -212,29 +234,34 @@ window.addEventListener('load', async () => {
 
             $('#range-graphene-to-converter').on('input',()=>{
                 checkvalues();
+                $('#button-convert-production').removeClass('disabled');
             });
 
             $('#range-metal-to-converter').on('input',()=>{
                 checkvalues();
+                $('#button-convert-production').removeClass('disabled');
             });
 
             $('#button-convert-production').click(()=>{
-                window.cssgame.setProductionResourcesConverter(window.ship,window.grapheneToConverter,window.metalToConverter,(e,h)=>{
-                    if (!e) {
-                        process_order(h);
-                    }
-                });
+                if ( (typeof window.grapheneToConverter != 'undefined' && window.grapheneToConverter != window.gConverter) || (typeof window.metalToConverter != 'undefined' && window.metalToConverter != window.mConverter) ) {
+                    window.cssgame.setProductionResourcesConverter(window.ship,window.grapheneToConverter,window.metalToConverter,(e,h)=>{
+                        if (!e) {
+                            process_order(h);
+                        }
+                    });
+                }
             });
             $(window.id_modal_open).modal('show');
         });
 
-        $('#set-resource-converter').on('hidden.bs.modal',()=>{
+        $('#modal-resource-converter').on('hidden.bs.modal',()=>{
             clean_modal();
             window.grapheneToConverter = 0;
             window.metalToConverter = 0;
             $('#button-convert-production').off();
             $('#range-metal-to-converter').off();
             $('#range-graphene-to-converter').off();
+            $('#button-convert-production').addClass('disabled');
         });
 
         /**

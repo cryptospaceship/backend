@@ -16,6 +16,7 @@ from spaceship_app.models import DiscordEvent
 from spaceship_app.models import Ranking
 from spaceship_app.models import Player
 from spaceship_app.models import EventInbox
+from spaceship_app.models import Message
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # System
@@ -33,7 +34,7 @@ import httplib2
 # Basic Config
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 LOG_FILE = './log/block_scanner.log'
-ERR_FILE = './log/block_scanner.err'
+ERR_FILE = './log/block_scanner_err.log'
 PID_FILE = './pid/block_scanner.pid'
 
 
@@ -138,6 +139,10 @@ def get_block(block, net):
         return net.connect().get_block(block)
     except:
         return None
+        
+def create_welcome_message(ship):
+    message = "Welcome commander! Your ship is ready to conquest the Crypto Space."
+    Message.create(ship, ship, "Welcome!!!", message)
 
 def get_create_ship(game, ship_id):
     ship = Ship.get_by_id(ship_id)
@@ -214,6 +219,7 @@ def join_game(event, abi_event):
     logging.info("join_game(): ship %s joined to %s" % (event.from_ship.ship_id, event.game.name))
     Ranking.create(event.from_ship, event.game)
     logging.info("join_game(): ranking created for %s in game %s" % (event.from_ship.ship_id, event.game.name))
+    create_welcome_message(event.from_ship)
     if abi_event.discord:        
         try:
             msg_vars = {'ship_name': event.from_ship.name, 'ship_id': event.from_ship.ship_id}
@@ -255,6 +261,7 @@ def create_update_event(tx, net, abi_event, receipt):
             ret = create_event_inbox(event, abi_event)
         elif abi_event.join_trigger:
             ret = join_game(event, abi_event)
+            EventInbox.create_from(event)
         elif abi_event.exit_trigger:
             ret = exit_game(event, abi_event)
     else:

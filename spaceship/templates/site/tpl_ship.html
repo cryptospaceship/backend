@@ -1,6 +1,7 @@
 {% extends "site/tpl_base.html" %}
 {% block content %}
 {% load js %}
+{% load boolean %}
 <main id="site-main" role="main" class="interior">
     <div class="container">
         <div class="ship-page">
@@ -65,15 +66,15 @@
                             <a href="javascript:void(0);" id="open-qaim-modal" class="btn blue modulo-qia">QAIM Modules</a>
                         </div>
                         <div class="col-xs-12 col-sm-5 col-md-5 current-mission">
-                            {% if ship.in_game == True %}
+                            {% if ship.in_game %}
                                 <h3>_Current Mission</h3>
-                                <a href="/ui/{{ game_network_id }}/play/{{ game.id }}/{{ ship.id }}/" class="btn resume-game">go to game</a>
+                                <a href="javascript:void(0);" class="btn resume-game" id="go-to-game">go to game</a>
                                 <p>started at</br>
-                                            block {{ game_block }}</p>
+                                            block <span id="game-start-block"><span></p>
                                 <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
                             {% else %}
                                 <h3>_Current Mission</h3>
-                                <p>No estas participando de ningun juego</p>
+                                <p>You are not playing right now</p>
                                 <a class="btn join-game" id="select-game-modal" href="#">join game</a>
                             {% endif %}
                         </div>
@@ -176,7 +177,7 @@
             <div class="form-modal">
                 <h5>Join a game</h5>
                 <p>_Select your next adventure</p>
-                <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore </p>
+                <p class="description">King of the Hill </p>
 
                 <div class="group-input">
                     <p>Select 2 QAIMS</p>
@@ -274,6 +275,20 @@
     </div>
 </div>
 
+<div style="display:none">
+    <div id="waiting-game" class="modal">
+        <form action="javascript:void(0);" method="post" class="modal-container">{% csrf_token %}
+            <div class="form-modal">
+                <h5>Game Status</h5>
+                <p>_waiting <span id="blocks-to-begin"></span> blocks to begin</p>
+            </div>
+            <div class="buttons">
+                <button type="button" class="btn blue closeModal">Close</button>         
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 // Constante para la capa1
 window.layer_1 = "/static/site/images/capa1.png";
@@ -312,7 +327,11 @@ window.layer_1 = "/static/site/images/capa1.png";
 {% if ship.qaim is not None %}
     window.shipQaim = {{ ship.qaim }};
 {% endif %}
+{% if ship.in_game %}
+    window.gameUrl = "/ui/{{ game_network_id }}/play/{{ game.id }}/{{ ship.id }}/";
+{% endif %}
 
+window.shipInGame = {{ ship.in_game | boolean }};
 window.base_url = "{{ base_url }}";
 window.points = {{ ship.points }};
 window.qaimClean = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];

@@ -357,7 +357,7 @@ class Game(models.Model):
     @classmethod
     def get_enabled_by_net(cls, net):
         return cls.objects.filter(network=net, enabled=True)
-
+        
     def connect(self):
         if self.version.name == "1.4":
             return crypto_game_v1_4.game(self.network.proxy, self.address, self.abi)
@@ -365,6 +365,15 @@ class Game(models.Model):
             return crypto_game_v1_5.game(self.network.proxy, self.address, self.abi)
         else:
             return None
+    
+    def start(self):
+        try:
+            last_block  = self.network.connect().get_last_block_number()
+            start_block = self.connect().get_game()['game_launch']
+            return last_block >= start_block
+        except:
+            return False
+        
     
     @staticmethod
     def calc_function_hash(function):
@@ -648,7 +657,9 @@ class EventInbox(models.Model):
                 'AttackPortEvent': {'T': '%s attacked Port' % self.event.from_ship.name, 
                                     'F': '%s attacked Port' % self.event.from_ship.name},
                 'PortConquestEvent': {'T': '%s conquest the port!!!' % self.event.from_ship.name, 
-                                      'F': '%s conquest the port!!!' % self.event.from_ship.name}
+                                      'F': '%s conquest the port!!!' % self.event.from_ship.name},
+                'ShipStartPlayEvent': {'T': '%s has arrived!!!' % self.event.from_ship.name, 
+                                      'F': '%s has arrived!!!' % self.event.from_ship.name}
                 }      
          
         return title[self.event.event_type][self.inbox_type]
@@ -734,6 +745,9 @@ class EventInbox(models.Model):
         else:
             return events    
         
+    @staticmethod
+    def delete_by_ship(ship):
+        EventInbox.objects.filter(ship=ship).delete()
         
         
 class Action(models.Model):
@@ -777,7 +791,7 @@ class Transaction(models.Model):
         tx.save()
         return tx
     
-    @classmethod
+    @staticmethod
     def delete_in_block(block):
         Transaction.objects.filter(at_block=block).delete()
         
@@ -917,6 +931,7 @@ class Ship(models.Model):
         return self
         
     def exit_game(self):
+        EventInbox.delete_by_ship(self)
         self.game = None
         self.save()
         return self
@@ -943,8 +958,8 @@ class GameAbiEvent(models.Model):
         return ae
     
     @staticmethod
-    def delete_game(cls, game):
-        cls.objects.filter(game=game).delete()
+    def delete_game(game):
+        GameAbiEvent.objects.filter(game=game).delete()
     
     @classmethod
     def get(cls, game, name):
@@ -987,9 +1002,9 @@ class GameAbiFunction(models.Model):
         except:
             return None
             
-    @classmethod
-    def delete_game(cls, game):
-        cls.objects.filter(game=game).delete()
+    @staticmethod
+    def delete_game(game):
+        GameAbiFunction.objects.filter(game=game).delete()
 
         
 class DiscordEvent(models.Model):

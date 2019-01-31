@@ -63,7 +63,7 @@
                         <div class="combo-top">
                             <div class="resource-title">
                                 <div class="icon ic-graphene"></div>
-                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="El Graphene Molecular Weaver permite recolectar graphene del espacio. Actualizalo para optimizar la recolección.">graphene</div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="The Graphene Molecular Weaver allows you to collect graphene from space, Update it to optimize collection.">graphene</div>
                                 <div class="resource-level"><span id="graphene-collector-level"></span></div>
                                 <div class="resource-name">Molecular weaver</div>
                             <!--<div class="resource-upgrade" id="upgrade-graphene">upgrade</div> -->
@@ -110,7 +110,7 @@
                         <div class="combo-top">
                             <div class="resource-title">
                                 <div class="icon ic-metals"></div>
-                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="Recolecta metales utilizando el Metals Harvesting Module. Su nivel determinará tu producción de metales.">metals</div>
+                                <div class="title-text" data-toggle="tooltip" data-placement="top" title="Collect metals using the Metal Harvesting Module. Your level will determine your metal production.">metals</div>
                                 <div class="resource-level"><span id="metals-collector-level"></span></div>
                                 <div class="resource-name">Harvesting Module</div>
                             <!--<div class="resource-upgrade" id="upgrade-metals">upgrade</div> -->
@@ -310,7 +310,7 @@
                     </button>
                 </div>
                 <div class="modal-body" id="modal-body">
-                    <div class="modal-body-text">Resource production to Energy - <span id="c">Working</span></div>
+                    <div class="modal-body-text">Resource production to Energy - <span id="converter-status">Working</span></div>
                     <div class="slidecontainer">                        <p class="converter-tag fL">Graphene: </p>
                         <input type="range" min="0" max="15" value="0" step="1" class="slider-build slider-converter-graphene" id="range-graphene-to-converter" style="width: 44%;">
                         <p class="fR-converter"><span id="graphene-selected">0</span> of <span id="graphene-to-converter"></span></p>
@@ -329,7 +329,7 @@
                         <div class="stopper"></div>
                     </div>  
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="button-convert-production" class="btn btn-primary">Confirm</button>
+                    <button type="button" id="button-convert-production" class="btn btn-primary disabled">Confirm</button>
                 </div>
     
             </div>
@@ -568,42 +568,7 @@
             </div>
 
 
-    <div class="modal fade" id="modal-resource-converter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Converter</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="modal-body">
-                    <div class="modal-body-text">Resource production to Energy - <span id="c">Working</span></div>
-                    <div class="slidecontainer">                        <p class="converter-tag fL">Graphene: </p>
-                        <input type="range" min="0" max="15" value="0" step="1" class="slider-build slider-converter-graphene" id="range-graphene-to-converter" style="width: 44%;">
-                        <p class="fR-converter"><span id="graphene-to-converter">15</span></p>
-                    </div>
-                    <div class="slidecontainer">
-                        <p class="converter-tag fL">Metal: </p>
-                        <input type="range" min="0" max="15" value="0" step="1" class="slider-build slider-converter-metal" id="range-metal-to-converter" style="width: 44%;">
-                        <p class="fR-converter"><span id="metal-to-converter">15</span></p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="title-text fL">Energy aditional Production: </div>
-                    <div class="ratio-item-modal">
-                        <div class="icon-ratio ic-energy"></div>
-                        <div class="title-text fL"><span id="energy-convertion">78600</span></div>
-                        <div class="stopper"></div>
-                    </div>  
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="button-convert-production" class="btn btn-primary">Confirm</button>
-                </div>
-    
-            </div>
-        </div>
-    </div>
-    
+   
 <!-- Modal for pannels -->
 <div class="modal fade" id="modal-energy-upgrade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -814,6 +779,9 @@
                         </div>
                     </div>
                 </div> 
+
+
+                
 </body>
 <!-- scripts -->
 {% for js in inject_js %}
@@ -847,6 +815,8 @@
     window.role = {{ role }};
     //window.role = 2;
     window.converterLevel = ( {{ role }} == 2 ) ? {{ wopr_level }} : 0;
+    window.mConverter = 0;
+    window.gConverter = 0;
 
     window.energyProduction = {{ energy_production }};
     window.grapheneProduction = {{ graphene_production }};

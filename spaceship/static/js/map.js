@@ -22,7 +22,16 @@ window.addEventListener('load', async () => {
                     $('#win-condition').text("LOSING");
                 else
                     $('#win-condition').text("WINNING");
-                $('#conquest-message').show();
+                
+                if (window.blocksToEnd == 0) {
+                    $('#claim-victory').show();
+                    $('#conquest-message').hide();
+                }
+                else {
+                    $('#conquest-message').show();
+                    $('#claim-victory').hide();
+                }
+
             }
             $('#reward').text(window.reward/1000000000000000000);
             $('#game-age').text(window.gameAge);
@@ -72,7 +81,7 @@ window.addEventListener('load', async () => {
         }
 
 
-        function setDamage() {
+        function setDamage () {
             let status = 100 - window.damage;
             let statusPercentage = status.toString() + '%'
             $('#bar-ship-status').css('width', statusPercentage);
@@ -86,7 +95,7 @@ window.addEventListener('load', async () => {
             }
             $('#ship-status-value').text(status);
 
-            if (window.damage != 0 && window.in_port) {
+            if (window.damage != 0 && window.in_port == false) {
                 $('#repair-button').show();
             } 
         }
@@ -187,6 +196,14 @@ window.addEventListener('load', async () => {
             refreshMap();
         });
 
+        // Claim victory
+        $('#claim-victory').click(()=>{
+            window.cssgame.claimVictory((e,g)=>{
+                if (!e) {
+                    process_order (h);
+                }
+            });
+        });
 
         function refreshMap() {
             window.cssgame.getStrategicMap(window.map_center_x,window.map_center_y,function(e,r) {
@@ -213,7 +230,10 @@ window.addEventListener('load', async () => {
                     cssgame.changeMode(window.ship, window.ATTACK_MODE,function(e,h){
                         if (!e) {
                             process_order (h);
-                        }    
+                        } else {
+                            window.metaerror = e;
+                            console.log(e);
+                        }
                     });
                 });
             }
@@ -428,6 +448,7 @@ window.addEventListener('load', async () => {
                                     $('#other-ship-name').text(ret.name);
                                     $('#other-ship-name-message').attr('href', '../messages/inbox/?to=' + ret.name);
                                     $('#other-ship-id').text(window.other_ship);
+                                    $('#other-ship-role').text(CSSGame.getRoleName(ret.role));
                                     $('#other-ship-mode').text(CSSGame.getModeName(ret.mode));
                                 }
                             });
@@ -484,51 +505,76 @@ window.addEventListener('load', async () => {
                                     $('#fire-cannon-button').hide();
                                     $('#repare-ship-button').show();
 
-                                    if (window.reparer_level == 2)
-                                        $('#range-to-repare').attr('max', 20);
-                                    else
-                                        $('#range-to-repare').attr('max', 10);
-                                    
-                                    $('#range-to-repare').on('input',()=>{
-                                        let v = $('#range-to-repare').val();
-                                        let cost = cssgame.getRepareCost(parseInt(v));
-
-                                        if (cost.energy <= window.energyStock && 
-                                            cost.graphene <= window.grapheneStock &&
-                                            cost.metal <= window.metalsStock && parseInt(v) != 0) {
-                                            window.to_fix = v;
-                                            $('#repare-ship-button').removeClass("disabled");
-                                        } else {
-                                            window.to_fix = 0;
-                                            $('#repare-ship-button').addClass("disabled");
-                                        }
-
-                                        if (cost.energy <= window.energyStock)
-                                            $('#energy-fix-cost').text(cost.energy);
-                                        else
-                                            $('#energy-fix-cost').text("Insufficient");
+                                    if (CSSGame.getDistance([window.position_x,window.position_y],[x,y]) == 1 && window.blocks_to_wopr==0) {
                                         
-                                        if (cost.graphene <= window.grapheneStock)
-                                            $('#graphene-fix-cost').text(cost.graphene);
-                                        else
-                                            $('#graphene-fix-cost').text("Insufficient");
+                                        window.cssgame.viewShipVars(window.other_ship, (e,r)=>{
+                                            
+                                            let vars = cssgame.viewShipVarsResult(r);
 
-                                        if (cost.metal <= window.metalsStock)
-                                            $('#metal-fix-cost').text(cost.metal);
-                                        else
-                                            $('#metal-fix-cost').text("Insufficient");
+                                            if (vars.damage == 0) {
+                                                $('#repare-ship-button').addClass("disabled");
+                                                $('#range-to-repare').attr('max', 0);
+                                            } else {
+                                                if (window.reparer_level == 2) {
+                                                    if (vars.damage > 20)
+                                                        $('#range-to-repare').attr('max', 20);
+                                                    else 
+                                                        $('#range-to-repare').attr('max', vars.damage);
+                                                } else {
+                                                    if (vars.damage > 10) 
+                                                        $('#range-to-repare').attr('max', 10);
+                                                    else 
+                                                        $('#range-to-repare').attr('max', vars.damage);
+                                                }
+                                                $('#range-to-repare').on('input',()=>{
+                                                    let v = $('#range-to-repare').val();
+                                                    let cost = cssgame.getRepareCost(parseInt(v));
 
-                                        $('#data-to-repare').text(v);
-                                    });
+                                                    if (cost.energy <= window.energyStock && 
+                                                        cost.graphene <= window.grapheneStock &&
+                                                        cost.metal <= window.metalsStock && parseInt(v) != 0) {
+                                                        window.to_fix = parseInt(v);
+                                                        $('#repare-ship-button').removeClass("disabled");
+                                                    } else {
+                                                        window.to_fix = 0;
+                                                        $('#repare-ship-button').addClass("disabled");
+                                                    }
 
-                                    $('#repare-ship-button').click(()=>{
-                                        if (window.to_fix != 0) {
-                                            cssgame.repairShip(window.ship,window.other_ship,window.to_fix,(e,h)=>{
-                                                if (!e)
-                                                    process_order(h);
-                                            });
-                                        }
-                                    });
+                                                    if (cost.energy <= window.energyStock)
+                                                        $('#energy-fix-cost').text(cost.energy);
+                                                    else
+                                                        $('#energy-fix-cost').text("Insufficient");
+                                                    
+                                                    if (cost.graphene <= window.grapheneStock)
+                                                        $('#graphene-fix-cost').text(cost.graphene);
+                                                    else
+                                                        $('#graphene-fix-cost').text("Insufficient");
+
+                                                    if (cost.metal <= window.metalsStock)
+                                                        $('#metal-fix-cost').text(cost.metal);
+                                                    else
+                                                        $('#metal-fix-cost').text("Insufficient");
+
+                                                    $('#data-to-repare').text(v);
+                                                });
+
+                                                $('#repare-ship-button').click(()=>{
+                                                    if (window.to_fix != 0) {
+                                                        console.log(window.ship);
+                                                        console.log(window.other_ship);
+                                                        console.log(window.to_fix);
+                                                        cssgame.repairShip(window.ship,window.other_ship,window.to_fix,(e,h)=>{
+                                                            if (!e)
+                                                                process_order(h);
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        $('#range-to-repare').attr('max', 0);
+                                        $('#repare-ship-button').addClass("disabled");
+                                    }
                                 }
                             }
                             
@@ -764,6 +810,77 @@ window.addEventListener('load', async () => {
             });
         }
         
+
+        $('#repair-button').click(()=>{
+            if (window.reparer_level == 2) {
+                if (window.damage > 20)
+                    $('#range-self-fix').attr('max', 20);
+                else 
+                    $('#range-self-fix').attr('max', window.damage);
+            } else {
+                if (window.damage > 10) 
+                    $('#range-self-fix').attr('max', 10);
+                else 
+                    $('#range-self-fix').attr('max', window.damage);
+            }
+            $('#range-self-fix').on('input',()=>{
+                let v = $('#range-self-fix').val();
+                let cost = cssgame.getRepareCost(parseInt(v));
+
+                if (cost.energy <= window.energyStock && 
+                    cost.graphene <= window.grapheneStock &&
+                    cost.metal <= window.metalsStock && parseInt(v) != 0) {
+                    window.to_fix = parseInt(v);
+                    $('#button-self-fix').removeClass("disabled");
+                } else {
+                    window.to_fix = 0;
+                    $('#button-self-fix').addClass("disabled");
+                }
+
+                if (cost.energy <= window.energyStock)
+                    $('#energy-fix-self').text(cost.energy);
+                else
+                    $('#energy-fix-self').text("Insufficient");
+                
+                if (cost.graphene <= window.grapheneStock)
+                    $('#graphene-fix-self').text(cost.graphene);
+                else
+                    $('#graphene-fix-self').text("Insufficient");
+
+                if (cost.metal <= window.metalsStock)
+                    $('#metals-fix-self').text(cost.metal);
+                else
+                    $('#metals-fix-self').text("Insufficient");
+
+                $('#to-fix').text(v);
+            });
+
+            $('#button-self-fix').click(()=>{
+                if (window.to_fix != 0) {
+                    cssgame.repairShip(window.ship,window.ship,window.to_fix,(e,h)=>{
+                        if (!e)
+                            process_order(h);
+                    });
+                }
+            });
+
+            window.id_modal_open = '#modal-self-fix';
+            $(window.id_modal_open).modal('show');
+        });
+
+        $('#modal-self-fix').on('hidden.bs.modal',()=> {
+            window.to_fix = 0;
+            $('#energy-fix-self').text(0);
+            $('#graphene-fix-self').text(0);
+            $('#metals-fix-self').text(0);
+            $('#button-self-fix').off();
+            $('#range-self-fix').off();
+            $('#button-self-fix').addClass("disabled");
+            $('#to-fix').text("0");
+            $('#range-self-fix').val(0);
+            clean_modal();
+        });
+
         /*
          * Limpia el handler para el boton de move-to-location
          */
@@ -801,6 +918,7 @@ window.addEventListener('load', async () => {
             $('#raid-button').off();
             $('#fire-cannon-button').off();
             $('#cannon-target').off();
+            $('#repare-ship-button').addClass("disabled");
             $('#attack-button').removeClass('disabled');
             $('#send-resources-button').removeClass('disabled');
             $('#raid-button').removeClass('disabled');
@@ -1080,6 +1198,9 @@ window.addEventListener('load', async () => {
 
         if (window.cannon == false && window.reparer == false)
             $('#cannon-reparer-watch').hide();
+
+        if (window.reparer)
+            $('#fire-reparer').text('repare')
 
         var mapType="3D";
         $(".panel").addClass("p3d");// this adds 3d effect to panel hovering

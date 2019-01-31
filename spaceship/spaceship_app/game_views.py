@@ -185,6 +185,8 @@ def play_events_view(request, net_id, game_id, ship_id):
     context['events'] = events
     context['events_count'] = events_list.count()
     context['pagination'] = __calc_pagination_limits(page, page_range, events.paginator.num_pages)
+    context['pagination_last'] = page_range 
+    context['page_fields'] = page_fields
     
     return render(request, template.file, context)
 
@@ -311,6 +313,8 @@ def play_messages_view(request, net_id, game_id, ship_id, box=''):
     context['messages'] = messages
     context['messages_count'] = messages_list.count()
     context['pagination'] = __calc_pagination_limits(page, page_range, messages.paginator.num_pages)
+    context['pagination_last'] = page_range 
+    context['page_fields'] = page_fields
     
     return render(request, template.file, context)
 
@@ -351,6 +355,7 @@ def play_ranking_view(request, net_id, game_id, ship_id):
     
     context['rankings'] = rankings    
     context['pagination'] = __calc_pagination_limits(page, page_range, rankings.paginator.num_pages)
+    
 
     return render(request, template.file, context)
 

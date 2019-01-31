@@ -42,10 +42,11 @@ $(document).ready(function(){
             $(li).insertAfter('#page-number-' + (pages - 1));
         } 
         else if (pages == (window.pageRange + 1)) {
-            a.setAttribute("href", "?page=" + pages);     
+            $('#page-number-' + window.pageRange).remove();
+            a.setAttribute("href", "?page=" + (pages - 1));     
             a.appendChild(document.createTextNode("..."));
             li.appendChild(a);        
-            $(li).insertAfter('#page-number-' + (pages - 1));
+            $(li).insertAfter('#page-number-' + (pages - 2));
         }
         
         $('#next-page-arrow').attr('class', 'arrow-next');
@@ -67,6 +68,7 @@ $(document).ready(function(){
         $('#ship-battle-defender').text(data.to + ' defends');
         $('#ship-battle-defender-fleet').text(data.meta._defender_size);
         $('#ship-battle-defender-casualties').text(data.meta._defender_size - data.meta._defender_left);
+        $('#ship-battle-defender-damage').text(data.meta._damage);
         
         $.colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: true, href:"#ship-battle"});
         $('body').addClass('blur');
@@ -226,10 +228,10 @@ $(document).ready(function(){
                             $('#table-body').prepend(event);
                         }
                         let elements = $('[id="event"]');
-                        if ( elements.length > 10 ) {
-                            for (i = 10; i <= elements.length-1; i++) 
+                        if ( elements.length > window.pageFields ) {
+                            for (i = window.pageFields; i <= elements.length-1; i++) 
                                 elements[i].remove();
-                            pages = parseInt(window.totalEvents / 10) + 1;
+                            pages = parseInt(window.totalEvents / window.pageFields) + 1;
                             console.log(m);
                             console.log(pages + " of " + window.lastPage);
                             if (pages > window.lastPage)

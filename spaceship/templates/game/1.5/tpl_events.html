@@ -279,6 +279,10 @@
                                 <td>Casualities</td>
                                 <td><span id="ship-battle-defender-casualties"></span></td>
                             </tr>
+                            <tr>
+                                <td>Damage</td>
+                                <td><span id="ship-battle-defender-damage"></span></td>
+                            </tr>
                         </tbody>
                     </table>
                     <a href="javascript:void(0);" id="port-battle-close" class="closeModal"></a>
@@ -381,6 +385,7 @@ window.totalEvents = {{ events_count }};
 
 window.actualPage = {{ events.number }};
 window.lastPage = {{ events.paginator.num_pages }};
-window.pageRange = {{ page_limit_right }};
+window.pageRange = {{ pagination_last }};
+window.pageFields = {{ page_fields }}
 </script>
 </html>

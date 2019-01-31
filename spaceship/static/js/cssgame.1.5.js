@@ -60,6 +60,7 @@ class CSSGame {
         w3.eth.getBlockNumber(callback);
     }
 
+
     placeShip(ship,qaim1,qaim2,callback) {
         let w3 = this.w3;
         let contract = this.contract;
@@ -304,7 +305,11 @@ class CSSGame {
         ret.x = result[1].toNumber();
         ret.y = result[2].toNumber();
         ret.mode = result[3].toNumber();
-        ret.inPort = result[4];
+        ret.qaim = [];
+        for (i = 0; i <= result[4].length-1; i ++)
+            ret.qaim[i] = result[4][i].toNumber();
+        ret.role = result[5].toNumber();
+        ret.inPort = result[6];
         return ret;
     }
 
@@ -619,6 +624,25 @@ class CSSGame {
         r.metals = parseInt(r.metals - this.constructor._percent(r.metals,_qaim));
 
         return r;
+    }
+
+    static getRoleName(role) {
+        let ret;
+        switch(role) {
+            case 0:
+                ret = 'Unknow';
+                break;
+            case 1:
+                ret = 'Cannon';
+                break;
+            case 3:
+                ret = 'Reparer';
+                break;
+            case 2:
+                ret = 'Converter';
+                break;
+        }
+        return ret;
     }
 
     static getModeName(mode) {

@@ -1047,6 +1047,17 @@ h2{
     width: 100%;
 }
 
+.claim-victory {
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    animation: blinker 2s linear infinite;
+    margin-left: 56px;
+    margin-top: 20px;
+    display: none;
+    width: 100%;
+}
+
 .end-message {
     color: #E50E32;
     font-weight: bold;

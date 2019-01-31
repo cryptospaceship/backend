@@ -57,10 +57,11 @@ $(document).ready(function(){
             $(li).insertAfter('#page-number-' + (pages - 1));
         } 
         else if (pages == (window.pageRange + 1)) {
-            a.setAttribute("href", "?page=" + pages);     
+            $('#page-number-' + window.pageRange).remove();
+            a.setAttribute("href", "?page=" + (pages - 1));     
             a.appendChild(document.createTextNode("..."));
             li.appendChild(a);        
-            $(li).insertAfter('#page-number-' + (pages - 1));
+            $(li).insertAfter('#page-number-' + (pages - 2));
         }
         
         $('#next-page-arrow').attr('class', 'arrow-next');
@@ -202,7 +203,7 @@ $(document).ready(function(){
         $('#to').prop('readonly', true);
     }
     
-    //window.lastMessage = 118;
+    //window.lastMessage = 100;
     if (typeof window.inbox != 'undefined' && window.inbox == true && window.actualPage == 1) {
         window.rm = setInterval(()=>{
             let last;
@@ -221,10 +222,10 @@ $(document).ready(function(){
                             $('#table-body').prepend(msg);
                         }
                         let elements = $('[id="message-inbox"]');
-                        if ( elements.length > 10 ) {
-                            for (i = 10; i <= elements.length-1; i++) 
+                        if ( elements.length > window.pageFields ) {
+                            for (i = window.pageFields; i <= elements.length-1; i++) 
                                 elements[i].remove();
-                            pages = parseInt(window.totalMessages / 10) + 1;
+                            pages = parseInt(window.totalMessages / window.pageFields) + 1;
                             console.log(pages + " of " + window.lastPage);
                             if (pages > window.lastPage)
                                 renderPaginator(pages);                            

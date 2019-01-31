@@ -265,7 +265,7 @@
                                     <div class="block-amount">
                                         <span id="blocks-to-fire"></span>
                                     </div>
-                                    <div class="block-amount-title">
+                                    <div class="block-amount-title" id="fire-reparer">
                                         fire
                                     </div>
                                 </div>
@@ -524,8 +524,9 @@
                                     <div class="stopper"></div>
                                 </div>
                                 <div class="modal-info-text">       
-                                    <div class="title-text-no-icon">Owner</div>
-                                    <div class="modal-info-data">Player Name</div>
+                                    <div class="title-text-no-icon">Ship Role</div>
+
+                                    <div class="modal-info-data"><span id="other-ship-role"></span></div>
                                     <div class="stopper"></div>
                                 </div>
                                 <div class="modal-info-text">       
@@ -793,7 +794,7 @@
         </div>
 
         <div class="modal fade" id="modal-tx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalCenterTitle">Order Submited</h5>
@@ -813,6 +814,51 @@
                 </div>
             </div>    
     
+
+
+              <!-- Modal for Build -->
+<div class="modal fade" id="modal-self-fix" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Reparer</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+              <div class="slidecontainer">
+                    <p class="build-tag fL">Self Fix: </p>
+                    <input type="range" min="0" max="480" value="0" step="1" class="slider-build slider-build-fleet" id="range-self-fix">
+                    <p class="fR"><span id="to-fix">0</span>%</p>
+            </div>
+            </div>
+            <div class="modal-footer">
+                  <div class="title-text fL">Cost:</div>
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-energy"></div>
+                      <div class="title-text fL"><span id="energy-fix-self">0</span></div>
+                          
+                      <div class="stopper"></div>
+                  </div> 
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-graphene"></div>
+                      <div class="title-text fL"><span id="graphene-fix-self">0</span></div>
+                      <div class="stopper"></div>
+                  </div>
+                  <div class="ratio-item-modal">
+                      <div class="icon-ratio ic-metals"></div>
+                      <div class="title-text fL"><span id="metals-fix-self">0</span></div>
+                      <div class="stopper"></div>
+                  </div>  
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" id="button-self-fix" class="btn btn-primary">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+            
+
 <!-- scripts -->
 <script src="/static/js/particles.min.js"></script>
 <script src="/static/js/app.js"></script>
@@ -850,7 +896,7 @@
     window.map = {{ map }};
     window.map_center_x = {{ map_center_x }};
     window.map_center_y = {{ map_center_y }};
-    window.map_size = 12;
+    window.map_size = {{ map_size }};
 
     // Ship
     window.mode = {{ mode }};

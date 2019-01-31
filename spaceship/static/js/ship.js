@@ -18,6 +18,15 @@ window.addEventListener('load', async () => {
         window.qaim_1 = undefined;
         window.qaim_2 = undefined;
 
+        if ( window.shipInGame ) {
+            window.cssgame = new CSSGame(w3,window.gameAbi,window.gameAddress,42);
+            window.cssgame.getGame((e,r)=>{
+                ret = window.cssgame.getGameResult(r);
+                window.gameLaunch = ret.gameLaunch;
+                $('#game-start-block').text(ret.gameLaunch);
+            });
+        }
+
         function joinGame(gameId) {   
             window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address'],42);
             console.log("La concha de tu hermana");
@@ -127,7 +136,8 @@ window.addEventListener('load', async () => {
             $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#modulo-qia"});
             $('body').addClass('blur');
         }    
-        
+
+
         $('.plusOne').on('click', function() {
             if (window.shipRemainingPoints > 0)
                 assignQaimPoint($(this).attr('i'))
@@ -140,36 +150,33 @@ window.addEventListener('load', async () => {
             window.shipRemainingPoints = window.shipUnassignedPoints;
             openQaimModal();
         });
-        /*    
-        $('#select-game-modal').on('click', function(){
-            window.qaim_1 = undefined;
-            window.qaim_2 = undefined;
-            for (i = 0; i <= 6-1; i++) {
-                q = '#qaims' + i.toString();
-                $(q).prop('checked', false);
-                $(q).on('click', function(){
-                    checked = $(this).attr('qaim');
-                    if (window.qaim_1 == checked) {
-                        window.qaim_1 = undefined;
-                    } else {
-                        if (window.qaim_2 == checked) {
-                            window.qaim_2 = undefined;
-                        } else {
-                            if (typeof window.qaim_1 !== 'undefined') {
-                                q = '#qaims' + window.qaim_1;
-                                $(q).prop('checked', false);
-                            }
-                            window.qaim_1 = window.qaim_2;
-                            window.qaim_2 = checked;
-                        }
-                    }
-                });
-            }
-            $('body').addClass('blur');
-            $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#join-game"});
-        });
-        */
         
+        function go_to_game(launch) {
+            window.web3.eth.getBlockNumber((e,n)=>{
+                if (launch < n)
+                    window.location = window.gameUrl;
+                else {
+                    // Necesita abrir el modal
+                    $('#blocks-to-begin').text((launch - n).toString());
+                    $('body').addClass('blur');
+                    $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-game"});
+                }
+            });
+        }
+
+        $('#go-to-game').on('click',()=>{
+            if (window.shipInGame) {
+                if (typeof window.gameLaunch == 'undefined') {
+                    window.cssgame.getGame((e,r)=>{
+                        ret = window.cssgame.getGameResult(r);
+                        go_to_game(ret.gameLaunch);
+                    });
+                } else {
+                    go_to_game(window.gameLaunch);
+                }
+            }
+        });
+
         $('#select-game-modal').on('click', function(){
             window.qaim_1 = undefined;
             window.qaim_2 = undefined;
@@ -220,9 +227,6 @@ window.addEventListener('load', async () => {
             $('body').addClass('blur');
             $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#join-game"});
         });
-        
-        
-        
         
         
         $('#qaim-save-button').on('click', function() {

@@ -98,7 +98,7 @@ class ShipAdmin(admin.ModelAdmin):
     
 @admin.register(GameAbiEvent)
 class GameAbiEventAdmin(admin.ModelAdmin):
-    list_display = ['name', 'game']
+    list_display = ['name', 'game', 'notif_trigger', 'join_trigger', 'exit_trigger', 'discord']
 
 @admin.register(GameAbiFunction)
 class GameAbiFunctionAdmin(admin.ModelAdmin):

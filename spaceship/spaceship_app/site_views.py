@@ -206,7 +206,7 @@ def ship_view(request, net_id, ship_id):
         games_data = {}
         for game in context['game_list']:
             games_data.update({game.contract_id: {"abi": loads(game.abi), "address": game.address, "id": game.id}})
-        context['games_data'] = games_data
+        context['games_data']   = games_data
     
     template = SiteTemplate.get('ship')
     
@@ -258,7 +258,11 @@ def change_network_view(request):
 def game_frame_view(request, net_id, game_id, ship_id):
     if not Ship.is_in_game(ship_id, game_id):
         return redirect('/ui/%d/ship/%d/' % (net_id, ship_id))
-
+    
+    game = Game.get_by_id(game_id)
+    if not game.start():
+        return redirect('/ui/%d/ship/%d/' % (net_id, ship_id))
+        
     template = SiteTemplate.get('game_frame')
     context = {}
     context['game_id'] = game_id

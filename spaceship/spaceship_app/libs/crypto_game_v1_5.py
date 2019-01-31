@@ -99,13 +99,29 @@ class game(object):
 
     def get_strategic_map(self, x, y):
         ret = {}
+        map_size = 13
         try:
             ret['map'] = self.contract.functions.getStrategicMap(x, y).call()
         except Exception as e:
             raise gameException(str(e))
 
+        if x < 3:
+            center_x = 3
+        elif x > (map_size - 4):
+            center_x = map_size - 4
+        else:
+            center_x = x
+            
+        if y < 3:
+            center_y = 3
+        elif y > (map_size - 4):
+            center_y = map_size - 4
+        else:
+            center_y = y
+            
         ret['map_center_x'] = ret['map'][49] + 3
         ret['map_center_y'] = ret['map'][50] + 3
+        ret['map_size']     = map_size
 
         return ret
 

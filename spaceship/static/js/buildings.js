@@ -23,7 +23,16 @@ window.addEventListener('load', async () => {
                     $('#win-condition').text("LOSING");
                 else
                     $('#win-condition').text("WINNING");
-                $('#conquest-message').show();
+                
+                if (window.blocksToEnd == 0) {
+                    $('#claim-victory').show();
+                    $('#conquest-message').hide();
+                }
+                else {
+                    $('#conquest-message').show();
+                    $('#claim-victory').hide();
+                }
+    
             }
             $('#reward').text(window.reward/1000000000000000000);
             $('#game-age').text(window.gameAge);
@@ -72,6 +81,7 @@ window.addEventListener('load', async () => {
             window.id_modal_open = undefined;
         }
 
+        
 
         function setDamage() {
             let status = 100 - window.damage;
@@ -86,10 +96,6 @@ window.addEventListener('load', async () => {
                 }
             }
             $('#ship-status-value').text(status);
-
-            if (window.damage != 0 && window.in_port) {
-                $('#repair-button').show();
-            } 
         }
 
         if (window.fleetType != "" && window.fleetEnergyCost != 0 && window.fleetGrapheneCost != 0 && window.fleetMetalsCost != 0)
@@ -309,6 +315,16 @@ window.addEventListener('load', async () => {
 
             $('#upgrading-wopr').click(function() {
                 modal_upgrading();
+            });
+
+            
+            // Claim victory
+            $('#claim-victory').click(()=>{
+                window.cssgame.claimVictory((e,g)=>{
+                    if (!e) {
+                        process_order (h);
+                    }    
+                });
             });
 
             function modal_upgrading () {
@@ -789,7 +805,7 @@ window.addEventListener('load', async () => {
                     $('#hangar-metals-tooltip').attr('data-original-title', 'Hangar max level reached');
                 }
                 
-                if (window.woprLevel < 4) {
+                if (window.woprLevel < 2) {
                     $('#wopr-energy-tooltip').attr('data-original-title', 'Energy required for next level: ' + parseInt(woprCost.energy).toString());
                     $('#wopr-graphene-tooltip').attr('data-original-title', 'Graphene required for next level: ' + parseInt(woprCost.graphene).toString());
                     $('#wopr-metals-tooltip').attr('data-original-title', 'Metals required for next level: ' + parseInt(woprCost.metals).toString());
@@ -850,7 +866,29 @@ window.addEventListener('load', async () => {
             
             $('[id=warehouse-load]').text(window.warehouseLoad);
 
-
+            function woprTexts(){
+                let role
+                let tooltip
+                switch(window.role){
+                case 1:
+                    role = "Crypto Ion-Cannon";
+                    tooltip = "Use the cannon to damage enemy spaceships or destroy their constructions.";
+                    break;
+                case 2:
+                    role = "Resource Converter";
+                    tooltip = "Use the Converter to obtain scarce rosources from leftovers.";
+                    break;
+                case 3:
+                    role = "Reparer";
+                    tooltip = "Use the reparer to repair your own spacechip or other friendly spaceships.";
+                    break;
+                default:
+                    role = "Unselected Role";
+                    tooltip = "Upgrade level of W.O.R.P and choose one of the available roles.";
+                }
+                $("#wopr-role-name").text(role);
+                $("#wopr-tooltip").attr("data-original-title", tooltip);
+            }
         
             // slide panels
             function panelSlide(panelid, speed, direction, amount){
@@ -867,7 +905,9 @@ window.addEventListener('load', async () => {
                 $('#resources').show();
                 $('#stats').show();
                 panelSlide("resources", 1000, "left", "+=50%"); 
-                panelSlide("stats", 1000, "left", "-=50%");          
+                panelSlide("stats", 1000, "left", "-=50%");
+                $("#wopr-tooltip").attr("title", "new title value");
+                woprTexts();
             }
             
             
