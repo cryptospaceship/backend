@@ -39,6 +39,9 @@ window.addEventListener('load', async () => {
             $('#players').text(window.players);
         }
 
+        $('#range-load-points').attr('step', CSSGame.fleetLoadSteper(window.gameNetwork));
+        $('#range-load-points').attr('max', CSSGame.fleetLoadSteper(window.gameNetwork)*100);
+
         setInterval(()=>{
             window.cssgame.getGame((e,r)=>{
                 if (!e) {
@@ -61,6 +64,11 @@ window.addEventListener('load', async () => {
                 }
             });
         },5000);
+
+        function cancel_order() {
+            $(window.id_modal_open).modal('hide');
+            clean_modal();
+        }
 
         function process_order (tx) {
             /*
@@ -138,6 +146,8 @@ window.addEventListener('load', async () => {
                 $('#range-disassemble-fleet').attr('max', max);                
                 $('#max-fleet-to-disassemble').text(max);
 
+                $('#button-disassemble-fleet').addClass('disabled'); 
+
                 $('#range-disassemble-fleet').on('input', function(){
                     let r = window.cssgame.calcReturnResourcesFromFleet(
                         window.hangarLevel, 
@@ -149,24 +159,41 @@ window.addEventListener('load', async () => {
                     $('#graphene-disassemble-fleet').text(r.graphene);
                     $('#metals-disassemble-fleet').text(r.metals);
                     window.fleet_to_disassemble = this.value;
+                    if (window.fleet_to_disassemble > 0)
+                        $('#button-disassemble-fleet').removeClass('disabled');
+                    else
+                        $('#button-disassemble-fleet').addClass('disabled');
                 });
 
                 $('#button-disassemble-fleet').click(function() {
-                    window.cssgame.disassembleFleet(window.ship,window.fleet_to_disassemble,function(e,h){
-                        if (!e) 
-                            process_order(h);
-                    });
+                    if (typeof window.fleet_to_disassemble != 'undefined' && window.fleet_to_disassemble > 0) {
+                        $('#button-disassemble-fleet').off();
+
+                        // Priero se Cierra el Modal 
+                        $(window.id_modal_open).modal('hide');
+                        // Luego se abre el otro modal
+                        window.id_modal_open = '#modal-waiting-confirm';
+
+                        $(window.id_modal_open).modal('show');
+                        window.cssgame.disassembleFleet(window.ship,window.fleet_to_disassemble,function(e,h){
+                            if (!e) 
+                                process_order(h);
+                            else
+                                cancel_order();
+                            window.fleet_to_disassemble = 0;
+                        });
+                    }
                 });
             });
 
 
             $('#modal-disassemble-fleet').on('hidden.bs.modal', function () {
+                $('#button-disassemble-fleet').off();
                 $('#fleet-to-disassemble').text(0);
                 $('#range-disassemble-fleet').val(0);  
                 $('#max-fleet-to-disassemble').text(max);
-                $('#button-disassemble-fleet').off(); 
-                window.fleet_to_disassemble = 0;
-                window.id_modal_open = undefined;
+                $('#graphene-disassemble-fleet').text(0);
+                $('#metals-disassemble-fleet').text(0);
             });
 
             function checkDesignPoints() {
@@ -178,12 +205,12 @@ window.addEventListener('load', async () => {
                 design.defense = parseInt($('#range-defense-points').val());
                 design.distance = parseInt($('#range-distance-points').val());
                 design.load = parseInt($('#range-load-points').val());
-                design.points = design.attack + design.defense + design.distance * 6 + design.load / 80;
+                design.points = design.attack + design.defense + design.distance * 6 + design.load / CSSGame.fleetLoadSteper(window.gameNetwork);
                 points = window.qaim[0] + CSSGame.getPointsByHangarLevel(window.hangarLevel) - design.points;
                 $('#available-design-points').text(points);
                 if (points >= 0) {
                     $('#available-design-points').css("color", "rgb(0, 232, 123)");
-                    $('#fleet-type-design').text(CSSGame.getFleetType(design.attack,design.defense,design.distance,design.load));
+                    $('#fleet-type-design').text(CSSGame.getFleetType(design.attack,design.defense,design.distance,design.load, window.gameNetwork));
                     cost = window.cssgame.getFleetCost(design.attack,design.defense,design.distance,design.load,window.qaim[3]);
                     cost.valid = true;
                 }
@@ -203,16 +230,28 @@ window.addEventListener('load', async () => {
                 // Disable handler
                 $('#button-design-fleet').off();
                 if (cost.valid) {
+                    $('#button-design-fleet').removeClass('disabled');
                     window.designCost = cost;
                     window.design = design;
                     // Configurar el handler para mandar a diseñar
                     $('#button-design-fleet').click(function(){
+                                    // Priero se Cierra el Modal 
+                        $(window.id_modal_open).modal('hide');
+                        // Luego se abre el otro modal
+                        window.id_modal_open = '#modal-waiting-confirm';
+
+                        $(window.id_modal_open).modal('show');
                         window.cssgame.designFleet(window.ship,window.design.attack,window.design.defense,window.design.distance,window.design.load,function(e,h){
-                        if (!e) 
-                            process_order(h);
+                            if (!e) 
+                                process_order(h);
+                            else
+                                cancel_order();
                         });
                     });
+                } else {
+                    $('#button-design-fleet').addClass('disabled');
                 }
+
             }
 
 
@@ -288,22 +327,10 @@ window.addEventListener('load', async () => {
             });
 
 
-            $('#modal-warehouse-upgrade').on('hidden.bs.modal', function () { 
-                window.id_modal_open = undefined;
-            });
-
-            $('#modal-hangar-upgrade').on('hidden.bs.modal', function () { 
-                window.id_modal_open = undefined;
-            });
-
             $('#modal-wopr-upgrade-first').on('hidden.bs.modal', function () {
-                window.id_modal_open = undefined;
                 window.role_selected = undefined;
             });
 
-            $('#modal-wopr-upgrade').on('hidden.bs.modal', function () { 
-                window.id_modal_open = undefined;
-            });
 
             $('#upgrading-warehouse').click(function() {
                 modal_upgrading();
@@ -347,47 +374,96 @@ window.addEventListener('load', async () => {
             });
 
             $('#button-upgrade-wopr').click(function() {
+                // Priero se Cierra el Modal 
+                $(window.id_modal_open).modal('hide');
+                // Luego se abre el otro modal
+                window.id_modal_open = '#modal-waiting-confirm';
+
+                $(window.id_modal_open).modal('show');
                 window.cssgame.upgradeWopr(window.ship,window.role,function(e,h){
                     if (!e) 
                         process_order(h);
+                    else
+                        cancel_order();
                 });
             });
 
             $('#converter-selected').click(function() {
+                // Priero se Cierra el Modal 
+                $(window.id_modal_open).modal('hide');
+                // Luego se abre el otro modal
+                window.id_modal_open = '#modal-waiting-confirm';
+
+                $(window.id_modal_open).modal('show');
                 window.role_selected = 2;
                 window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
                     if (!e) 
                         process_order(h);
+                    else
+                        cancel_order();
                 });
             });
 
             $('#cannon-selected').click(function() {
+                // Priero se Cierra el Modal 
+                $(window.id_modal_open).modal('hide');
+                // Luego se abre el otro modal
+                window.id_modal_open = '#modal-waiting-confirm';
+
+                $(window.id_modal_open).modal('show');
                 window.role_selected = 1;
                 window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
                     if (!e) 
                         process_order(h);
+                    else
+                        cancel_order();
                 });
             });
 
             $('#reparer-selected').click(function() {
+                // Priero se Cierra el Modal 
+                $(window.id_modal_open).modal('hide');
+                // Luego se abre el otro modal
+                window.id_modal_open = '#modal-waiting-confirm';
+
+                $(window.id_modal_open).modal('show');
                 window.role_selected = 3;
                 window.cssgame.upgradeWopr(window.ship,window.role_selected,function(e,h){
                     if (!e) 
                         process_order(h);
+                    else
+                        cancel_order();
                 });
             });
             
 
             $('#button-upgrade-hangar').click(function() {
+                // Priero se Cierra el Modal 
+                $(window.id_modal_open).modal('hide');
+                // Luego se abre el otro modal
+                window.id_modal_open = '#modal-waiting-confirm';
+
+                $(window.id_modal_open).modal('show');
                 window.cssgame.upgradeHangar(window.ship,function(e,h){
                     if (!e) 
                         process_order(h);
+                    else
+                        cancel_order();
                 });
             });
+
             $('#button-upgrade-warehouse').click(function() {
+                // Priero se Cierra el Modal 
+                $(window.id_modal_open).modal('hide');
+                // Luego se abre el otro modal
+                window.id_modal_open = '#modal-waiting-confirm';
+
+                $(window.id_modal_open).modal('show');
                 window.cssgame.upgradeWarehouse(window.ship,function(e,h){
                     if (!e) 
                         process_order(h);
+                    else
+                        cancel_order();
                 });
             });
 
@@ -425,7 +501,6 @@ window.addEventListener('load', async () => {
                 cost.valid = false;
                 window.designCost = cost;
                 window.design = design;
-                window.id_modal_open = undefined;
             });
 
             /*
@@ -451,18 +526,32 @@ window.addEventListener('load', async () => {
                 $('#build-fleet-ready').hide();
             }
 
-            $('#modal-build-fleet').on('hidden.bs.modal', function () {
-                window.id_modal_open = undefined;
-            });
-
             $('#button-build-fleet').click(function(){
                 let value = parseInt($('#range-build-fleet').val());
                 if (value > 0) {
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
+
                     window.cssgame.buildFleet(window.ship,value,function(e,h){
                         if (!e) 
                             process_order(h);
+                        else
+                            cancel_order();
                     });
                 }
+            });
+
+            $('#modal-build-fleet').on('hidden.bs.modal', ()=> {
+                $('#button-build-fleet').addClass('disabled');
+                $('#range-build-fleet').val(0);
+                $('#fleet-to-build').text(0);
+                $('#energy-build-fleet').text(0);
+                $('#graphene-build-fleet').text(0);
+                $('#metals-build-fleet').text(0);
             });
 
             $('#range-build-fleet').on('input', function(){
@@ -472,6 +561,10 @@ window.addEventListener('load', async () => {
                 $('#energy-build-fleet').text(r.energy);
                 $('#graphene-build-fleet').text(r.graphene);
                 $('#metals-build-fleet').text(r.metals);
+                if (size > 0 )
+                    $('#button-build-fleet').removeClass('disabled');
+                else
+                    $('#button-build-fleet').addClass('disabled');
             });
 
             function calcBuildFleet() {
@@ -854,6 +947,8 @@ window.addEventListener('load', async () => {
                         ret = window.cssgame.viewFleetResult(r);
                         window.fleetSize = ret.size;
                         window.fleetQueue = ret.inProduction;
+                        if (window.blocksToEndProduction != 0 && ret.blocksToEndProduction == 0)
+                            location.reload();
                         window.blocksToEndProduction = ret.blocksToEndProduction;
                         setFleet();
                     }
@@ -865,6 +960,22 @@ window.addEventListener('load', async () => {
             $('[data-toggle="tooltip"]').tooltip();
             
             $('[id=warehouse-load]').text(window.warehouseLoad);
+
+            if (window.qaim[2] != 0) {
+                $('.qaim-bonus-2').show();
+                $("[id='qaim-building-bonus']").text(window.qaim[2]);
+            }
+
+            if (window.qaim[3] != 0) {
+                $('.qaim-bonus-3').show();
+                $("[id='qaim-fleet-improve-bonus']").text(window.qaim[3]);
+            }
+
+            if (window.qaim[0] != 0) {
+                $('.qaim-bonus-0').show();
+                $('#qaim-fleet-bonus').text(window.qaim[0]);
+            }
+    
 
             function woprTexts(){
                 let role

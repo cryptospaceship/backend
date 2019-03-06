@@ -33,9 +33,9 @@ import httplib2
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Basic Config
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-LOG_FILE = './log/block_scanner.log'
-ERR_FILE = './log/block_scanner_err.log'
-PID_FILE = './pid/block_scanner.pid'
+LOG_FILE = './log/block_scanner_rsk.log'
+ERR_FILE = './log/block_scanner_rsk_err.log'
+PID_FILE = './pid/block_scanner_rsk.pid'
 
 
 """
@@ -125,7 +125,8 @@ def get_ship_info(game, ship):
 def get_transaction(tx, net):
     try:
         return net.connect().get_transaction(tx)
-    except:
+    except Exception as e:
+        print(str(e))
         return None
 
 def get_last_block(net):
@@ -143,6 +144,11 @@ def get_block(block, net):
 def create_welcome_message(ship):
     message = "Welcome commander! Your ship is ready to conquest the Crypto Space."
     Message.create(ship, ship, "Welcome!!!", message)
+    
+def clean_ship_history(ship, game):
+   Ranking.remove(ship, game)
+   Ranking.remove_by_player(ship.player, game)
+   EventInbox.delete_by_ship(ship, game)
 
 def get_create_ship(game, ship_id):
     ship = Ship.get_by_id(ship_id, game.network)
@@ -160,24 +166,26 @@ def get_create_ship(game, ship_id):
     
         
 def create_update_transaction(tx, net, game, function_name=''):
-    transaction = Transaction.get(game, tx['hash'].hex())
-    if transaction is None:
         
-        if function_name == '':
-            function = GameAbiFunction.get_by_hash(tx['input'][0:10], game)
-        else:
-            function = GameAbiFunction.get_by_name(function_name, game)
-      
-        if function is not None:
-            ship_id = str(int(tx['input'][10:74], 16))
-            transaction = Transaction.create(game, function, tx['hash'].hex(), tx['from'], ship_id, tx['input'])
-            logging.info("create_transaction(): TX created for game: %s - address: %s - ship_id: %s" % (game.name, game.address, ship_id))
-            return transaction
-        else:
-            logging.info("create_transaction(): abi function not found: %s " % tx['input'][0:10])
-            return None
+    if function_name == '':
+        function = GameAbiFunction.get_by_hash(tx['input'][0:10], game)
     else:
+        function = GameAbiFunction.get_by_name(function_name, game)
+  
+    if function is not None:
+        ship_id = str(int(tx['input'][10:74], 16))
+        transaction = Transaction.get(game, tx['hash'].hex())
+        if transaction is None:
+            transaction = Transaction.create(game, tx['hash'].hex())
+            transaction.load(function, tx['from'], ship_id, tx['input'])
+        else:
+            transaction.load(function, tx['from'], ship_id, tx['input'])
+        logging.info("create_transaction(): TX created for game: %s - address: %s - ship_id: %s" % (game.name, game.address, ship_id))
         return transaction
+    else:
+        logging.info("create_transaction(): abi function not found: %s " % tx['input'][0:10])
+        return None
+    
     
     
 def create_event_inbox(event, abi_event):
@@ -215,8 +223,10 @@ def create_event_inbox(event, abi_event):
 
     
 def join_game(event, abi_event):
-    event.from_ship.join_game(event.game)
+    event.from_ship.join_game(event.game, event.event_block)
     logging.info("join_game(): ship %s joined to %s" % (event.from_ship.ship_id, event.game.name))
+    clean_ship_history(event.from_ship, event.game)
+    logging.info("join_game(): ship history cleaned for ship %s in game %s" % (event.from_ship.name, event.game.name))
     Ranking.create(event.from_ship, event.game)
     logging.info("join_game(): ranking created for %s in game %s" % (event.from_ship.ship_id, event.game.name))
     create_welcome_message(event.from_ship)
@@ -234,9 +244,6 @@ def join_game(event, abi_event):
 def exit_game(event, abi_event):
     event.from_ship.exit_game()
     logging.info("exit_game(): ship %s removed from game %s" % (event.from_ship.name, event.game.name))
-    ranking = Ranking.get(event.from_ship, event.game)
-    ranking.delete()
-    logging.info("exit_game(): ship %s removed from ranking in game %s" % (event.from_ship.name, event.game.name))
     
     if abi_event.discord:        
         try:
@@ -259,11 +266,13 @@ def create_update_event(tx, net, abi_event, receipt):
             event = Event.create(abi_event.game, tx, ship, abi_event.name, data)
         if abi_event.notif_trigger:
             ret = create_event_inbox(event, abi_event)
-        elif abi_event.join_trigger:
+        if abi_event.join_trigger:
             ret = join_game(event, abi_event)
             EventInbox.create_from(event)
-        elif abi_event.exit_trigger:
+        if abi_event.exit_trigger:
             ret = exit_game(event, abi_event)
+        if abi_event.end_trigger:
+            event.game.finish()
     else:
         logging.info("create_event(): error getting events")
         return False
@@ -273,11 +282,12 @@ def create_update_event(tx, net, abi_event, receipt):
     
     
 def scan_block(block, net):
+    
     for tx in block['transactions']:
         data    = get_transaction(tx.hex(), net)
         address = get_games_addresses(net)
         css     = CryptoSpaceShip.get_by_network(net)
-        
+
         if data is None:
             return False
            
@@ -314,7 +324,7 @@ def scan_transactions(net):
                 for abi_event in function.events.all():
                     event_created = create_update_event(tx, net, abi_event, receipt)
                     #if not event_created:
-                    #    return                
+                    #    return
                 tx.scan(receipt.blockNumber, receipt.gasUsed, receipt.status)
             else:
                 return
@@ -333,7 +343,7 @@ def get_points_from_event(event):
     if '_from' in meta:
         points = get_ship_points(event.game, meta['_from'])
         if points is not None:
-            ship    = Ship.get_by_id(meta['_from'], event.game.network)
+            ship    = Ship.get_by_id(meta['_from'])
             ranking = Ranking.get(ship, event.game)
             if ranking is not None:
                 r.update(points)
@@ -341,7 +351,7 @@ def get_points_from_event(event):
         if type(meta['_to']) is int:
             meta['_to'] = [meta['_to']]
         for to in meta['_to']:
-            ship = Ship.get_by_id(to, event.game.network)
+            ship = Ship.get_by_id(to)
             if ship is not None:
                 ranking = Ranking.get(ship, event.game)
                 r.update(points)
@@ -379,7 +389,7 @@ def block_scanner_main():
                         level    = logging.INFO)
 
     while True:
-        net = Network.get_by_net_id(42)
+        net = Network.get_by_net_id(31)
         last_block = get_last_block(net)
         if last_block is not None:
             last_scanned_block = net.scanned_block

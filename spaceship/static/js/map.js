@@ -61,6 +61,11 @@ window.addEventListener('load', async () => {
             });
         },5000);
 
+        function cancel_order() {
+            $(window.id_modal_open).modal('hide');
+            clean_modal();
+        }
+
         function process_order (tx) {
             /*
              * Se cierra el modal
@@ -227,12 +232,17 @@ window.addEventListener('load', async () => {
             $('#attack-mode-shipname').text("Set " + window.shipName.toString() + " to Attack Mode.");
             if (window.mode != window.ATTACK_MODE && canChangeMode()) {
                 $('#confirm-change-attack-mode').click(function() {
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
                     cssgame.changeMode(window.ship, window.ATTACK_MODE,function(e,h){
                         if (!e) {
                             process_order (h);
                         } else {
-                            window.metaerror = e;
-                            console.log(e);
+                            cancel_order();
                         }
                     });
                 });
@@ -248,10 +258,18 @@ window.addEventListener('load', async () => {
             $('#defense-mode-shipname').text("Set " + window.shipName.toString() + " to Defense Mode.");
             if (window.mode != window.DEFENSE_MODE && canChangeMode()) {
                 $('#confirm-change-defense-mode').click(function() {
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
                     cssgame.changeMode(window.ship, window.DEFENSE_MODE,function(e,h){
                         if (!e) {
                             process_order (h);
-                        }    
+                        } else {
+                            cancel_order();
+                        }
                     });
                 });
             }
@@ -266,10 +284,18 @@ window.addEventListener('load', async () => {
             $('#movemment-mode-shipname').text("Set " + window.shipName.toString() + " to Movemment Mode.");
             if (window.mode != window.MOVEMMENT_MODE && canChangeMode()) {
                 $('#confirm-change-movemment-mode').click(function() {
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
                     cssgame.changeMode(window.ship, window.MOVEMMENT_MODE,function(e,h){
                         if (!e) {
                             process_order (h);
-                        }    
+                        } else {
+                            cancel_order();
+                        }
                     });
                 });
             }
@@ -284,10 +310,18 @@ window.addEventListener('load', async () => {
             $('#default-mode-shipname').text("Set " + window.shipName.toString() + " to Default Mode.");
             if (window.mode != window.DEFAULT_MODE && canChangeMode()) {
                 $('#confirm-change-default-mode').click(function() {
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
                     cssgame.changeMode(window.ship, window.DEFAULT_MODE,function(e,h){
                         if (!e) {
                             process_order (h);
-                        }    
+                        } else {
+                            cancel_order();
+                        }
                     });
                 });
             }    
@@ -300,25 +334,21 @@ window.addEventListener('load', async () => {
 
 
         $('#modalAttackMode').on('hidden.bs.modal',function() { 
-            clean_modal();
             $('#confirm-change-attack-mode').off();
             $('#confirm-change-attack-mode').removeClass('disabled');                        
         });
         
         $('#modalDefenseMode').on('hidden.bs.modal',function() {
-            clean_modal();
             $('#confirm-change-defense-mode').off();
             $('#confirm-change-defense-mode').removeClass('disabled')
         });
         
         $('#modalMovemmentMode').on('hidden.bs.modal',function() { 
-            clean_modal();
             $('#confirm-change-movemment-mode').off();
             $('#confirm-change-movemment-mode').removeClass('disabled');
         });
         
         $('#modalDefaultMode').on('hidden.bs.modal',function() { 
-            clean_modal();
             $('#confirm-change-default-mode').off();
             $('#confirm-change-default-mode').removeClass('disabled');
         });
@@ -333,7 +363,7 @@ window.addEventListener('load', async () => {
             else
                 p = parseInt((window.energyStock * 100 / 3000000));
             */
-            p = parseInt((window.energyStock * 100 / CSSGame.energyToFireCost(target)));
+            p = parseInt((window.energyStock * 100 / CSSGame.energyToFireCost(target,window.gameNetwork)));
 
             if (p > 100) {
                 p = 100;
@@ -349,40 +379,46 @@ window.addEventListener('load', async () => {
             $('#bar-cannon-to-fire').css('width',pstr);
 
 
-            if (CSSGame.checkCannonRange([window.position_x,window.position_y],[x,y], window.cannon_level)) {
+            if (CSSGame.checkCannonRange([window.position_x,window.position_y],[x,y],target,window.cannon_level)) {
                 if (!window.in_port) {
                     if (window.blocks_to_wopr == 0) {
-                        if (CSSGame.energyToFire(window.energyStock,target)) {
+                        if (CSSGame.energyToFire(window.energyStock,target,window.gameNetwork)) {
                             if (window.mode == 2) {
+                                $('#fire-cannon-button').removeClass('disabled');
                                 $('#cannon-status').text('Ready');
                                 $('#cannon-damage-percentage').text(damage + '%');
                                 return true;
                             }
                             else {
+                                $('#fire-cannon-button').addClass('disabled');
                                 $('#cannon-status').text('Wrong mode');
                                 $('#cannon-damage-percentage').text('-');
                                 return false;
                             }
                         }
                         else {
+                            $('#fire-cannon-button').addClass('disabled');
                             $('#cannon-status').text('Loading');
                             $('#cannon-damage-percentage').text('-');
                             return false;
                         }
                     }
                     else {
+                        $('#fire-cannon-button').addClass('disabled');
                         $('#cannon-status').text('Waiting');
                         $('#cannon-damage-percentage').text('-');
                         return false;
                     }
                 }
                 else {
+                    $('#fire-cannon-button').addClass('disabled');
                     $('#cannon-status').text('Ship in Port');
                     $('#cannon-damage-percentage').text('-');
                     return false;
                 }
             }
             else {
+                $('#fire-cannon-button').addClass('disabled');
                 $('#cannon-status').text('Out of range');
                 $('#cannon-damage-percentage').text('-');
                 return false;
@@ -413,9 +449,17 @@ window.addEventListener('load', async () => {
                                 * a esa ubicacion
                                 */
                                 $('#move-to-location').click(function() {
+                                    // Priero se Cierra el Modal 
+                                    $(window.id_modal_open).modal('hide');
+                                    // Luego se abre el otro modal
+                                    window.id_modal_open = '#modal-waiting-confirm';
+
+                                    $(window.id_modal_open).modal('show');
                                     cssgame.moveTo(window.ship,x,y,function(e,h){
                                         if (!e) {
                                             process_order(h);
+                                        } else {
+                                            cancel_order();
                                         }
                                     });
                                 });
@@ -605,9 +649,18 @@ window.addEventListener('load', async () => {
                                                 let energy = $('#energy-to-send').val();
                                                 let graphene = $('#graphene-to-send').val();
                                                 let metals = $('#metals-to-send').val();
-                                                cssgame.sendResources(window.ship,window.other_ship,energy,graphene,metals,function(e,h){
+                                                let other_ship = window.other_ship;
+                                                // Priero se Cierra el Modal 
+                                                $(window.id_modal_open).modal('hide');
+                                                // Luego se abre el otro modal
+                                                window.id_modal_open = '#modal-waiting-confirm';
+
+                                                $(window.id_modal_open).modal('show');
+                                                cssgame.sendResources(window.ship,other_ship,energy,graphene,metals,function(e,h){
                                                     if (!e) {
                                                         process_order(h);                  
+                                                    } else {
+                                                        cancel_order();
                                                     }
                                                 });
                                             });
@@ -615,18 +668,36 @@ window.addEventListener('load', async () => {
                                              * Define el handler para atacar
                                              */ 
                                             $('#attack-button').click(function() {
-                                                cssgame.attackShip(window.ship,window.other_ship, function(e,h){
+                                                // Priero se Cierra el Modal 
+                                                $(window.id_modal_open).modal('hide');
+                                                // Luego se abre el otro modal
+                                                window.id_modal_open = '#modal-waiting-confirm';
+
+                                                $(window.id_modal_open).modal('show');
+                                                let other_ship = window.other_ship;
+                                                cssgame.attackShip(window.ship,other_ship, function(e,h){
                                                     if (!e) {
                                                         process_order(h);
+                                                    } else {
+                                                        cancel_order();
                                                     }
                                                 });
                                             });
 
                                             
                                             $('#raid-button').click(function() {
-                                                cssgame.raidShip(window.ship,window.other_ship, function(e,h){
+                                                // Priero se Cierra el Modal 
+                                                $(window.id_modal_open).modal('hide');
+                                                // Luego se abre el otro modal
+                                                window.id_modal_open = '#modal-waiting-confirm';
+
+                                                $(window.id_modal_open).modal('show');
+                                                let other_ship = window.other_ship;
+                                                cssgame.raidShip(window.ship,other_ship, function(e,h){
                                                     if (!e) {
                                                         process_order(h);
+                                                    } else {
+                                                        cancel_order();
                                                     }
                                                 });
                                             });
@@ -781,9 +852,17 @@ window.addEventListener('load', async () => {
                                     if (!window.in_port || window.is_defender) {
                                         $("#planet-ship-status").text("Ready");
                                         $("#button-land-to").click(function() {
+                                            // Priero se Cierra el Modal 
+                                            $(window.id_modal_open).modal('hide');
+                                            // Luego se abre el otro modal
+                                            window.id_modal_open = '#modal-waiting-confirm';
+
+                                            $(window.id_modal_open).modal('show');
                                             cssgame.landTo(window.ship,x,y,false,function(e,h){
                                                 if (!e) {
                                                     process_order(h);
+                                                } else {
+                                                    cancel_order();
                                                 }
                                             });
                                         });
@@ -885,13 +964,11 @@ window.addEventListener('load', async () => {
          * Limpia el handler para el boton de move-to-location
          */
         $('#modal-map-empty').on('hidden.bs.modal',function() {
-            clean_modal();
             $('#move-to-location').off();
             $('#move-to-location').removeClass('disabled');
         });
 
          $('#modal-map-planet').on('hidden.bs.modal',function() {
-            clean_modal();
             window.is_defender = undefined;
             $("#button-land-to").off();
             $("#button-defend-to").off();
@@ -903,7 +980,6 @@ window.addEventListener('load', async () => {
 
 
         $('#modal-map-other-ship').on('hidden.bs.modal',function() {
-            clean_modal();
             window.other_ship = undefined;
             $('#range-to-repare').off();
             $('#range-to-repare').val("0");
@@ -932,7 +1008,7 @@ window.addEventListener('load', async () => {
 
         function setFleet() {
             if (window.fleet_type != 0)
-                $('#fleet-type-name').text(CSSGame.getFleetType(window.fleet_type));
+                $('#fleet-type-name').text(CSSGame.getFleetTypeName(window.fleet_type));
             else
                 $('#fleet-type-name').text("Undesigned Fleet");
             $('#fleet-size').text(window.fleet_size.toString());
@@ -1051,10 +1127,13 @@ window.addEventListener('load', async () => {
         
         function setMap() {
             let map = window.map;
-            if (map.length != 51) {
+            if (map.length > 52) {
                 throw "Invalid Map size";
             }
             
+            if (map.length == 52)
+                window.map_size = map[51];
+
             // Set center
             start_x = map[49];
             start_y = map[50];
@@ -1201,6 +1280,18 @@ window.addEventListener('load', async () => {
 
         if (window.reparer)
             $('#fire-reparer').text('repare')
+
+
+        if (window.qaim[5] != 0) {
+            $('.qaim-bonus-5').show();
+            $("[id='qaim-mode-bonus']").text(window.qaim[5]);
+        }
+
+        if (window.qaim[4] != 0) {
+            $('.qaim-bonus-4').show();
+            $("[id='qaim-jump-bonus']").text(window.qaim[4]);
+        }
+
 
         var mapType="3D";
         $(".panel").addClass("p3d");// this adds 3d effect to panel hovering

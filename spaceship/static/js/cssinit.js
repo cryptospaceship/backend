@@ -49,6 +49,12 @@ class CSSInit {
                     }
                     if (!ok) 
                         window.location = url;
+                    else {
+                        if (typeof window.current_network == 'undefined')
+                            window.current_network = net;
+                        if (window.current_network != net)
+                            window.location = '/ui/ships/';
+                    }
                 }
             });
         },2000);

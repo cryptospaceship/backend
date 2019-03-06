@@ -125,25 +125,24 @@ class Message(models.Model):
         
         
     @classmethod
-    def get_inbox_unread_count(cls, ship_id):
-        ship = Ship.get_by_id(ship_id)
+    def get_inbox_unread_count(cls, ship_id, network):
+        ship = Ship.get_by_id(ship_id, network)
         if ship is not None:
             return cls.objects.filter(receiver=ship, game=ship.game, read=False).count()
         else:
             return 0
         
     @classmethod
-    def get_outbox_unread_count(cls, ship_id):
-        ship = Ship.get_by_id(ship_id)
+    def get_outbox_unread_count(cls, ship_id, network):
+        ship = Ship.get_by_id(ship_id, network)
         if ship is not None:
             return cls.objects.filter(sender=ship, game=ship.game).count()
         else:
             return 0
     
     @classmethod
-    def get_inbox_list(cls, ship_id, serialized=False):
-        print(ship_id)
-        ship = Ship.get_by_id(ship_id)
+    def get_inbox_list(cls, ship_id, network, serialized=False):
+        ship = Ship.get_by_id(ship_id, network)
         if ship is not None:
             msgs = cls.objects.filter(receiver=ship, game=ship.game).order_by('-id')
         else:
@@ -158,8 +157,8 @@ class Message(models.Model):
             return msgs
     
     @classmethod
-    def get_outbox_list(cls, ship_id, serialized=False):
-        ship = Ship.get_by_id(ship_id)
+    def get_outbox_list(cls, ship_id, network, serialized=False):
+        ship = Ship.get_by_id(ship_id, network)
         if ship is not None:
             msgs = cls.objects.filter(sender=ship, game=ship.game).order_by('-id')
         else:
@@ -227,7 +226,7 @@ class Player(models.Model):
     def get_ship_in_game(self, game):
         try:
             ship_id = game.connect().get_ship_by_owner(self.address)
-            ship    = Ship.get_by_id(ship_id)
+            ship    = Ship.get_by_id(ship_id, game.network)
             return ship
         except:
             return None
@@ -318,6 +317,7 @@ class Game(models.Model):
     deployed_at         = models.IntegerField()
     discord_channel_api = models.CharField(max_length=256, blank=True)
     enabled             = models.BooleanField(default=False)
+    finished            = models.BooleanField(default=False)
     load_abi_trigger    = models.BooleanField(default=False)
 
     def __str__(self):
@@ -373,8 +373,22 @@ class Game(models.Model):
             return last_block >= start_block
         except:
             return False
-        
     
+    def end(self):
+        try:
+            gdata = self.connect().get_game()
+            if gdata['game_winner'] == gdata['game_candidate'] and gdata['game_candidate'] != '0x0000000000000000000000000000000000000000':
+                return True
+            else:
+                return False
+        except:
+            print('Puto')
+            return False
+
+    def finish(self):
+        self.finished = True
+        self.save()
+            
     @staticmethod
     def calc_function_hash(function):
         f = "%s(" % function['name']
@@ -490,15 +504,7 @@ class SiteStatic(models.Model):
         return str(self.name)
     
     
-class Event(models.Model):
-    """
-    EVENT_TYPES = (('AS', 'Attack Ship'),
-                   ('AP', 'Attack Port'),
-                   ('PC', 'Port Conquest'),
-                   ('FC', 'Fire Cannon'),
-                   ('SR', 'Send Resources'))
-    """
-    
+class Event(models.Model):    
     game        = models.ForeignKey(Game, on_delete=models.CASCADE)
     transaction = models.ForeignKey('Transaction', on_delete=models.CASCADE)
     event_type  = models.CharField(max_length=128)
@@ -516,80 +522,6 @@ class Event(models.Model):
             return cls.objects.get(id=event_id)
         except:
             return None
-    """    
-    @classmethod
-    def create_attack_ship(cls, tx, data):
-        event             = cls()
-        event.game        = tx.game
-        event.event_type  = 'AS'
-        event.event_block = data[0].blockNumber
-        event.from_ship   = dict(data[0].args)['_from']
-        event.to_ship     = dict(data[0].args)['_to']
-        event.event_meta  = dict(data[0].args)
-        event.save()
-
-        EventInbox.create_from(event, data[0].args._from)
-        EventInbox.create_to(event, data[0].args._to)
-
-    @classmethod
-    def create_attack_port(cls, tx, data):
-        event             = cls()
-        event.game        = tx.game
-        event.event_type  = 'AP'
-        event.event_block = data[0].blockNumber
-        event.from_ship   = dict(data[0].args)['_from']
-        event.event_meta  = dict(data[0].args)
-        event.save()
-
-        EventInbox.create_from(event, data[0].args._from)
-        for to in data[0].args._to:
-            if to != 0:
-                EventInbox.create_to(event, to)
-
-    @classmethod
-    def create_port_conquest(cls, tx, data):
-        event             = cls()
-        event.game        = tx.game
-        event.event_type  = 'PC'
-        event.event_block = data[0].blockNumber
-        event.from_ship   = dict(data[0].args)['_from']
-        event.event_meta  = dict(data[0].args)
-        event.save()
-
-        EventInbox.create_from(event, data[0].args._from)
-        ships = tx.game.connect().get_ships_id()
-        for ship in ships:
-            if ship != event.from_ship:
-                EventInbox.create_to(event, ship)
-
-    @classmethod
-    def create_fire_cannon(cls, tx, data):
-        event             = cls()
-        event.game        = tx.game
-        event.event_type  = 'FC'
-        event.event_block = data[0].blockNumber
-        event.from_ship   = dict(data[0].args)['_from']
-        event.to_ship     = dict(data[0].args)['_to']
-        event.event_meta  = dict(data[0].args)
-        event.save()
-
-        EventInbox.create_from(event, data[0].args._from)
-        EventInbox.create_to(event, data[0].args._to)
-
-    @classmethod
-    def create_send_resources(cls, tx, data):
-        event             = cls()
-        event.game        = tx.game
-        event.event_type  = 'SR'
-        event.event_block = data[0].blockNumber
-        event.from_ship   = dict(data[0].args)['_from']
-        event.to_ship     = dict(data[0].args)['_to']
-        event.event_meta  = dict(data[0].args)
-        event.save()
-
-        EventInbox.create_from(event, data[0].args._from)
-        EventInbox.create_to(event, data[0].args._to)
-    """
     
     @classmethod
     def create(cls, game, transaction, ship, event_type, data):
@@ -643,7 +575,7 @@ class EventInbox(models.Model):
         meta = self.event.load_meta()
         if '_to' in meta:
             if type(meta['_to']).__name__ != 'list':
-                to_ship_name = Ship.get_by_id(meta['_to']).name
+                to_ship_name = Ship.get_by_id(meta['_to'], self.game.network).name
                 
         title = {
                 'AttackShipEvent': {'T': '%s attacked you' % self.event.from_ship.name, 
@@ -688,7 +620,7 @@ class EventInbox(models.Model):
     def create_to(cls, event, ship_id):
         event_inbox            = cls()
         event_inbox.game       = event.game
-        event_inbox.ship       = Ship.get_by_id(ship_id)
+        event_inbox.ship       = Ship.get_by_id(ship_id, event.game.network)
         event_inbox.event      = event
         event_inbox.inbox_type = 'T'
         event_inbox.viewed     = False
@@ -724,8 +656,8 @@ class EventInbox(models.Model):
             return None
 
     @classmethod
-    def get_by_ship_id(cls, ship_id):
-        ship = Ship.get_by_id(ship_id)
+    def get_by_ship_id(cls, ship_id, network):
+        ship = Ship.get_by_id(ship_id, network)
         o = cls.objects.filter(ship=ship).order_by('-id')
         for i in o:
             print(i.event.event_meta.replace("'", "\""))
@@ -746,8 +678,8 @@ class EventInbox(models.Model):
             return events    
         
     @staticmethod
-    def delete_by_ship(ship):
-        EventInbox.objects.filter(ship=ship).delete()
+    def delete_by_ship(ship, game):
+        EventInbox.objects.filter(ship=ship, game=game).delete()
         
         
 class Action(models.Model):
@@ -768,28 +700,48 @@ class Transaction(models.Model):
     game          = models.ForeignKey(Game, on_delete=models.CASCADE)
     from_address  = models.CharField(max_length=42, default='0x0')
     ship_id       = models.CharField(max_length=4, default="0000")    
-    action        = models.CharField(max_length=128)
+    action        = models.CharField(max_length=128, blank=True)
     hash          = models.CharField(max_length=128)
     input         = models.TextField(default='')
     at_block      = models.IntegerField(blank=True, null=True)
     gas_expended  = models.IntegerField(blank=True, null=True)
     scanned       = models.BooleanField(default=False)
+    status        = models.IntegerField(null=True)
     creation_date = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__(self):
-        return self.hash
-
+        return self.hash    
+        
+    def serialize(self):
+        ret = {}
+        ret['game']    = self.game.name
+        ret['address'] = self.from_address
+        ret['ship_id'] = self.ship_id
+        ret['action']  = self.action
+        ret['hash']    = self.hash
+        ret['block']   = self.at_block
+        ret['gas']     = self.gas_expended
+        ret['scanned'] = self.scanned
+        ret['status']  = self.status
+        return ret
+        
     @classmethod
-    def create(cls, game, action, hash, address, ship_id, input):
-        tx = cls()
-        tx.game         = game
-        tx.action       = action.name
-        tx.hash         = hash
-        tx.from_address = address
-        tx.ship_id      = ship_id
-        tx.input        = input
+    def create(cls, game, hash, ship_id=None):
+        tx      = cls()
+        tx.game = game
+        tx.hash = hash
+        if ship_id is not None:
+            tx.ship_id = ship_id
         tx.save()
         return tx
+    
+    @staticmethod
+    def get_ship_stats(game, ship_id, from_block):        
+        transactions = Transaction.objects.filter(game=game, ship_id=ship_id, status=1, at_block__gte=from_block)
+        total_gas = 0
+        for tx in transactions:
+            total_gas = total_gas + tx.gas_expended
+        return {'transactions': transactions.count(), 'gas': total_gas}
     
     @staticmethod
     def delete_in_block(block):
@@ -799,9 +751,35 @@ class Transaction(models.Model):
     def get_pending_queue(cls, game):
         return cls.objects.filter(game=game, scanned=False).order_by('-id')
     
-    def scan(self, block, gas):
+    @classmethod
+    def get_pending_by_ship(cls, game, ship_id, action='', serialize=False):
+        print(game)
+        print(ship_id)
+        print(action)
+        if action == '':
+            txs = cls.objects.filter(game=game, ship_id=ship_id, scanned=False).order_by('-id')
+        else:
+            txs = cls.objects.filter(game=game, ship_id=ship_id, action=action, scanned=False).order_by('-id')
+        if serialize:
+            ret = []
+            for tx in txs:
+                ret.append(tx.serialize())
+            return ret
+        else:
+            return txs
+    
+    def load(self, action, address, ship_id, input):
+        self.action       = action.name
+        self.from_address = address
+        self.ship_id      = ship_id
+        self.input        = input
+        self.save()
+        return self
+        
+    def scan(self, block, gas, status):
         self.at_block     = block
         self.gas_expended = gas
+        self.status       = status
         self.scanned      = True
         self.save()
         return self
@@ -863,19 +841,22 @@ class Stat(models.Model):
 
 
 class Ship(models.Model):
-    ship_id = models.IntegerField()
-    name    = models.CharField(max_length=128)
-    game    = models.ForeignKey(Game, on_delete=models.CASCADE, null=True)
-    player  = models.ForeignKey(Player, on_delete=models.CASCADE, null=True)
+    ship_id  = models.IntegerField()
+    name     = models.CharField(max_length=128)
+    game     = models.ForeignKey(Game, on_delete=models.CASCADE, null=True)
+    at_block = models.IntegerField(blank=True, null=True)
+    player   = models.ForeignKey(Player, on_delete=models.CASCADE, null=True)
+    network  = models.ForeignKey(Network, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return str(self.name)
     
     @classmethod
-    def create(cls, ship_id, name):
+    def create(cls, ship_id, name, network):
         ship = cls()
         ship.ship_id = ship_id
         ship.name    = name
+        ship.network = network
         ship.save()
         return ship
 
@@ -890,9 +871,9 @@ class Ship(models.Model):
         return ret
     
     @classmethod
-    def get_by_id(cls, ship_id):
+    def get_by_id(cls, ship_id, net):
         try:
-            return cls.objects.get(ship_id=ship_id)
+            return cls.objects.get(ship_id=ship_id, network=net)
         except:
             return None
             
@@ -925,14 +906,15 @@ class Ship(models.Model):
         self.save()
         return self
         
-    def join_game(self, game):
+    def join_game(self, game, block):
         self.game = game
+        self.at_block = block
         self.save()
         return self
         
     def exit_game(self):
-        EventInbox.delete_by_ship(self)
         self.game = None
+        self.at_block = None
         self.save()
         return self
 
@@ -943,6 +925,7 @@ class GameAbiEvent(models.Model):
     notif_trigger    = models.BooleanField(default=False)
     join_trigger     = models.BooleanField(default=False)
     exit_trigger     = models.BooleanField(default=False)
+    end_trigger      = models.BooleanField(default=False)
     discord          = models.BooleanField(default=False)
     discord_template = models.TextField(blank=True)
         
@@ -1044,11 +1027,11 @@ class Ranking(models.Model):
     @classmethod
     def list(cls, game, user=None):
         rankings = cls.objects.filter(game=game).order_by('-points')
-
+        
         ret = []
         pp  = 0
         i = 1
-        for r in rankings: 
+        for r in rankings:
             r.position = i
             i = i + 1
             if r.ship.player is None:
@@ -1087,7 +1070,12 @@ class Ranking(models.Model):
         self.points = points
         self.save()
         return self
-     
-        
-#class Battles
+    
+    @staticmethod
+    def remove(ship, game):
+        Ranking.objects.filter(ship=ship, game=game).delete()
+    
+    @staticmethod
+    def remove_by_player(player, game):
+        Ranking.objects.filter(game=game, ship__player=player).delete()
 

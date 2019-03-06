@@ -202,14 +202,22 @@ def ship_view(request, net_id, ship_id):
         context['contract_abi']          = loads(game.abi)
         context['game_block']            = game.deployed_at
     else:
-        context['game_list']        = Game.objects.filter(network=ship.network, enabled=True)
+        game_list = Game.objects.filter(network=ship.network, enabled=True)
+
         games_data = {}
-        for game in context['game_list']:
-            games_data.update({game.contract_id: {"abi": loads(game.abi), "address": game.address, "id": game.id}})
+        context['game_list'] = []
+        for game in game_list:
+            if not game.end():
+                context['game_list'].append(game)        
+                games_data.update({game.contract_id: {"abi": loads(game.abi), "address": game.address, "id": game.id}})
         context['games_data']   = games_data
     
     template = SiteTemplate.get('ship')
     
+    context['game_end']              = game.end()
+    #if context['game_end']:
+    #    context['is_winner']
+    #    context['points']
     context['ship_contract_address'] = ship.address
     context['ship_contract_abi']     = loads(ship.abi)
     context['ship']                  = ship.connect().get_ship(int(ship_id))
@@ -260,13 +268,14 @@ def game_frame_view(request, net_id, game_id, ship_id):
         return redirect('/ui/%d/ship/%d/' % (net_id, ship_id))
     
     game = Game.get_by_id(game_id)
-    if not game.start():
+    
+    if not game.start() or game.end():
         return redirect('/ui/%d/ship/%d/' % (net_id, ship_id))
         
     template = SiteTemplate.get('game_frame')
     context = {}
     context['game_id'] = game_id
-    context['messages_count'] = Message.get_inbox_unread_count(ship_id)
+    context['messages_count'] = Message.get_inbox_unread_count(ship_id, game.network)
     context['events_count'] = EventInbox.unread_count(game_id, ship_id)
     context['inject_css'] = template.get_css()
     return render(request, template.file, context)

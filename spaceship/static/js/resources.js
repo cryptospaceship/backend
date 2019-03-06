@@ -62,6 +62,11 @@ window.addEventListener('load', async () => {
             });
         },5000);
 
+        function cancel_order() {
+            $(window.id_modal_open).modal('hide');
+            clean_modal();
+        }
+
         function process_order (tx) {
             /*
              * Se cierra el modal
@@ -80,7 +85,6 @@ window.addEventListener('load', async () => {
             window.id_modal_open = undefined;
         }
 
-        
 
         function setDamage() {
             let status = 100 - window.damage;
@@ -120,9 +124,19 @@ window.addEventListener('load', async () => {
             $('#button-upgrade-energy-panel').off();
             $('#solar-panel-cost-index').text(i);
             $('#button-upgrade-energy-panel').click(function() {
+
+                // Priero se Cierra el Modal 
+                $(window.id_modal_open).modal('hide');
+                // Luego se abre el otro modal
+                window.id_modal_open = '#modal-waiting-confirm';
+
+                $(window.id_modal_open).modal('show');
+
                 window.cssgame.upgradeEnergy(window.ship,i-1,function(e,h){
                     if (!e) 
                         process_order(h);
+                    else 
+                        cancel_order();
                 });
             });
             $('.solar-panel-cost').css('display','flex');
@@ -170,16 +184,34 @@ window.addEventListener('load', async () => {
         });
 
         $('#button-upgrade-graphene').click(function() {
+            // Priero se Cierra el Modal 
+            $(window.id_modal_open).modal('hide');
+            // Luego se abre el otro modal
+            window.id_modal_open = '#modal-waiting-confirm';
+
+            $(window.id_modal_open).modal('show');
+
             window.cssgame.upgradeGraphene(window.ship,function(e,h){
                 if (!e) 
                     process_order(h);
+                else 
+                    cancel_order();
             });
         });
 
         $('#button-upgrade-metals').click(function() {
+            // Priero se Cierra el Modal 
+            $(window.id_modal_open).modal('hide');
+            // Luego se abre el otro modal
+            window.id_modal_open = '#modal-waiting-confirm';
+
+            $(window.id_modal_open).modal('show');
+
             window.cssgame.upgradeMetals(window.ship,function(e,h){
                 if (!e) 
                     process_order(h);
+                else 
+                    cancel_order();
             });
         });
 
@@ -188,7 +220,6 @@ window.addEventListener('load', async () => {
         });
 
         $('#modal-energy-upgrade').on('hidden.bs.modal', function () {
-            clean_modal();
             $('.solar-panel-cost').css('display','none');
             $('#button-upgrade-energy-panel').off();
             $('#button-upgrade-energy-panel').addClass('disabled');
@@ -243,10 +274,19 @@ window.addEventListener('load', async () => {
             });
 
             $('#button-convert-production').click(()=>{
+
                 if ( (typeof window.grapheneToConverter != 'undefined' && window.grapheneToConverter != window.gConverter) || (typeof window.metalToConverter != 'undefined' && window.metalToConverter != window.mConverter) ) {
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
                     window.cssgame.setProductionResourcesConverter(window.ship,window.grapheneToConverter,window.metalToConverter,(e,h)=>{
                         if (!e) {
                             process_order(h);
+                        } else {
+                            cancel_order();
                         }
                     });
                 }
@@ -255,7 +295,6 @@ window.addEventListener('load', async () => {
         });
 
         $('#modal-resource-converter').on('hidden.bs.modal',()=>{
-            clean_modal();
             window.grapheneToConverter = 0;
             window.metalToConverter = 0;
             $('#button-convert-production').off();
@@ -270,48 +309,91 @@ window.addEventListener('load', async () => {
         $('#all-energy').click(()=>{
             $('#energy-resource-convertion').text(cssgame.getConvertionRate(window.energyStock,window.converterLevel));
             $('#energy-to-convert').val(window.energyStock);
+            if (typeof window.convert_destination != 'undefined')
+                $('#button-convert-energy').removeClass('disabled');
         });
 
         $('#all-graphene').click(()=>{
             $('#graphene-resource-convertion').text(cssgame.getConvertionRate(window.grapheneStock,window.converterLevel));
             $('#graphene-to-convert').val(window.grapheneStock);
+            if (typeof window.convert_destination != 'undefined')
+                $('#button-convert-graphene').removeClass('disabled');
         });
 
         $('#all-metals').click(()=>{
             $('#metal-resource-convertion').text(cssgame.getConvertionRate(window.metalsStock,window.converterLevel));
             $('#metals-to-convert').val(window.metalsStock);
+            if (typeof window.convert_destination != 'undefined')
+                $('#button-convert-metals').removeClass('disabled');
         });
 
         $('#convert-energy').click(()=>{
             window.convert_source = 0;
+            window.convert_destination = undefined;
             window.id_modal_open = '#modal-convert-energy';
+            $('#button-convert-energy').addClass('disabled');
+
             $('#energy-to-convert').val(0);
             $('#convert-energy-to-graphene').prop('checked', false);
             $('#convert-energy-to-metals').prop('checked', false);
 
             $('#convert-energy-to-graphene').on('click',()=>{
-                window.convert_destination = 1;
-                $('#convert-energy-to-metals').prop('checked',false);
-                $('#icon-energy-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+                if ($('#convert-energy-to-graphene').prop('checked')) {
+                    if ($('#energy-to-convert').val() > 0 )
+                        $('#button-convert-energy').removeClass('disabled');
+                    window.convert_destination = 1;
+                    $('#convert-energy-to-metals').prop('checked',false);
+                    $('#icon-energy-to-convertion').removeClass().addClass('icon-ratio ic-graphene');
+                } else {
+                    $('#button-convert-energy').addClass('disabled');
+                    window.convert_destination = undefined;
+                    $('#icon-energy-to-convertion').removeClass();
+                }
             });
 
+
             $('#convert-energy-to-metals').on('click',()=>{
-                window.convert_destination = 2;
-                $('#convert-energy-to-graphene').prop('checked', false);
-                $('#icon-energy-to-convertion').removeClass().addClass('icon-ratio ic-metals');
+                if ($('#convert-energy-to-metals').prop('checked')) {
+                    if ($('#energy-to-convert').val() > 0 )
+                        $('#button-convert-energy').removeClass('disabled');
+                    window.convert_destination = 2;
+                    $('#convert-energy-to-graphene').prop('checked', false);
+                    $('#icon-energy-to-convertion').removeClass().addClass('icon-ratio ic-metals');
+                } else {
+                    $('#button-convert-energy').addClass('disabled');
+                    window.convert_destination = undefined;
+                    $('#icon-energy-to-convertion').removeClass();
+                }
             });
 
             $('#energy-to-convert').on('input', ()=>{
                 let v = $('#energy-to-convert').val();
+                if (typeof window.convert_destination != 'undefined' && v > 0)
+                    $('#button-convert-energy').removeClass('disabled');
+                else 
+                    $('#button-convert-energy').addClass('disabled');
                 $('#energy-resource-convertion').text(cssgame.getConvertionRate(v,window.converterLevel));
             });
 
             $('#button-convert-energy').on('click',()=>{
                 n = parseInt($('#energy-to-convert').val());
                 if (window.convert_destination != undefined && n > 0) {
+                
+                    $('#button-convert-energy').off();
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
+
                     window.cssgame.convertResource(window.ship,window.convert_source,window.convert_destination,n,(e,tx)=>{
                         if (!e)
                             process_order(tx);
+                        else
+                            cancel_order();
+                        window.convert_source = undefined;
+                        window.convert_destination = undefined;
                     });
                 }
             });
@@ -320,35 +402,70 @@ window.addEventListener('load', async () => {
         });
 
         $('#convert-graphene').click(()=>{
+
             window.convert_source = 1;
+            window.convert_destination = undefined;
             window.id_modal_open = '#modal-convert-graphene';
+            $('#button-convert-graphene').addClass('disabled');
             $('#graphene-to-convert').val(0);
             $('#convert-graphene-to-energy').prop('checked', false);
             $('#convert-graphene-to-metals').prop('checked', false);
 
             $('#convert-graphene-to-energy').on('click',()=>{
-                window.convert_destination = 0;
-                $('#convert-graphene-to-metals').prop('checked',false);
-                $('#icon-graphene-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+                if ( $('#convert-graphene-to-energy').prop('checked') ) {
+                    if ($('#graphene-to-convert').val() > 0)
+                        $('#button-convert-graphene').removeClass('disabled');
+                    window.convert_destination = 0;
+                    $('#convert-graphene-to-metals').prop('checked',false);
+                    $('#icon-graphene-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+                } else {
+                    $('#button-convert-graphene').addClass('disabled');
+                    window.convert_destination = undefined;
+                    $('#icon-graphene-to-convertion').removeClass();
+                }
             });
 
             $('#convert-graphene-to-metals').on('click',()=>{
-                window.convert_destination = 2;
-                $('#convert-graphene-to-energy').prop('checked', false);
-                $('#icon-graphene-to-convertion').removeClass().addClass('icon-ratio ic-metals');
+                if ( $('#convert-graphene-to-metals').prop('checked') ) {
+                    if ($('#graphene-to-convert').val() > 0)
+                        $('#button-convert-graphene').removeClass('disabled');
+                    window.convert_destination = 2;
+                    $('#convert-graphene-to-energy').prop('checked', false);
+                    $('#icon-graphene-to-convertion').removeClass().addClass('icon-ratio ic-metals');
+                } else {
+                    $('#button-convert-graphene').addClass('disabled');
+                    window.convert_destination = undefined;
+                    $('#icon-graphene-to-convertion').removeClass();
+                }
             });
 
             $('#graphene-to-convert').on('input', ()=>{
                 let v = $('#graphene-to-convert').val();
+                if (typeof window.convert_destination != 'undefined' && v > 0)
+                    $('#button-convert-graphene').removeClass('disabled');
+                else 
+                    $('#button-convert-graphene').addClass('disabled');
                 $('#graphene-resource-convertion').text(cssgame.getConvertionRate(v,window.converterLevel));
             });
 
             $('#button-convert-graphene').on('click',()=>{
                 n = parseInt($('#graphene-to-convert').val());
                 if (window.convert_destination != undefined && n > 0) {
+
+                    $('#button-convert-graphene').off();
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
                     window.cssgame.convertResource(window.ship,window.convert_source,window.convert_destination,n,(e,tx)=>{
                         if (!e)
                             process_order(tx);
+                        else
+                            cancel_order();
+                        window.convert_source = undefined;
+                        window.convert_destination = undefined;
                     });
                 }
             });
@@ -358,35 +475,74 @@ window.addEventListener('load', async () => {
 
 
         $('#convert-metal').click(()=>{
+
             window.convert_source = 2;
+            window.convert_destination = undefined;
+            $('#button-convert-metals').addClass('disabled');
             window.id_modal_open = '#modal-convert-metals';
             $('#metals-to-convert').val(0);
             $('#convert-metals-to-energy').prop('checked', false);
             $('#convert-metals-to-graphene').prop('checked', false);
             
             $('#convert-metals-to-energy').on('click',()=>{
-                window.convert_destination = 0;
-                $('#convert-metals-to-graphene').prop('checked', false);
-                $('#icon-metals-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+                if ( $('#convert-metals-to-energy').prop('checked') ) {
+                    if ($('#metals-to-convert').val() > 0)
+                        $('#button-convert-metals').removeClass('disabled');
+                    window.convert_destination = 0;
+                    $('#convert-metals-to-graphene').prop('checked', false);
+                    $('#icon-metals-to-convertion').removeClass().addClass('icon-ratio ic-energy');
+                }
+                else {
+                    $('#button-convert-metals').addClass('disabled');
+                    window.convert_destination = undefined;
+                    $('#icon-metals-to-convertion').removeClass();
+                }
             });
 
             $('#convert-metals-to-graphene').on('click',()=>{
-                window.convert_destination = 1;
-                $('#convert-metals-to-energy').prop('checked', false);
-                $('#icon-metals-to-convertion').removeClass().addClass('icon-ratio ic-graphene');
+                if ( $('#convert-metals-to-graphene').prop('checked') ) {
+                    if ($('#metals-to-convert').val() > 0)
+                        $('#button-convert-metals').removeClass('disabled');
+                    window.convert_destination = 1;
+                    $('#convert-metals-to-energy').prop('checked', false);
+                    $('#icon-metals-to-convertion').removeClass().addClass('icon-ratio ic-graphene');
+                }
+                else {
+                    $('#button-convert-metals').addClass('disabled');
+                    window.convert_destination = undefined;
+                    $('#icon-metals-to-convertion').removeClass();
+                }
             });
 
             $('#metals-to-convert').on('input', ()=>{
                 let v = $('#metals-to-convert').val();
+                if (typeof window.convert_destination != 'undefined' && v > 0)
+                    $('#button-convert-metals').removeClass('disabled');
+                else 
+                    $('#button-convert-metals').addClass('disabled');
                 $('#metal-resource-convertion').text(cssgame.getConvertionRate(v,window.converterLevel));
             });
 
             $('#button-convert-metals').on('click',()=>{
                 n = parseInt($('#metals-to-convert').val());
                 if (window.convert_destination != undefined && n > 0) {
+
+                    $('#button-convert-metals').off();
+
+                    // Priero se Cierra el Modal 
+                    $(window.id_modal_open).modal('hide');
+                    // Luego se abre el otro modal
+                    window.id_modal_open = '#modal-waiting-confirm';
+
+                    $(window.id_modal_open).modal('show');
+
                     window.cssgame.convertResource(window.ship,window.convert_source,window.convert_destination,n,(e,tx)=>{
                         if (!e)
                             process_order(tx);
+                        else
+                            cancel_order();
+                        window.convert_source = undefined;
+                        window.convert_destination = undefined;
                     });
                 }
             });
@@ -395,8 +551,6 @@ window.addEventListener('load', async () => {
         });
 
         $('#modal-convert-energy').on('hidden.bs.modal',()=>{
-            window.convert_source = undefined;
-            window.convert_destination = undefined;
             $('#energy-to-convert').val(0);
             $('#icon-energy-to-convertion').attr('class','');
             $('#convert-energy-to-metals').off();
@@ -404,12 +558,9 @@ window.addEventListener('load', async () => {
             $('#button-energy-graphene').off();
             $('#energy-to-convert').off();
             $('#energy-resource-convertion').text(0);
-            clean_modal();
         });
 
         $('#modal-convert-graphene').on('hidden.bs.modal',()=>{
-            window.convert_source = undefined;
-            window.convert_destination = undefined;
             $('#icon-graphene-to-convertion').attr('class','');
             $('#convert-graphene-to-metals').off();
             $('#convert-graphene-to-energy').off();
@@ -417,11 +568,9 @@ window.addEventListener('load', async () => {
             $('#graphene-to-convert').val(0);
             $('#graphene-to-convert').off();
             $('#graphene-resource-convertion').text(0);
-            clean_modal();
         });
+
         $('#modal-convert-metals').on('hidden.bs.modal',()=>{
-            window.convert_source = undefined;
-            window.convert_destination = undefined;
             $('#icon-metals-to-convertion').attr('class','');
             $('#button-convert-metals').off();
             $('#metals-to-convert').val(0);
@@ -429,7 +578,6 @@ window.addEventListener('load', async () => {
             $('#convert-metals-to-energy').off();
             $('#metals-to-convert').off();
             $('#metal-resource-convertion').text(0);
-            clean_modal();
         });
 
         $('#upgrade-graphene-ready').click(function() {
@@ -445,10 +593,6 @@ window.addEventListener('load', async () => {
             // Finally Show the Modal
             window.id_modal_open = '#modal-graphene-upgrade';
             $('#modal-graphene-upgrade').modal('show');
-        });
-
-        $('#modal-graphene-upgrade').on('hidden.bs.modal', function () {
-            clean_modal();
         });
 
         $('#upgrading-energy').click(function() {
@@ -495,10 +639,6 @@ window.addEventListener('load', async () => {
             // Finally Show the Modal
             window.id_modal_open = '#modal-metal-upgrade';
             $('#modal-metal-upgrade').modal('show');
-        });
-
-        $('#modal-metal-upgrade').on('hidden.bs.modal', function () {
-            clean_modal();
         });
 
         function checkResourceUpgrade() {
@@ -672,9 +812,15 @@ window.addEventListener('load', async () => {
             if (window.role == 2) {
                 // Falta checkear si el watch esta bien
                 $('#converter-watch').show();
-                $('#convert-energy').show();
-                $('#convert-graphene').show();
-                $('#convert-metal').show();
+                if (window.converterBlock == 0) {
+                    $('#convert-energy').show();
+                    $('#convert-graphene').show();
+                    $('#convert-metal').show();
+                } else {
+                    $('#convert-energy').hide();
+                    $('#convert-graphene').hide();
+                    $('#convert-metal').hide();
+                }
             }
             else {
                 $('#set-resource-converter').hide();
@@ -859,6 +1005,9 @@ window.addEventListener('load', async () => {
                         location.reload();
                     }
                     window.resourceBlock = ret.countdownToUpgradeResources;
+                    if (window.converterBlock != 0 && ret.countdownToWopr == 0 ) {
+                        location.reload();
+                    }
                     window.converterBlock = ret.countdownToWopr;
                     window.damage = ret.damage;
                     setResourcesStock();
@@ -876,6 +1025,10 @@ window.addEventListener('load', async () => {
         $('[id=warehouse-load]').text(window.warehouseLoad);
 
 
+        if (window.qaim[1] != 0) {
+            $('.qaim-bonus-1').show();
+            $("[id='qaim-resource-bonus']").text(window.qaim[1]);
+        }
 
         // slide panels
         function panelSlide(panelid, speed, direction, amount){

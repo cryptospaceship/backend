@@ -966,6 +966,36 @@ h2{
     color:rgb(0, 232, 123);
 }
 
+.qaim-bonus-0 {
+    display: none;
+    margin-left: 20px;
+}
+
+.qaim-bonus-1 {
+    display: none;
+    margin-left: 20px;
+}
+
+.qaim-bonus-2 {
+    display: none;
+    margin-left: 20px;
+}
+
+.qaim-bonus-3 {
+    display: none;
+    margin-left: 20px;
+}
+
+.qaim-bonus-4 {
+    display: none;
+    margin-left: 20px;
+}
+
+.qaim-bonus-5 {
+    display: none;
+    margin-left: 20px;
+}
+
 #resource-converter-status {
     color:rgb(0, 232, 123);
 }

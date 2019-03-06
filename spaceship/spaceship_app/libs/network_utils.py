@@ -32,6 +32,7 @@ class network(object):
 
     def get_transaction(self, tx_hash):
         try:
-            return self.w3.eth.getTransaction(tx_hash)
+            ret = self.w3.eth.getTransaction(tx_hash)
+            return ret
         except Exception as e:
             raise networkException(str(e))

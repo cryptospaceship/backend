@@ -288,6 +288,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Change to Attack Mode</h5>
+                    <h5 class="modal-title qaim-bonus-5">QAIM 6 Bonus: <span class="bonus-mode-up">+<span id="qaim-mode-bonus"></span>% </span>unlock mode change speed</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -323,6 +324,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Change to Defense Mode</h5>
+                    <h5 class="modal-title qaim-bonus-5">QAIM 6 Bonus: <span class="bonus-mode-up">+<span id="qaim-mode-bonus"></span>% </span>unlock mode change speed</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -357,6 +359,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Change to Movemment Mode</h5>
+                    <h5 class="modal-title qaim-bonus-5">QAIM 6 Bonus: <span class="bonus-mode-up">+<span id="qaim-mode-bonus"></span>% </span>unlock mode change speed</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -391,6 +394,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalCenterTitle">Back to default Mode</h5>
+                        <h5 class="modal-title qaim-bonus-5">QAIM 6 Bonus: <span class="bonus-mode-up">+<span id="qaim-mode-bonus"></span>% </span>unlock mode change speed</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -422,7 +426,9 @@
             <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="exampleModalCenterTitle">Location (<span id="location_x-space"></span>,<span id="location_y-space"></span>)</h4>
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Location (<span id="location_x-space"></span>,<span id="location_y-space"></span>)</h5>
+                        <h5 class="modal-title qaim-bonus-4">QAIM 5 Bonus: <span class="bonus-mode-up">+<span id="qaim-jump-bonus"></span>%</span> unlock movemment speed</h5>
+
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -700,7 +706,8 @@
                 <div class="modal-dialog modal-dialog-map modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="exampleModalCenterTitle">Location <span id="planet-location"></span></h4>
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Location <span id="planet-location"></span></h4>
+                            <h5 class="modal-title qaim-bonus-4">QAIM 5 Bonus: <span class="bonus-mode-up">+<span id="qaim-jump-bonus"></span>% </span>unlock movemment speed</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -814,7 +821,25 @@
                 </div>
             </div>    
     
-
+            <div class="modal fade" id="modal-waiting-confirm" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" >Pre Submit</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                            <div class="modal-body-text">ORDER:</div>
+                            <div class="modal-body-text">Waiting for your approval</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
               <!-- Modal for Build -->
 <div class="modal fade" id="modal-self-fix" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -897,6 +922,7 @@
     window.map_center_x = {{ map_center_x }};
     window.map_center_y = {{ map_center_y }};
     window.map_size = {{ map_size }};
+
 
     // Ship
     window.mode = {{ mode }};

@@ -170,7 +170,7 @@ def play_events_view(request, net_id, game_id, ship_id):
     
     context.update(__get_events(game, ship_id))
     
-    events_list = EventInbox.get_by_ship_id(ship_id)
+    events_list = EventInbox.get_by_ship_id(ship_id, game.network)
     
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
@@ -288,18 +288,18 @@ def play_messages_view(request, net_id, game_id, ship_id, box=''):
     context['game_network']   = net_id
     context['ship_id']        = ship_id
     #context['events_count']   = EventInbox.unread_count(game_id, ship_id)
-    context['messages_count'] = Message.get_inbox_unread_count(ship_id)
+    context['messages_count'] = Message.get_inbox_unread_count(ship_id, game.network)
 
     if "to" in request.GET:
         context['to_ship'] = request.GET['to']
     
     if box == "inbox" or box == "":
         context["message_type"] = "inbox"
-        messages_list = Message.get_inbox_list(ship_id)
+        messages_list = Message.get_inbox_list(ship_id, game.network)
     elif box == "outbox":
         print("outbox")
         context["message_type"] = "outbox"
-        messages_list = Message.get_outbox_list(ship_id)
+        messages_list = Message.get_outbox_list(ship_id, game.network)
         
     context['ship_list'] = dumps(Ship.get_list(game, ship_id))
     
@@ -339,8 +339,8 @@ def play_ranking_view(request, net_id, game_id, ship_id):
     context['game_network']   = net_id
     context['ship_id']        = ship_id
     #context['events_count']   = EventInbox.unread_count(game_id, ship_id)
-    context['messages_count'] = Message.get_inbox_unread_count(ship_id)
-    context['inbox_messages'] = Message.get_inbox_list(ship_id, True)
+    context['messages_count'] = Message.get_inbox_unread_count(ship_id, game.network)
+    context['inbox_messages'] = Message.get_inbox_list(ship_id, game.network, True)
     
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()  

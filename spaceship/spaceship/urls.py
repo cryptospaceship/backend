@@ -52,7 +52,9 @@ from spaceship_app.api_views import api_get_messages
 from spaceship_app.api_views import api_inbox_unread_count
 from spaceship_app.api_views import api_get_messages_since
 from spaceship_app.api_views import api_ship_in_game
-
+from spaceship_app.api_views import api_create_tx
+from spaceship_app.api_views import api_get_pending_transactions
+from spaceship_app.api_views import api_get_ship_stats
 
 
 urlpatterns = [
@@ -110,5 +112,8 @@ urlpatterns = [
     path('api/message/list/<int:game_id>/<str:box>/', api_get_messages),
     #url(r'^admin/'            , admin.site.urls),
     path('api/ship/ingame/<int:ship_id>/<int:game_id>/', api_ship_in_game),
+    path('api/ship/stats/<int:game_id>/', api_get_ship_stats),
+    path('api/tx/create/', api_create_tx),
+    path('api/tx/get/pending/<int:game_id>/', api_get_pending_transactions),
     path('admin/'            , admin.site.urls),
 ]

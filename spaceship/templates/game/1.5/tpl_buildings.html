@@ -336,6 +336,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <h5 class="modal-title qaim-bonus-2">QAIM 3 Bonus: <span class="bonus-mode-up">+<span id="qaim-building-bonus"></span>%</span> Build speed, <span class="bonus-mode-up">-<span id="qaim-building-bonus"></span>%</span> Cost</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -374,6 +375,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <h5 class="modal-title qaim-bonus-2">QAIM 3 Bonus: <span class="bonus-mode-up">+<span id="qaim-building-bonus"></span>%</span> Build speed, <span class="bonus-mode-up">-<span id="qaim-building-bonus"></span>%</span> Cost</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -412,6 +414,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE</h5>
+        <h5 class="modal-title qaim-bonus-2">QAIM 3 Bonus: <span class="bonus-mode-up">+<span id="qaim-building-bonus"></span>%</span> Build speed, <span class="bonus-mode-up">-<span id="qaim-building-bonus"></span>%</span> Cost</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -448,7 +451,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle">UPGRADE AVAILABLE - ROLE SELECTION</h5>
+          <h5 class="modal-title" id="exampleModalCenterTitle">ROLE SELECTION</h5>
+          <h5 class="modal-title qaim-bonus-2">QAIM 3 Bonus: <span class="bonus-mode-up">+<span id="qaim-building-bonus"></span>%</span> Build speed, <span class="bonus-mode-up">-<span id="qaim-building-bonus"></span>%</span> Cost</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -535,6 +539,8 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalCenterTitle">DESIGN FLEET</h5>
+              <h5 class="modal-title qaim-bonus-0">QAIM 1 Bonus: <span class="bonus-mode-up">+<span id="qaim-fleet-bonus"></span>Points</span></h5>
+              <h5 class="modal-title qaim-bonus-3">QAIM 4 Bonus: <span class="bonus-mode-up">-<span id="qaim-fleet-improve-bonus"></span>%</span> Cost</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -617,6 +623,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalCenterTitle">Build Fleet</h5>
+              <h5 class="modal-title qaim-bonus-3">QAIM 4 Bonus: <span class="bonus-mode-up">+<span id="qaim-fleet-improve-bonus"></span>%</span> Build speed, <span class="bonus-mode-up">-<span id="qaim-fleet-improve-bonus"></span>%</span> Cost</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -648,7 +655,7 @@
                       <div class="stopper"></div>
                   </div>  
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" id="button-build-fleet" class="btn btn-primary">Confirm</button>
+              <button type="button" id="button-build-fleet" class="btn btn-primary disabled">Confirm</button>
             </div>
           </div>
         </div>
@@ -714,6 +721,25 @@
                 </div>
             </div> 
 
+            <div class="modal fade" id="modal-waiting-confirm" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" >Pre Submit</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                                <div class="modal-body-text">ORDER:</div>
+                                <div class="modal-body-text">Waiting for your approval</div>
+                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
             
 

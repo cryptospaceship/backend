@@ -94,16 +94,24 @@ class game(object):
                'metals_collector_level': data[5],
                'resource_upgrading': data[6]}
 
+        if len(data) == 9:
+            ret['gConverter'] = data[7]
+            ret['mConverter'] = data[8]
+
         return ret
 
 
     def get_strategic_map(self, x, y):
         ret = {}
-        map_size = 13
         try:
             ret['map'] = self.contract.functions.getStrategicMap(x, y).call()
         except Exception as e:
             raise gameException(str(e))
+
+        try:
+            map_size = ret['map'][51]
+        except:
+            map_size = 13
 
         if x < 3:
             center_x = 3

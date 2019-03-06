@@ -82,7 +82,7 @@ class ActionAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['game', 'ship_id', 'action', 'hash', 'at_block', 'gas_expended', 'creation_date']
+    list_display = ['game', 'ship_id', 'action', 'hash', 'at_block', 'gas_expended', 'status', 'creation_date']
 
 @admin.register(Stat)
 class StatAdmin(admin.ModelAdmin):
@@ -94,11 +94,11 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(Ship)
 class ShipAdmin(admin.ModelAdmin):
-    list_display = ['ship_id', 'name', 'game', 'player']
+    list_display = ['ship_id', 'name', 'game', 'player', 'network']
     
 @admin.register(GameAbiEvent)
 class GameAbiEventAdmin(admin.ModelAdmin):
-    list_display = ['name', 'game', 'notif_trigger', 'join_trigger', 'exit_trigger', 'discord']
+    list_display = ['name', 'game', 'notif_trigger', 'join_trigger', 'exit_trigger', 'end_trigger','discord']
 
 @admin.register(GameAbiFunction)
 class GameAbiFunctionAdmin(admin.ModelAdmin):

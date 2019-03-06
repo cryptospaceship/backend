@@ -5,7 +5,7 @@ window.addEventListener('load', async () => {
 	config.unlock = "/unlock/";
 	config.account = undefined;
 	config.network = "/network/";
-	config.networks = [42,77];
+	config.networks = [31,42,77];
 
 	init = new CSSInit(config,window.web3);
 	init.init(function(){

@@ -61,7 +61,8 @@ def api_events_unread_count(request, game_id):
 @require_http_methods(['GET'])
 @login_required(login_url='/signin/')
 def api_get_event(request, event_id):
-    ei = EventInbox.get_by_id(event_id)
+    
+    ei   = EventInbox.get_by_id(event_id)
     if ei is None:
         body = {'status': 'error', 'message': 'invalid event id'}
         return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
@@ -73,18 +74,18 @@ def api_get_event(request, event_id):
         ret = {}
         meta = ei.event.load_meta()
         ret['meta'] = meta
-        ret['from'] = Ship.get_by_id(meta['_from']).name
+        ret['from'] = Ship.get_by_id(meta['_from'], ei.game.network).name
         if '_to' in meta:
             if type(meta['_to']).__name__ == 'list':
                 ret['to'] = {}
                 for ship_id in meta['_to']:
                     if ship_id != 0:
-                        ship_name = Ship.get_by_id(ship_id).name
+                        ship_name = Ship.get_by_id(ship_id, ei.game.network).name
                         ret['to'][ship_id] = ship_name
                     else:
                         ret['to'][ship_id] = ''
             else:
-                ret['to']   = Ship.get_by_id(meta['_to']).name
+                ret['to']   = Ship.get_by_id(meta['_to'], ei.game.network).name
         ret['event_type'] = ei.event.event_type
         status = http_REQUEST_OK
     else:
@@ -118,7 +119,7 @@ def api_create_message(request):
     game   = Game.get_by_id(data['game_id'])
     player = Player.get_by_user(request.user)
     sender = Ship.get_by_player(game, player)
-    receiver = Ship.get_by_id(data['to'])
+    receiver = Ship.get_by_id(data['to'], game.network)
     if receiver is None:
         user_message = "Error sending message. Please try again later."
         message = "user does not exist"
@@ -144,7 +145,12 @@ def api_inbox_unread_count(request, game_id, box):
     player   = Player.get_by_user(request.user)
     game     = Game.get_by_id(game_id)
     ship     = player.get_ship_in_game(game)
-    messages = Message.get_inbox_unread_count(ship.ship_id)
+
+    # Revisar con Nico, porque falla?
+    try:
+        messages = Message.get_inbox_unread_count(ship.ship_id, game.network)
+    except:
+        messages = 0
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
     
     
@@ -183,9 +189,9 @@ def api_get_messages(request, game_id, box):
     game     = Game.get_by_id(game_id)
     ship     = player.get_ship_in_game(game)
     if box == "inbox":
-        messages = Message.get_inbox_list(ship.ship_id, True)
+        messages = Message.get_inbox_list(ship.ship_id, game.network, True)
     else:
-        messages = Message.get_outbox_list(ship.ship_id, True)
+        messages = Message.get_outbox_list(ship.ship_id, game.network, True)
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
 
     
@@ -198,4 +204,75 @@ def api_get_messages_since(request, game_id, msg_id):
     messages = Message.get_inbox_since_id(ship, msg_id, True)
     return HttpResponse(dumps(messages), content_type="application/json", status=http_REQUEST_OK)
     
+
+@require_http_methods(['POST'])
+@csrf_exempt
+@login_required(login_url='/signin/')
+def api_create_tx(request):
+    try:
+        data = loads(request.body.decode('utf-8'))
+    except Exception:
+        user_message = "Error creating tx. Please try again later."
+        message = "error decoding json"
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
     
+    player = Player.get_by_user(request.user)
+    
+    game = Game.get_by_id(data['game_id'])
+    if game is None:
+        user_message = "Error creating transaction. Please try again later."
+        message = "game_id %s not found" % data['game_id']
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    ship = player.get_ship_in_game(game)
+    if ship is None:
+        user_message = "You has not ships playing in game %s" % game.name
+        message = "player has not ship playing in game %s" % game.name
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    tx = Transaction.get(game, data['tx_hash'])
+    if tx is not None:
+        user_message = "Error creating transaction."
+        message = "transaction with hash %s already exists" % data['tx_hash']
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    try:    
+        Transaction.create(game, data['tx_hash'], ship.ship_id)
+    except:
+        user_message = "Error creating transaction. Please try again later."
+        message = "error creating transaction"
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    return HttpResponse(status=http_POST_OK)
+    
+    
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')    
+def api_get_pending_transactions(request, game_id):
+    player   = Player.get_by_user(request.user)
+    game     = Game.get_by_id(game_id)
+    ship     = player.get_ship_in_game(game)
+    
+    try:
+        action = request.GET['action']
+    except:
+        action = ''
+    
+    txs = Transaction.get_pending_by_ship(game, ship.ship_id, action, True)
+    return HttpResponse(dumps(txs), content_type="application/json", status=http_REQUEST_OK)
+    
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')    
+def api_get_ship_stats(request, game_id):
+    player   = Player.get_by_user(request.user)
+    game     = Game.get_by_id(game_id)
+    ship     = player.get_ship_in_game(game)
+
+    stats = Transaction.get_ship_stats(game, ship.ship_id, ship.at_block)
+    
+    return HttpResponse(dumps(stats), content_type="application/json", status=http_REQUEST_OK)

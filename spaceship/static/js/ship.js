@@ -4,7 +4,7 @@ window.addEventListener('load', async () => {
 	config.unlock = "/unlock/";
 	config.account = window.player_address;
 	config.network = "/network/";
-	config.networks = [42,77];
+	config.networks = [42,77,31];
     config.signout  = "/signout/"
 
     
@@ -17,6 +17,41 @@ window.addEventListener('load', async () => {
         window.backend = new Backend(window.base_url);
         window.qaim_1 = undefined;
         window.qaim_2 = undefined;
+        
+        for (let i = 0; i <= 6-1; i++) {
+            q = '#qaims' + i.toString();
+            $(q).prop('checked', false);
+            $(q).on('click', function(){
+                checked = $(this).attr('qaim');
+                console.log(checked);
+                if (window.qaim_1 == checked) {
+                    window.qaim_1 = window.qaim_2;
+                    window.qaim_2 = undefined;
+                } else if (window.qaim_2 == checked) {
+                    window.qaim_2 = undefined;
+                } else {
+                    if (typeof window.qaim_1 === 'undefined') {
+                        window.qaim_1 = checked;
+                    } else if (typeof window.qaim_2 === 'undefined') {
+                        window.qaim_2 = checked;
+                    } else {
+                        q = '#qaims' + window.qaim_1;
+                        $(q).prop('checked', false);
+                        window.qaim_1 = window.qaim_2;
+                        window.qaim_2 = checked;
+                    }
+                }
+                if (form_completed()) {
+                    $('#join-game-button').attr("disabled", false);
+                    $('#join-game-button').css({'background-color':'#E50E32'});
+                } else {
+                    $('#join-game-button').attr("disabled", true);
+                    $('#join-game-button').css({'background-color':'#A80621'});
+                }
+            });
+            
+        }
+        
 
         if ( window.shipInGame ) {
             window.cssgame = new CSSGame(w3,window.gameAbi,window.gameAddress,42);
@@ -29,26 +64,32 @@ window.addEventListener('load', async () => {
 
         function joinGame(gameId) {   
             window.cssgame = new CSSGame(w3,window.gamesData[gameId]['abi'],window.gamesData[gameId]['address'],42);
-            console.log("La concha de tu hermana");
             window.cssgame.placeShip(window.shipId,window.qaim_1,window.qaim_2,function(e,tx) {
-                
-                console.log(e);
+            window.toReload = 3;
                 if (!e) {
                     $('body').addClass('blur');
                     
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation"});
                     setInterval(function(){
                         w3.eth.getTransactionReceipt(tx, function(e,h){
-                            if (h && h.blockNumber != null && h.status != "0x0") {
+                            if (h && h.blockNumber != null) {
                                 // En esta instancia la transaccion esta confirmada
-                                $('#step').text("2");
-                                $('#step_1').hide();
-                                $('#step_2').show();
-                                window.backend.shipingame(shipId,window.gamesData[gameId]['id'],(err,ret)=>{
-                                    if (err == null && ret['in_game']) {
-                                        window.location.href = '/ui/' + window.gameNetwork + '/play/' + window.gamesData[gameId]['id'] + '/' + window.shipId + '/';
-                                    }
-                                });                                                
+                                if (h.status == "0x01") {
+                                    $('#step').text("2");
+                                    $('#step_1').hide();
+                                    $('#step_2').show();
+                                    window.backend.shipingame(shipId,window.gamesData[gameId]['id'],(err,ret)=>{
+                                        if (err == null && ret['in_game']) {
+                                            window.location.href = '/ui/' + window.gameNetwork + '/play/' + window.gamesData[gameId]['id'] + '/' + window.shipId + '/';
+                                        }
+                                    });
+                                } else {
+                                    $('#step_1').hide();
+                                    $('#fail').show();
+                                    window.toReload = window.toReload - 1;
+                                    if (window.toReload == 0) 
+                                        window.location.reload();
+                                }                                           
                             }         
                         });
                     },3000);
@@ -177,43 +218,22 @@ window.addEventListener('load', async () => {
             }
         });
 
+        
+        
         $('#select-game-modal').on('click', function(){
             window.qaim_1 = undefined;
             window.qaim_2 = undefined;
             $('#select-game').val('Select an option');
             $('#join-game-button').attr("disabled", true);
             $('#join-game-button').css({'background-color':'#A80621'});
-            for (i = 0; i <= 6-1; i++) {
+            
+            for (i=0; i < window.shipQaim.length; i++) {
+                $('#q-' + i.toString()).text(window.shipQaim[i]);
+            }   
+
+            for (let i = 0; i <= 6-1; i++) {
                 q = '#qaims' + i.toString();
                 $(q).prop('checked', false);
-                $(q).on('click', function(){
-                    checked = $(this).attr('qaim');
-                    if (window.qaim_1 == checked) {
-                        window.qaim_1 = window.qaim_2;
-                        window.qaim_2 = undefined;
-                    } else if (window.qaim_2 == checked) {
-                        window.qaim_2 = undefined;
-                    } else {
-                        if (typeof window.qaim_1 === 'undefined') {
-                            window.qaim_1 = checked;
-                        } else if (typeof window.qaim_2 === 'undefined') {
-                            window.qaim_2 = checked;
-                        } else {
-                            q = '#qaims' + window.qaim_1;
-                            $(q).prop('checked', false);
-                            window.qaim_1 = window.qaim_2;
-                            window.qaim_2 = checked;
-                        }
-                    }
-                    if (form_completed()) {
-                        $('#join-game-button').attr("disabled", false);
-                        $('#join-game-button').css({'background-color':'#E50E32'});
-                    } else {
-                        $('#join-game-button').attr("disabled", true);
-                        $('#join-game-button').css({'background-color':'#A80621'});
-                    }
-                });
-                
             }
             $('#select-game').change(function() {
                 if (form_completed()){
@@ -229,6 +249,9 @@ window.addEventListener('load', async () => {
         });
         
         
+        
+        
+        
         $('#qaim-save-button').on('click', function() {
             setQaim();
         });
@@ -242,5 +265,6 @@ window.addEventListener('load', async () => {
         $('#exit-game-button').on('click', function() {
             exitGame();
         });
+
     });
 });

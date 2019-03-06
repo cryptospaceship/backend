@@ -67,11 +67,22 @@
                         </div>
                         <div class="col-xs-12 col-sm-5 col-md-5 current-mission">
                             {% if ship.in_game %}
-                                <h3>_Current Mission</h3>
-                                <a href="javascript:void(0);" class="btn resume-game" id="go-to-game">go to game</a>
-                                <p>started at</br>
-                                            block <span id="game-start-block"><span></p>
-                                <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
+                                {% if game_end %}
+                                    <h3>_Game End</h3>
+                                    <p>Contratulations YOU WIN!</p>
+                                    <div style="text-align:center;">
+                                        <img src="/static/site/images/trophy.svg" style="max-width: 50%;">
+                                    </div>
+                                    <p>Points earned: <span style="color: #E50E32;"></span></p><br/>
+                                    <p>Exit game to collect points</p>
+                                    <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
+                                {% else %}
+                                    <h3>_Current Mission</h3>
+                                    <a href="javascript:void(0);" class="btn resume-game" id="go-to-game">go to game</a>
+                                    <p>started at</br>
+                                                block <span id="game-start-block"><span></p>
+                                    <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
+                                {% endif %}
                             {% else %}
                                 <h3>_Current Mission</h3>
                                 <p>You are not playing right now</p>
@@ -98,7 +109,7 @@
                     <div class="column"> 
                         <div class="points">
                             <div class="text">
-                                <p class="title">Fleet Points</p>
+                                <p class="title">QAIM 1 - Fleet Points</p>
                                 <p class="description">Assign additional points to build your fleet</p>
                             </div>
                             <div class="asignar">
@@ -108,7 +119,7 @@
                         </div>
                         <div class="points">
                             <div class="text">
-                                <p class="title">Resources Improve</p>
+                                <p class="title">QAIM 2 - Resources Improve</p>
                                 <p class="description">Improve speed and cost of resources upgrade</p>
                             </div>
                             <div class="asignar">
@@ -118,7 +129,7 @@
                         </div>
                         <div class="points">
                             <div class="text">
-                                <p class="title">Buildings Improve</p>
+                                <p class="title">QAIM 3 - Buildings Improve</p>
                                 <p class="description">Improve speed and cost of buildings upgrade</p>
                             </div>
                             <div class="asignar">
@@ -130,7 +141,7 @@
                     <div class="column"> 
                         <div class="points">
                             <div class="text">
-                                <p class="title">Fleet Improve</p>
+                                <p class="title">QAIM 4 - Fleet Improve</p>
                                 <p class="description">Improve speed and cost of fleet construction</p>
                             </div>
                             <div class="asignar">
@@ -140,7 +151,7 @@
                         </div>
                         <div class="points">
                             <div class="text">
-                                <p class="title">Ship Jump Improve</p>
+                                <p class="title">QAIM 5 - Jump Improve</p>
                                 <p class="description">Reduce time between movements</p>
                             </div>
                             <div class="asignar">
@@ -150,7 +161,7 @@
                         </div>
                         <div class="points">
                             <div class="text">
-                                <p class="title">Mode Change Improve</p>
+                                <p class="title">QAIM 6 - Mode Change Improve</p>
                                 <p class="description">Reduce time between mode changes</p>
                             </div>
                             <div class="asignar">
@@ -181,29 +192,29 @@
 
                 <div class="group-input">
                     <p>Select 2 QAIMS</p>
-                    <div class="inputs">
+                    <div class="inputs" title="Fleet Points">
                         <input type="checkbox" id="qaims0" qaim="0">
-                        <label for="qaims1">QAIMS 1</label>
+                        <label for="qaims1">QAIM 1 (<span id="q-0"></span>)</label>
                     </div>
-                    <div class="inputs">
+                    <div class="inputs" title="Resources Improve">
                         <input type="checkbox" id="qaims1" qaim="1">
-                        <label for="qaims2">QAIMS 2</label>
+                        <label for="qaims2">QAIM 2 (<span id="q-1"></span>)</label>
                     </div>
-                    <div class="inputs">
+                    <div class="inputs" title="Buildings Improve">
                         <input type="checkbox" id="qaims2" qaim="2">
-                        <label for="qaims3">QAIMS 3</label>
+                        <label for="qaims3">QAIM 3 (<span id="q-2"></span>)</label>
                     </div>
-                    <div class="inputs">
+                    <div class="inputs" title="Fleet Improve">
                         <input type="checkbox" id="qaims3" qaim="3">
-                        <label for="qaims4">QAIMS 4</label>
+                        <label for="qaims4">QAIM 4 (<span id="q-3"></span>)</label>
                     </div>
-                    <div class="inputs">
+                    <div class="inputs" title="Jump Improve">
                         <input type="checkbox" id="qaims4" qaim="4">
-                        <label for="qaims5">QAIMS 5</label>
+                        <label for="qaims5">QAIM 5 (<span id="q-4"></span>)</label>
                     </div>
-                    <div class="inputs">
+                    <div class="inputs" title="Mode Change Improve">
                         <input type="checkbox" id="qaims5" qaim="5">
-                        <label for="qaims6">QAIMS 6</label>
+                        <label for="qaims6">QAIM 6 (<span id="q-5"></span>)</label>
                     </div>
                 </div>
 
@@ -270,6 +281,7 @@
                 <h5>Step <span id="step">1</span>/2</h5>
                 <p id="step_1">_waiting for transaction confirmation</p>
                 <p id="step_2" style="display:none;">_waiting for backend</p>
+                <p id="fail" style="display: none;">_transaction fail</p>
             </div>
         </form>
     </div>
@@ -338,5 +350,4 @@ window.qaimClean = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 window.qaimAssign = [];
 </script>
 
-    
 {% endblock %}
