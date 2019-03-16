@@ -101,8 +101,9 @@ window.addEventListener('load', async () => {
             });
         }
         
-        function exitGame() {            
-            window.csstoken.exitGame(window.shipId,function(e,tx){
+        function exitGame() {
+            
+            window.csstoken.exitGame(window.shipId,function(e,tx) {
                 if (!e) {
                     $('body').addClass('blur');
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation-exit"});
@@ -111,13 +112,16 @@ window.addEventListener('load', async () => {
                             if (h && h.blockNumber != null) window.location.reload();
                         });
                     },3000);
+                } else {
+                    window.exit = false;
                 }
-            });            
+            });
+
         }
         
         function setQaim() {        
-            window.csstoken.setQAIM(window.shipId,window.qaimAssign,function(e,tx){
-                if (!e) {
+            window.csstoken.setQAIM(window.shipId,window.qaimAssign,function(err,tx){
+                if (!err) {
                     $('body').addClass('blur');
                     $.colorbox({inline:true, closeButton: false, arrowKey: false, overlayClose: false,href:"#waiting-confirmation-qaim"});
                     setInterval(function(){
@@ -125,7 +129,10 @@ window.addEventListener('load', async () => {
                             if (h && h.blockNumber != null) window.location.reload();
                         });
                     },3000);
+                } else {
+                    window.saveQaim = false;
                 }
+                console.log(err);
             });            
         }
            
@@ -253,7 +260,10 @@ window.addEventListener('load', async () => {
         
         
         $('#qaim-save-button').on('click', function() {
-            setQaim();
+            if (window.saveQaim == false) {
+                window.saveQaim = true;
+                setQaim();
+            }
         });
         
         $('#join-game-button').on('click', function() {
@@ -263,7 +273,10 @@ window.addEventListener('load', async () => {
         });
 
         $('#exit-game-button').on('click', function() {
-            exitGame();
+            if (window.exit == false ) {
+                window.exit = true;
+                exitGame();
+            }
         });
 
     });

@@ -106,6 +106,13 @@ class spaceShip(object):
             
         return data
         
+    def get_current_gen(self):
+        try:
+            data = self.contract.functions.getCurrentGen().call()
+        except Exception as e:
+            raise spaceShipException(str(e))
+            
+        return data
         
     def get_unassigned_points(self, ship_id):
         try:

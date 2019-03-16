@@ -16,7 +16,7 @@
 </head>
 
 <body style="overflow-y: hidden; background-size: cover;">
-    
+    <main id="site-main" role="main">
         <!-- ACA PONER CONTENIDO-->
         <div class="container overal-ranking">
             <div class="section-title">
@@ -36,7 +36,7 @@
                     <tbody>
                         {% for ranking in rankings %}
                             {% if ranking.owner %}
-                                <tr style="background-color: #ffffff30;">
+                                <tr id="open-stats" style="background-color: #ffffff30; cursor:pointer;">
                                     <td><b>{{ ranking.position }}</b></td>
                                     <td><b>{{ ranking.ship.ship_id }}</b></td>
                                     <td><b>{{ ranking.ship.name }}</b></td>
@@ -97,7 +97,41 @@
                 </div>
             </div>
         </div>
-    
+    </main>
+            <!--Sent Resources-->
+    <div style="display:none">
+        <div id="stats" class="modal">
+            <div class="modal-container table-events">
+                <div class="form-modal">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="2">Contract Iteration History</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Gas Consumed</td>
+                                <td><span id="gas"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Transactions</td>
+                                <td><span id="transctions"></span> (Successful: <span id="ok"></span>, Error: <span id="error"></span>)</td>
+                            </tr>
 
+                        </tbody>
+                    </table>
+                    <a href="javascript:void(0);" class="closeModal"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for js in inject_js %}
+        <script src="{{ js }}"></script>
+    {% endfor %}
 </body>
+<script>
+window.baseUrl = "{{ base_url }}";
+window.gameId  = {{ game_id }};
+</script>
 </html>

@@ -604,6 +604,7 @@ class EventInbox(models.Model):
         ret['block']  = self.event.event_block
         ret['from']   = self.event.from_ship.name
         ret['title']  = self.build_title()
+        ret['date']   = dateformat.format(self.creation, 'N j, Y, P')
         return ret
         
     @classmethod
@@ -737,11 +738,17 @@ class Transaction(models.Model):
     
     @staticmethod
     def get_ship_stats(game, ship_id, from_block):        
-        transactions = Transaction.objects.filter(game=game, ship_id=ship_id, status=1, at_block__gte=from_block)
-        total_gas = 0
+        transactions = Transaction.objects.filter(game=game, ship_id=ship_id, at_block__gte=from_block)
+        total_gas  = 0
+        successful = 0
+        error      = 0
         for tx in transactions:
             total_gas = total_gas + tx.gas_expended
-        return {'transactions': transactions.count(), 'gas': total_gas}
+            if tx.status == 1:
+                successful = successful + 1
+            else:
+                error = error + 1
+        return {'transactions': transactions.count(), 'successful': successful, 'error': error, 'gas': total_gas}
     
     @staticmethod
     def delete_in_block(block):

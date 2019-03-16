@@ -149,4 +149,19 @@ class Backend {
         xhr.send();
     }
 
+    getGas(gameId, callback) {
+        let ep = '/api/ship/stats/' + gameId.toString() + '/';
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if(this.readyState == XMLHttpRequest.DONE) {
+                if (this.status == 200){
+                    callback(null,JSON.parse(xhr.response));
+                }
+                else 
+                    callback(xhr.response,null);
+            }   
+        }
+        xhr.open('GET', this.baseurl + ep, true);
+        xhr.send();
+    }
 }

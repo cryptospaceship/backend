@@ -45,10 +45,10 @@
                                 To
                             </div>
                             {% endif %}
-                            <div class="subject row-header">
+                            <div class="subject row-header" id="subject-modified">
                                 Subject
                             </div>
-                            <div class="date row-header">
+                            <div class="date row-header" id="date-modified">
                                 Date
                             </div>
                         </div>
@@ -75,10 +75,10 @@
                                     {{ message.receiver.name }}
                                 </div>
                             {% endif %}                                
-                                <div class="subject row-table">
+                                <div class="subject row-table" id="subject-modified">
                                     {{ message.subject }}
                                 </div>
-                                <div class="date row-table">
+                                <div class="date row-table" id="date-modified">
                                     {{ message.date }}
                                 </div>
                             </a>
@@ -184,6 +184,10 @@
         </div>
     </div>
 </body>
+<style>
+    #subject-modified{width:45%;}
+    #date-modified{width:25%;}
+</style>
     {% for js in inject_js %}
         <script src="{{ js }}"></script>
     {% endfor %}

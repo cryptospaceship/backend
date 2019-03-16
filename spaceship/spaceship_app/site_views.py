@@ -45,6 +45,7 @@ def fleet_view(request, net_id):
 
     ship_list = ship.connect().get_ships_by_owner(player.address)
     ship_price = ship.connect().get_creation_ship_price()
+    current_gen = ship.connect().get_current_gen()
 
     net_name   = Network.get_by_net_id(net_id)
 
@@ -59,7 +60,7 @@ def fleet_view(request, net_id):
     context['contract_address']  = ship.address
     context['contract_abi']      = loads(ship.abi)
     context['ship_list']         = ship_list
-    
+    context['current_gen']       = current_gen
     colors = {}
     for s in ship_list:
         colors[s['id']] = s['color']

@@ -26,14 +26,14 @@
                 <div class="table-container">
                     <div class="message-box">
                         <div class="table-header">
-                            <div class="from-to row-header">
-                                Type
-                            </div>
                             <div class="subject row-header">
                                 Event
                             </div>
                             <div class="date row-header">
                                 Block
+                            </div>
+                            <div class="from-to row-header">
+                                Date
                             </div>
                         </div>
                         <div class="table-body" id="table-body">
@@ -43,14 +43,14 @@
                             {% else %}
                             <a class="message-content row-body" id="event" event-id={{ ei.id }} style="background-color: #ffffff30; font-weight: 800; cursor: pointer;">
                             {% endif %}
-                                <div class="from-to row-table">
-                                    {{ ei.inbox_type }}
-                                </div>
                                 <div class="subject row-table">
                                     {{ ei.title }}
                                 </div>
                                 <div class="date row-table">
                                     {{ ei.event.event_block }}
+                                </div>
+                                <div class="from-to row-table">
+                                    {{ ei.creation_date }}
                                 </div>
                             </a>
                             {% endfor %}

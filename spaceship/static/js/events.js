@@ -1,33 +1,33 @@
 $(document).ready(function(){
     window.backend = new Backend(window.baseUrl);
 
-    function renderEvent(event_id, type, title, block, viewed) {
+    function renderEvent(event_id, date, title, block, viewed) {
         let block_div = document.createElement('div');
         let title_div = document.createElement('div');
-        let type_div = document.createElement('div');
+        let date_div = document.createElement('div');
         let a = document.createElement('a');
     
         a.setAttribute("class", "message-content row-body");
         a.setAttribute("id", "event");
         a.setAttribute("event-id", event_id);
     
-        type_div.setAttribute("class", "from-to row-table");
+        date_div.setAttribute("class", "from-to row-table");
     
         if (viewed == false)
             a.setAttribute("style", "background-color: #ffffff30; font-weight: 800; cursor: pointer;");
         else
             a.setAttribute("style", "cursor: pointer;");
             
-        type_div.appendChild(document.createTextNode(type));
+        date_div.appendChild(document.createTextNode(date));
     
         block_div.setAttribute("class", "date row-table");
         block_div.innerText = block;
         title_div.setAttribute("class", "subject row-table");
         title_div.innerText = title;
-    
-        a.appendChild(type_div);
+        
         a.appendChild(title_div);
         a.appendChild(block_div);
+        a.appendChild(date_div);
         return a;
     }
 
@@ -224,7 +224,7 @@ $(document).ready(function(){
                     if (m.length > 0) {
                         window.totalEvents = window.totalEvents + m.length;
                         for (i = m.length -1; i >= 0; i-- ) {
-                            event = renderEvent(m[i].id,m[i].type,m[i].title,m[i].block, m[i].viewed);
+                            event = renderEvent(m[i].id,m[i].date,m[i].title,m[i].block, m[i].viewed);
                             $('#table-body').prepend(event);
                         }
                         let elements = $('[id="event"]');

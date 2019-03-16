@@ -100,7 +100,7 @@ window.addEventListener('load', async () => {
             }
             $('#ship-status-value').text(status);
 
-            if (window.damage != 0 && window.in_port == false) {
+            if (window.damage != 0 && window.in_port == false && window.role == 3 && window.blocks_to_wopr == 0) {
                 $('#repair-button').show();
             } 
         }

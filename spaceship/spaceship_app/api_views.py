@@ -266,6 +266,7 @@ def api_get_pending_transactions(request, game_id):
     txs = Transaction.get_pending_by_ship(game, ship.ship_id, action, True)
     return HttpResponse(dumps(txs), content_type="application/json", status=http_REQUEST_OK)
     
+    
 @require_http_methods(['GET'])
 @login_required(login_url='/signin/')    
 def api_get_ship_stats(request, game_id):

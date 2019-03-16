@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    console.log(window.baseUrl)
     window.backend = new Backend(window.baseUrl);
     
     function renderMessage(msg_id, from, subject, date, read) {
@@ -36,8 +35,10 @@ $(document).ready(function(){
     
         icons.appendChild(span);
         date_div.setAttribute("class", "date row-table");
+        date_div.setAttribute("id", "date-modified");
         date_div.innerText = date;
         subject_div.setAttribute("class", "subject row-table");
+        subject_div.setAttribute("id", "subject-modified");
         subject_div.innerText = subject;
     
         a.appendChild(from_div);
@@ -203,7 +204,9 @@ $(document).ready(function(){
         $('#to').prop('readonly', true);
     }
     
+    //Descomentar esta linea para traer mensajes de prueba
     //window.lastMessage = 100;
+    
     if (typeof window.inbox != 'undefined' && window.inbox == true && window.actualPage == 1) {
         window.rm = setInterval(()=>{
             let last;
