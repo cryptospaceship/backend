@@ -1279,7 +1279,7 @@ window.addEventListener('load', async () => {
             $('#cannon-reparer-watch').hide();
 
         if (window.reparer)
-            $('#fire-reparer').text('repare')
+            $('#fire-reparer').text('repair')
 
 
         if (window.qaim[5] != 0) {

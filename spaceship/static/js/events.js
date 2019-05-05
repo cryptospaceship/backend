@@ -117,7 +117,7 @@ $(document).ready(function(){
         $('#cannon-fired-target').text('Ship');
         $('#cannon-fired-damage').text(data.meta._damage + '%');
         if (data.meta._destroyed)
-            $('#cannon-fired-information').text('The enemy has been destroyed');
+            $('#cannon-fired-information').text('The ship has been destroyed');
         else
             $('#cannon-fired-information').text('-');
         
@@ -127,7 +127,6 @@ $(document).ready(function(){
     
     
     function openPortBattleModal(data){
-        console.log(data);
         let defenders = (data.meta._to.filter((x) => { return x > 0; })).length;
         if (data.meta._attacker_left > 0)
             $('#port-battle-attacker').text(data.from + " Conquest Port");
@@ -162,6 +161,25 @@ $(document).ready(function(){
         $('body').addClass('blur');
     }
     
+    function openRepairShipModal(data){
+        $('#ship-repaired-reparer').text(data.from);
+        $('#ship-repaired-destination').text(data.to);
+        $('#ship-repaired-damage').text(data.meta._units + '% repaired');
+        
+        $.colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: true, href:"#ship-repaired"});
+        $('body').addClass('blur');
+    }
+    
+    function openEndGameModal(data){
+        let reward = data.meta.reward/1000000000000000000
+        $('#end-game-winner').text(data.from);
+        $('#end-game-address').text(data.meta.winner);
+        $('#end-game-reward').text(reward + ' rbtc');
+        
+        $.colorbox({ inline: true, closeButton: false, arrowKey: false, overlayClose: true, href:"#end-game"});
+        $('body').addClass('blur');
+    }
+    
     function closePortBattleModal() {
         $('#port-battle-table-1').show();
         $('#port-battle-table-2').show();
@@ -191,6 +209,10 @@ $(document).ready(function(){
                     openCannonFiredAccuracyModal(r);
                 else if (r.event_type == 'AttackPortEvent')
                      openPortBattleModal(r);
+                else if (r.event_type == 'RepairShipEvent')
+                     openRepairShipModal(r);
+                else if (r.event_type == 'WinnerEvent')
+                     openEndGameModal(r);
                 markAsViewed(ei);
             }
         });

@@ -173,8 +173,12 @@ def create_update_transaction(tx, net, game, function_name=''):
         function = GameAbiFunction.get_by_name(function_name, game)
   
     if function is not None:
-        ship_id = str(int(tx['input'][10:74], 16))
+        if len(tx['input']) > 10:
+            ship_id = str(int(tx['input'][10:74], 16))
+        else:
+            ship_id = '0000'
         transaction = Transaction.get(game, tx['hash'].hex())
+        
         if transaction is None:
             transaction = Transaction.create(game, tx['hash'].hex())
             transaction.load(function, tx['from'], ship_id, tx['input'])
@@ -287,7 +291,7 @@ def scan_block(block, net):
         data    = get_transaction(tx.hex(), net)
         address = get_games_addresses(net)
         css     = CryptoSpaceShip.get_by_network(net)
-
+        
         if data is None:
             return False
            
@@ -305,6 +309,7 @@ def scan_block(block, net):
         
         elif addr in address.keys():
             transaction = create_update_transaction(data, net, address[addr])
+            
             if transaction is None:
                 return False
     return True
@@ -409,9 +414,9 @@ def block_scanner_main():
                     else:
                         logging.info("block_scanner_main(): error scanning block: %s" % last_scanned_block)
                         break
-                        
+                    
+                    get_ships_owner(net)
                     if last_scanned_block % net.points_interval == 0:
-                        get_ships_owner(net)
                         get_points(net)
                         
    

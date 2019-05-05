@@ -377,12 +377,13 @@ class Game(models.Model):
     def end(self):
         try:
             gdata = self.connect().get_game()
-            if gdata['game_winner'] == gdata['game_candidate'] and gdata['game_candidate'] != '0x0000000000000000000000000000000000000000':
-                return True
-            else:
-                return False
+            return gdata['game_end']
+
+            #if gdata['game_winner'] == gdata['game_candidate'] and gdata['game_candidate'] != '0x0000000000000000000000000000000000000000':
+            #    return True
+            #else:
+            #    return False
         except:
-            print('Puto')
             return False
 
     def finish(self):
@@ -394,8 +395,12 @@ class Game(models.Model):
         f = "%s(" % function['name']
         for input in function['inputs']:
             f = "%s%s," % (f, input['type'])
-        f = f[:-1] + ')'    
+        if f.endswith(','):
+            f = f[:-1] + ')'
+        else:
+            f = f + ')'
         hash = web3.Web3.sha3(f.encode()).hex()
+        print(f)
         return hash[0:10]    
     
     def load_abi(self):             
@@ -591,7 +596,11 @@ class EventInbox(models.Model):
                 'PortConquestEvent': {'T': '%s conquest the port!!!' % self.event.from_ship.name, 
                                       'F': '%s conquest the port!!!' % self.event.from_ship.name},
                 'ShipStartPlayEvent': {'T': '%s has arrived!!!' % self.event.from_ship.name, 
-                                      'F': '%s has arrived!!!' % self.event.from_ship.name}
+                                       'F': '%s has arrived!!!' % self.event.from_ship.name},
+                'WinnerEvent': {'T': '%s won!!!' % self.event.from_ship.name, 
+                                'F': '%s won!!!' % self.event.from_ship.name},
+                'RepairShipEvent': {'T': '%s repaired your ship' % self.event.from_ship.name, 
+                                    'F': 'Ship %s repaired' % to_ship_name}
                 }      
          
         return title[self.event.event_type][self.inbox_type]
@@ -604,7 +613,7 @@ class EventInbox(models.Model):
         ret['block']  = self.event.event_block
         ret['from']   = self.event.from_ship.name
         ret['title']  = self.build_title()
-        ret['date']   = dateformat.format(self.creation, 'N j, Y, P')
+        ret['date']   = dateformat.format(self.creation_date, 'N j, Y, P')
         return ret
         
     @classmethod
@@ -657,13 +666,11 @@ class EventInbox(models.Model):
             return None
 
     @classmethod
-    def get_by_ship_id(cls, ship_id, network):
-        ship = Ship.get_by_id(ship_id, network)
-        o = cls.objects.filter(ship=ship).order_by('-id')
+    def get_by_ship_id(cls, ship_id, game):
+        ship = Ship.get_by_id(ship_id, game.network)
+        o = cls.objects.filter(ship=ship, game=game).order_by('-id')
         for i in o:
-            print(i.event.event_meta.replace("'", "\""))
             i.event_meta_parsed = json.loads(i.event.event_meta.replace("'", "\"").replace("False", "false").replace("True", "true"))
-            print (i.event_meta_parsed)
         return o
 
     @classmethod

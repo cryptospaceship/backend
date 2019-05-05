@@ -170,7 +170,7 @@ def play_events_view(request, net_id, game_id, ship_id):
     
     context.update(__get_events(game, ship_id))
     
-    events_list = EventInbox.get_by_ship_id(ship_id, game.network)
+    events_list = EventInbox.get_by_ship_id(ship_id, game)
     
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
@@ -198,9 +198,10 @@ def play_resources_view(request, net_id, game_id, ship_id):
     if game is None:
         return render(request, html_templates['not_foud'])
 
-    template = GameTemplate.get(game.version, 'resources')    
-        
     context = {}
+    gdata = game.connect().get_game()
+    context['game_end']     = gdata['game_end']
+    context['is_winner']    = gdata['game_ship_winner'] == ship_id
     context['explorer_url'] = game.network.explorer
     context['base_url']     = Var.get_var('base_url')
     context['game_id']      = game_id
@@ -210,10 +211,14 @@ def play_resources_view(request, net_id, game_id, ship_id):
     context['ship_id']      = ship_id
     #context['events_count'] = EventInbox.unread_count(game_id, ship_id)
 
+    context.update(__get_resources(game, ship_id))
+    if context['damage'] >= 100 or context['game_end']:
+        template = GameTemplate.get(game.version, 'end')
+    else:
+        template = GameTemplate.get(game.version, 'resources')
+
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
-    
-    context.update(__get_resources(game, ship_id))
 
     return render(request, template.file, context)
 
@@ -226,6 +231,9 @@ def play_map_view(request, net_id, game_id, ship_id):
         return render(request,html_templates['not_found'])
 
     context = {}
+    gdata = game.connect().get_game()
+    context['game_end']     = gdata['game_end']
+    context['is_winner']    = gdata['game_ship_winner'] == ship_id
     context['explorer_url'] = game.network.explorer
     context['base_url']     = Var.get_var('base_url')
     context['game_id']      = game_id
@@ -237,7 +245,13 @@ def play_map_view(request, net_id, game_id, ship_id):
 
     context.update(__get_map(game, ship_id))
     
-    template = GameTemplate.get(game.version, 'map')
+    if context['damage'] >= 100 or context['game_end']:
+        template = GameTemplate.get(game.version, 'end')
+    else:
+        template = GameTemplate.get(game.version, 'map')
+
+    context['inject_js']      = template.get_js()
+    context['inject_css']     = template.get_css()
 
     return render(request, template.file, context)
 
@@ -248,10 +262,11 @@ def play_buildings_view(request, net_id, game_id, ship_id):
     game = Game.get_by_id(game_id)
     if game is None:
         return render(request, html_templates['not_foud'])
-
-    template = GameTemplate.get(game.version, 'buildings')    
         
     context = {}
+    gdata = game.connect().get_game()
+    context['game_end']     = gdata['game_end']
+    context['is_winner']    = gdata['game_ship_winner'] == ship_id
     context['explorer_url'] = game.network.explorer
     context['base_url']     = Var.get_var('base_url')
     context['game_id']      = game_id
@@ -260,11 +275,15 @@ def play_buildings_view(request, net_id, game_id, ship_id):
     context['game_network'] = net_id
     context['ship_id']      = ship_id
     #context['events_count'] = EventInbox.unread_count(game_id, ship_id)
-
-    context['inject_js']      = template.get_js()
-    context['inject_css']     = template.get_css() 
     
     context.update(__get_buildings(game, ship_id))   
+    if context['damage'] >= 100 or context['game_end']:
+        template = GameTemplate.get(game.version, 'end')
+    else:
+        template = GameTemplate.get(game.version, 'buildings')
+
+    context['inject_js']      = template.get_js()
+    context['inject_css']     = template.get_css()
 
     return render(request, template.file, context)
 

@@ -369,6 +369,70 @@
             </div>
         </div>
     </div>
+    
+    <!--Ship Repaired-->
+    <div style="display:none">
+        <div id="ship-repaired" class="modal">
+            <div class="modal-container table-events">
+                <div class="form-modal">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="2">Ship Repaired</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Reparer</td>
+                                <td><span id="ship-repaired-reparer"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Repaired</td>
+                                <td><span id="ship-repaired-destination"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Damage</td>
+                                <td><span id="ship-repaired-damage"></span></td>
+                        </tbody>
+                    </table>
+                    <a href="javascript:void(0);" class="closeModal"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--Winner Event-->
+    <div style="display:none">
+        <div id="end-game" class="modal">
+            <div class="modal-container table-events">
+                <div class="form-modal">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="2">End Game</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Winner</td>
+                                <td><span id="end-game-winner"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                <td><span id="end-game-address"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Reward</td>
+                                <td><span id="end-game-reward"></span></td>
+                        </tbody>
+                    </table>
+                    <a href="javascript:void(0);" class="closeModal"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
     {% for js in inject_js %}
         <script src="{{ js }}"></script>
     {% endfor %}

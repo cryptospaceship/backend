@@ -202,7 +202,9 @@ class game(object):
                'game_reward': data[4],
                'game_players': data[5],
                'game_candidate': data[6],
-               'game_winner': data[7] }
+               'game_winner': data[7],
+               'game_ship_winner': data[8],
+               'game_end': data[9] }
 
         return ret
     

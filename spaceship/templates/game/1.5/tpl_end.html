@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Mobile-friendly viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRYPTOSPACESHIP</title>
+    <!-- Style sheet link -->
+    {% for css in inject_css %}
+        <link href="{{ css }}" rel="stylesheet" media="all"></script>
+    {% endfor %}
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/site/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/site/images/favicon-16x16.png">
+    <link href="https://fonts.googleapis.com/css?family=Rajdhani:300,400,500,600" rel="stylesheet">
+</head>
+
+<body style="overflow-y: hidden; background-size: cover;">
+    <main id="site-main" role="main">
+        <!-- ACA PONER CONTENIDO-->
+
+        <div class="form-page">
+            <div class="metamask">
+            {% if game_end %}
+                {% if is_winner %}
+                    <h2>You Win!</h2>
+                    <img src="/static/site/images/trophy.svg" alt="Skull" style="width:30%;">
+                {% else %}
+                    <h2>You Lose!</h2>
+                    <img src="/static/site/images/sad.svg" alt="Skull" style="width:30%;">
+                {% endif %}
+            {% else %}
+                <h2>Your Crypto-space Ship has been destroyed</h2>
+                <img src="/static/site/images/skull.svg" alt="Skull" style="width:30%;">  
+            {% endif %}
+            <a onclick="window.parent.location.pathname=window.url_to_token" class="btn">Go to the Css Token</a>
+            </div>
+        </div>
+    </main>
+    {% for js in inject_js %}
+        <script src="{{ js }}"></script>
+    {% endfor %}
+</body>
+<script>
+window.baseUrl = "{{ base_url }}";
+window.gameId  = {{ game_id }};
+window.url_to_token = "/ui/{{ game_network }}/ship/{{ ship_id }}/";
+</script>
+</html>

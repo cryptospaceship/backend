@@ -215,10 +215,11 @@ def ship_view(request, net_id, ship_id):
     
     template = SiteTemplate.get('ship')
     
-    context['game_end']              = game.end()
-    #if context['game_end']:
-    #    context['is_winner']
-    #    context['points']
+    gdata = game.connect().get_game()
+    context['game_end']              = gdata['game_end']
+    context['is_winner']             = gdata['game_ship_winner'] == ship_id
+    context['points_earned']         = game.connect().get_ship_points(ship_id)
+    context['reward']                = gdata['game_reward']
     context['ship_contract_address'] = ship.address
     context['ship_contract_abi']     = loads(ship.abi)
     context['ship']                  = ship.connect().get_ship(int(ship_id))
@@ -226,7 +227,12 @@ def ship_view(request, net_id, ship_id):
     context['inject_js']             = template.get_js()
     context['inject_css']            = template.get_css()
     context['base_url']              = 'http://dev.cryptospaceship.io:8000'
-    
+
+    if context['ship']['in_game']:
+        context['destroyed'] = True if game.connect().view_ship_vars(ship_id)['damage'] >= 100 else False
+    else:
+        context['destroyed'] = False
+
     player = Player.get_by_user(request.user)
     if player is not None:
         context['player_address'] = player.address
@@ -270,7 +276,7 @@ def game_frame_view(request, net_id, game_id, ship_id):
     
     game = Game.get_by_id(game_id)
     
-    if not game.start() or game.end():
+    if not game.start():
         return redirect('/ui/%d/ship/%d/' % (net_id, ship_id))
         
     template = SiteTemplate.get('game_frame')

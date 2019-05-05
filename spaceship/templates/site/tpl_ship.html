@@ -68,19 +68,35 @@
                         <div class="col-xs-12 col-sm-5 col-md-5 current-mission">
                             {% if ship.in_game %}
                                 {% if game_end %}
-                                    <h3>_Game End</h3>
-                                    <p>Contratulations YOU WIN!</p>
+                                    <h3>Game End {% if is_winner %} - YOU WIN! {% else %} - YOU LOSE {% endif %}</h3>
+                                    <a href="javascript:void(0);" class="btn resume-game" id="go-to-game">view game</a>
                                     <div style="text-align:center;">
-                                        <img src="/static/site/images/trophy.svg" style="max-width: 50%;">
+                                        {% if is_winner %}
+                                            <img src="/static/site/images/trophy.svg" style="max-width: 45%; margin-top: 10px;">
+                                        {% else %}
+                                            <img src="/static/site/images/sad.svg" style="max-width: 45%; margin-top: 10px;">
+                                        {% endif %}
                                     </div>
-                                    <p>Points earned: <span style="color: #E50E32;"></span></p><br/>
-                                    <p>Exit game to collect points</p>
+                                    {% if is_winner %} 
+                                    <p style="margin-top: 1px; margin-bottom: 1px;">Gas earned: <span style="color: #E50E32;">{{ reward }}</span></p>
+                                    {% endif %}
+                                    <p style="margin-top: 1px; margin-bottom: 1px;">Points earned: <span style="color: #E50E32;">{{ points_earned }}</span></p>
+                                    <p style="margin-top: 1px; margin-bottom: 1px;">Exit game to collect points</p>
                                     <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
                                 {% else %}
-                                    <h3>_Current Mission</h3>
-                                    <a href="javascript:void(0);" class="btn resume-game" id="go-to-game">go to game</a>
-                                    <p>started at</br>
-                                                block <span id="game-start-block"><span></p>
+                                    {% if destroyed %}
+                                        <h3>_Mission End</h3>
+                                        <a href="javascript:void(0);" class="btn resume-game" id="go-to-game">view game</a>
+                                        <div style="text-align:center;">
+                                            <img src="/static/site/images/skull.svg" style="max-width: 45%; margin-top: 10px;">
+                                        </div>
+                                        <p>Points earned: <span style="color: #E50E32;">{{ points_earned }}</span></p>
+                                        <p>Exit game to collect points</p>
+                                    {% else %}
+                                        <h3>_Current Mission</h3>
+                                        <a href="javascript:void(0);" class="btn resume-game" id="go-to-game">go to game</a>
+                                        <p>started at</br> block <span id="game-start-block"><span></p>
+                                    {% endif %}
                                     <a href="#exit-game" class="btn blue exit-game">EXIT GAME</a>
                                 {% endif %}
                             {% else %}

@@ -398,7 +398,7 @@ class CSSGame {
     static getCannonDamage(from, to, level, accuracy) {
         let d = this.getDistance(from,to);
         let ret = 0;
-        if (this.checkCannonRange(from,to,level)) {
+        if (this.checkCannonRange(from,to, accuracy ? 0 : 1, level)) {
             if (accuracy) {
                 if (d == 2)
                     ret = 50;

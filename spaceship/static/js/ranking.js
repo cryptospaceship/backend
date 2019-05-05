@@ -11,7 +11,7 @@ $(document).ready(function(){
     }
 
     $('#open-stats').on('click',()=>{
-        window.backend.getGas(17,(e,r)=>{
+        window.backend.getGas(window.gameId,(e,r)=>{
             openStats(r.gas,r.transactions,r.successful,r.error);
         });
     });

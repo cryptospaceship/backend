@@ -64,13 +64,16 @@ class CSSToken {
     }
 
     static formatPoints(p) {
-        if (p < 1000) {
-            if (p < 10) 
-                return '00' + p.toString();
-            if (p < 100)
-                return '0' + p.toString();
-            return p.toString();
-        }
+    
+        if ( p > 1000) 
+            p = p - 1000;
+
+        if (p < 10) 
+            return '00' + p.toString();
+        if (p < 100)
+            return '0' + p.toString();
+        return p.toString();
+
     }
 
     static colorToNumber(color) {

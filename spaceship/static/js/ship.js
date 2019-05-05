@@ -217,6 +217,7 @@ window.addEventListener('load', async () => {
                 if (typeof window.gameLaunch == 'undefined') {
                     window.cssgame.getGame((e,r)=>{
                         ret = window.cssgame.getGameResult(r);
+                        console.log(ret);
                         go_to_game(ret.gameLaunch);
                     });
                 } else {
