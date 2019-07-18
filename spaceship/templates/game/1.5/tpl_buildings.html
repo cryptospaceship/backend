@@ -731,8 +731,8 @@
                           </button>
                         </div>
                         <div class="modal-body" id="modal-body">
-                                <div class="modal-body-text">ORDER:</div>
-                                <div class="modal-body-text">Waiting for your approval</div>
+                                <div class="modal-body-text">ORDER: Waiting for your approval</div>
+                                <div class="modal-body-text"><p style="display:unset">Continue transaction with Metamask</p><img src="/static/images/button-metamask.svg" style="max-width: 40px"></div>
                             </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -749,6 +749,11 @@
         <script src="{{ js }}"></script>
     {% endfor %}
     <script>
+        
+        window.tx_pending = {{ transactions| js}};
+        window.tx_group = "{{ transaction_group }}";
+        window.refresh_interval = {{ refresh_interval }};
+
         window.DEBUG = true;
         window.planetOwner = {{ game_candidate }};
         window.reward = {{ game_reward }};

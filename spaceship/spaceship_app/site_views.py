@@ -226,7 +226,7 @@ def ship_view(request, net_id, ship_id):
     context['game_network_id']       = net_id
     context['inject_js']             = template.get_js()
     context['inject_css']            = template.get_css()
-    context['base_url']              = 'http://dev.cryptospaceship.io:8000'
+    context['base_url']              = Var.get_var('base_url')
 
     if context['ship']['in_game']:
         context['destroyed'] = True if game.connect().view_ship_vars(ship_id)['damage'] >= 100 else False
@@ -281,10 +281,12 @@ def game_frame_view(request, net_id, game_id, ship_id):
         
     template = SiteTemplate.get('game_frame')
     context = {}
-    context['game_id'] = game_id
+    context['game_id']        = game_id
     context['messages_count'] = Message.get_inbox_unread_count(ship_id, game.network)
-    context['events_count'] = EventInbox.unread_count(game_id, ship_id)
-    context['inject_css'] = template.get_css()
+    context['events_count']   = EventInbox.unread_count(game_id, ship_id)
+    context['inject_css']     = template.get_css()
+    context['base_url']       = Var.get_var('base_url')
+    
     return render(request, template.file, context)
     
 def support_view(request):

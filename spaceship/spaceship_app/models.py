@@ -250,14 +250,15 @@ class Gas(models.Model):
 
        
 class Network(models.Model):
-    name            = models.CharField(max_length=32)
-    gas             = models.ForeignKey(Gas, on_delete=models.CASCADE)
-    net_id          = models.IntegerField()
-    proxy           = models.CharField(max_length=128)
-    explorer        = models.CharField(max_length=256, blank=True)
-    scanned_block   = models.IntegerField(default=0)
-    scanner_sleep   = models.IntegerField(default=5)
-    points_interval = models.IntegerField(default=100, help_text="Intervalo en bloques para get_points")
+    name             = models.CharField(max_length=32)
+    gas              = models.ForeignKey(Gas, on_delete=models.CASCADE)
+    net_id           = models.IntegerField()
+    proxy            = models.CharField(max_length=128)
+    explorer         = models.CharField(max_length=256, blank=True)
+    scanned_block    = models.IntegerField(default=0)
+    scanner_sleep    = models.IntegerField(default=5)
+    points_interval  = models.IntegerField(default=100, help_text="Intervalo en bloques para get_points")
+    refresh_interval = models.IntegerField(default=30, help_text="Intervalo de resfresh en milisegundos") 
 
     def __str__(self):
         return self.name
@@ -709,6 +710,7 @@ class Transaction(models.Model):
     from_address  = models.CharField(max_length=42, default='0x0')
     ship_id       = models.CharField(max_length=4, default="0000")    
     action        = models.CharField(max_length=128, blank=True)
+    action_group  = models.CharField(max_length=2, blank=True, null=True)
     hash          = models.CharField(max_length=128)
     input         = models.TextField(default='')
     at_block      = models.IntegerField(blank=True, null=True)
@@ -734,18 +736,21 @@ class Transaction(models.Model):
         return ret
         
     @classmethod
-    def create(cls, game, hash, ship_id=None):
+    def create(cls, game, hash, ship_id=None, group=''):
         tx      = cls()
         tx.game = game
         tx.hash = hash
         if ship_id is not None:
             tx.ship_id = ship_id
+        tx.action_group = group
         tx.save()
         return tx
     
     @staticmethod
-    def get_ship_stats(game, ship_id, from_block):        
-        transactions = Transaction.objects.filter(game=game, ship_id=ship_id, at_block__gte=from_block)
+    def get_ship_stats(game, player):
+        ship         = player.get_ship_in_game(game)
+        transactions = Transaction.objects.filter(game=game, from_address=player.address, at_block__gte=ship.at_block)
+        #transactions = Transaction.objects.filter(game=game, ship_id=ship_id, at_block__gte=from_block)
         total_gas  = 0
         successful = 0
         error      = 0
@@ -766,18 +771,22 @@ class Transaction(models.Model):
         return cls.objects.filter(game=game, scanned=False).order_by('-id')
     
     @classmethod
-    def get_pending_by_ship(cls, game, ship_id, action='', serialize=False):
-        print(game)
-        print(ship_id)
-        print(action)
-        if action == '':
+    def get_pending_by_ship(cls, game, ship_id, group='', format=''):
+        #actions = GameAbiFunction.get_names_by_group(game, group)
+        if group == '':
             txs = cls.objects.filter(game=game, ship_id=ship_id, scanned=False).order_by('-id')
         else:
-            txs = cls.objects.filter(game=game, ship_id=ship_id, action=action, scanned=False).order_by('-id')
-        if serialize:
+            #txs = cls.objects.filter(game=game, ship_id=ship_id, action__in=actions, scanned=False).order_by('id')
+            txs = cls.objects.filter(game=game, ship_id=ship_id, action_group=group, scanned=False).order_by('id')
+        if format == 'serialize':
             ret = []
             for tx in txs:
                 ret.append(tx.serialize())
+            return ret
+        elif format == 'list':
+            ret = []
+            for tx in txs:
+                ret.append(tx.hash)
             return ret
         else:
             return txs
@@ -787,6 +796,7 @@ class Transaction(models.Model):
         self.from_address = address
         self.ship_id      = ship_id
         self.input        = input
+        self.action_group = action.group
         self.save()
         return self
         
@@ -802,6 +812,14 @@ class Transaction(models.Model):
     def get(cls, game, hash):
         try:
             return cls.objects.get(game=game, hash=hash)
+        except ObjectDoesNotExist:
+            return None
+    
+    @classmethod
+    def get_by_hash(cls, hash):
+        print(hash)
+        try:
+            return cls.objects.get(hash=hash)
         except ObjectDoesNotExist:
             return None
             
@@ -968,10 +986,23 @@ class GameAbiEvent(models.Model):
         
 
 class GameAbiFunction(models.Model):
-    name   = models.CharField(max_length=128)
-    hash   = models.CharField(max_length=10)
-    game   = models.ForeignKey(Game, on_delete=models.CASCADE)
-    events = models.ManyToManyField(GameAbiEvent, blank=True)
+    GROUP = (('RE', 'Resources'),
+             ('BU', 'Buildings'),
+             ('MA', 'Map'))
+    """
+             ('FA', 'Fleet Action'),
+             ('MO', 'Movement'),
+             ('WP', 'WOPR'),
+             ('MO', 'Mode'),
+             ('BF', 'Build Fleet'),
+             ('DF', 'Disassemble Fleet'))
+    """
+    name    = models.CharField(max_length=128)
+    hash    = models.CharField(max_length=10)
+    game    = models.ForeignKey(Game, on_delete=models.CASCADE)
+    events  = models.ManyToManyField(GameAbiEvent, blank=True)
+    ship_id = models.BooleanField(default=True, help_text="True if has ship_id")
+    group   = models.CharField(max_length=2, choices=GROUP, blank=True, null=True)
     
     def __str__(self):
         return self.name
@@ -991,6 +1022,10 @@ class GameAbiFunction(models.Model):
             return cls.objects.get(hash=hash, game=game)
         except:
             return None
+    
+    @classmethod
+    def get_names_by_group(cls, game, group):
+        return cls.objects.filter(game=game, group=group).values_list('name', flat=True)
 
     @classmethod
     def get_by_name(cls, name, game):

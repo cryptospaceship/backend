@@ -164,4 +164,37 @@ class Backend {
         xhr.open('GET', this.baseurl + ep, true);
         xhr.send();
     }
+
+    txCreate(gameId, tx,tx_group) {
+        let ep = '/api/tx/create/';
+        let data = {};
+        data['game_id'] = gameId;
+        data['tx_hash'] = tx;
+        data['group'] = tx_group;
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if(this.readyState == XMLHttpRequest.DONE) {
+                console.log('Done');
+            }   
+        }
+        xhr.open('POST', this.baseurl + ep, true);
+        xhr.withCredentials = true;
+        xhr.send(JSON.stringify(data));
+    }
+
+    txConfirmed(hash,callback) {
+        let ep = '/api/tx/get/status/?hash=' + hash;
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if(this.readyState == XMLHttpRequest.DONE) {
+                if (this.status == 200){
+                    callback(null,JSON.parse(xhr.response));
+                }
+                else 
+                    callback(xhr.response,null);
+            }   
+        }
+        xhr.open('GET', this.baseurl + ep, true);
+        xhr.send();
+    }
 }

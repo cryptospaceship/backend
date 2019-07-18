@@ -13,16 +13,40 @@ window.addEventListener('load', async () => {
         window.cssgame = new CSSGame(this.web3,window.gameAbi,window.gameAddress,window.gameNetwork);
         window.backend = new Backend(window.base_url);
 
+        
+        function check_pending_tx (tx) {
+            /*
+             * Se cierra el modal
+             */
+            setInterval(()=>{
+                backend.txConfirmed(tx,function(e,h){
+                    if (e == null) 
+                        if (h.confirmed == true) location.reload(); 
+                });
+            },window.refresh_interval);
+        }
+
+        if (window.tx_pending.length != 0) {
+            /*
+             * Mostrar alerta
+             */ 
+            check_pending_tx(window.tx_pending[0]);
+        }
+
+
         function setGameStats() {
             let noOwner = "0x0000000000000000000000000000000000000000";
             if (window.planetOwner != noOwner) {
                 if (window.blocksToEnd < 0)
                     window.blocksToEnd = 0;
                 $('#blocks-to-end').text(window.blocksToEnd);
-                if (window.cssgame.w3.eth.accounts[0] != window.planetOwner)
+                if (window.cssgame.w3.eth.accounts[0] != window.planetOwner) {
+                    $('#end-status').text('LOSE');
                     $('#win-condition').text("LOSING");
-                else
+                } else {
+                    $('#end-status').text('WIN');
                     $('#win-condition').text("WINNING");
+                }
                 
                 if (window.blocksToEnd == 0) {
                     $('#claim-victory').show();
@@ -63,7 +87,7 @@ window.addEventListener('load', async () => {
                     console.log(e);
                 }
             });
-        },5000);
+        },window.refresh_interval);
 
         function cancel_order() {
             $(window.id_modal_open).modal('hide');
@@ -76,10 +100,13 @@ window.addEventListener('load', async () => {
              */
             $(window.id_modal_open).modal('hide');
             setInterval(()=>{
-                this.web3.eth.getTransactionReceipt(tx, function(e,h){
+                this.web3.eth.getTransactionReceipt(tx, function(e,h) {
                     if (h && h.blockNumber != null) location.reload();
                 });
-            },3000);
+            }, window.refresh_interval);
+
+            backend.txCreate(window.game,tx,window.tx_group);
+
             //$('#link-to-explorer').attr('href', window.explorer_url + tx);
             $('#link-to-explorer').attr('onclick', "window.parent.open('" + window.explorer_url + tx +  "', '_blank'); return false;");
             $('#modal-tx').modal('show');
@@ -953,7 +980,7 @@ window.addEventListener('load', async () => {
                         setFleet();
                     }
                 });
-            }, 5000);
+            }, window.refresh_interval);
 
 
             /* tooltips */

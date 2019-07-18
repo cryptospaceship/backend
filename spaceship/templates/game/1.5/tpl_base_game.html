@@ -17,6 +17,7 @@
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
     <script src="/static/js/popper.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -29,7 +30,7 @@
                 <div class="row">
                     <div class="col-md-2 col-lg-2">
                         <h1 id="conquest-message" class="conquest-message">The planet has been conquered. The game could end in <span id="blocks-to-end" class="end-message"></span> Blocks. YOU ARE <span class="end-message" id="win-condition"></span></h1>
-                        <h1 id="claim-victory" class="claim-victory">Claim Victory</h1>
+                        <h1 id="claim-victory" class="claim-victory">Claim Victory ( You <span id="end-status"></span> )</h1>
                     </div>
                     <div class="col-md-8 col-lg-8">
                         <div class="resources-general">

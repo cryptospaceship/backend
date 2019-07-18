@@ -55,6 +55,7 @@ from spaceship_app.api_views import api_ship_in_game
 from spaceship_app.api_views import api_create_tx
 from spaceship_app.api_views import api_get_pending_transactions
 from spaceship_app.api_views import api_get_ship_stats
+from spaceship_app.api_views import api_get_tx_status
 
 
 urlpatterns = [
@@ -115,5 +116,6 @@ urlpatterns = [
     path('api/ship/stats/<int:game_id>/', api_get_ship_stats),
     path('api/tx/create/', api_create_tx),
     path('api/tx/get/pending/<int:game_id>/', api_get_pending_transactions),
+    path('api/tx/get/status/', api_get_tx_status),
     path('admin/'            , admin.site.urls),
 ]

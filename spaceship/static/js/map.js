@@ -12,16 +12,38 @@ window.addEventListener('load', async () => {
         window.cssgame = new CSSGame(this.web3,window.gameAbi,window.gameAddress,window.gameNetwork);
         window.backend = new Backend(window.base_url);
 
+        function check_pending_tx (tx) {
+            /*
+             * Se cierra el modal
+             */
+            setInterval(()=>{
+                backend.txConfirmed(tx,function(e,h){
+                    if (e == null) 
+                        if (h.confirmed == true) location.reload(); 
+                });
+            },window.refresh_interval);
+        }
+
+        if (window.tx_pending.length != 0) {
+            /*
+             * Mostrar alerta
+             */ 
+            check_pending_tx(window.tx_pending[0]);
+        }
+
         function setGameStats() {
             let noOwner = "0x0000000000000000000000000000000000000000";
             if (window.planetOwner != noOwner) {
                 if (window.blocksToEnd < 0)
                     window.blocksToEnd = 0;
                 $('#blocks-to-end').text(window.blocksToEnd);
-                if (window.cssgame.w3.eth.accounts[0] != window.planetOwner)
+                if (window.cssgame.w3.eth.accounts[0] != window.planetOwner) {
+                    $('#end-status').text('LOSE');
                     $('#win-condition').text("LOSING");
-                else
+                } else {
+                    $('#end-status').text('WIN');
                     $('#win-condition').text("WINNING");
+                }
                 
                 if (window.blocksToEnd == 0) {
                     $('#claim-victory').show();
@@ -38,33 +60,62 @@ window.addEventListener('load', async () => {
             $('#players').text(window.players);
         }
 
+        
+
         setInterval(()=>{
-            window.cssgame.getGame((e,r)=>{
+            window.cssgame.w3.eth.getBlockNumber((e,b)=>{
                 if (!e) {
-                    window.cssgame.w3.eth.getBlockNumber((e,b)=>{
-                        if (!e) {
-                            ret = window.cssgame.getGameResult(r);
-                            window.gameAge = b - ret.gameLaunch;
-                            if (b > ret.endBlock) 
-                                window.blocksToEnd = 0;
-                            else
-                                window.blocksToEnd = ret.endBlock - b;
-                            window.planetOwner = ret.candidate;
-                            window.reward = ret.reward;
-                            window.players = ret.players;
-                            setGameStats();
-                        }
-                    });
-                } else {
-                    console.log(e);
+                    if ( b > window.last_scanned_block ) {
+                        window.last_scanned_block = b;
+                        /*
+                         * Update Game
+                         */
+                        window.cssgame.getGame((e,r)=>{
+                            if (!e) {
+                                ret = window.cssgame.getGameResult(r);
+                                window.gameAge = b - ret.gameLaunch;
+                                if (b > ret.endBlock) 
+                                    window.blocksToEnd = 0;
+                                else
+                                    window.blocksToEnd = ret.endBlock - b;
+                                window.planetOwner = ret.candidate;
+                                window.reward = ret.reward;
+                                window.players = ret.players;
+                                setGameStats();
+                            }
+                        });
+
+                        /*
+                         *
+                         */
+                        window.cssgame.viewShipVars(window.ship,function(e,r) {
+                            if(!e) {
+                                ret = window.cssgame.viewShipVarsResult(r);
+                                window.energyStock = ret.energyStock;
+                                window.grapheneStock = ret.grapheneStock;
+                                window.metalsStock = ret.metalStock;
+                                window.blocks_to_wopr = ret.countdownToWopr;
+                                window.blocks_to_mode = ret.countdownToMode;
+                                window.blocks_to_move = ret.countdownToMove;
+                                window.blocks_to_fleet = ret.countdownToFleet;
+                                window.damage = ret.damage;
+                                setResourcesStock();
+                                setEnergyForChangeMode();
+                                setActionCountdownBlocks();
+                                setDamage();
+                            }
+                        });
+                        refreshMap();
+                    }
                 }
             });
-        },5000);
+        },window.refresh_interval);
 
         function cancel_order() {
             $(window.id_modal_open).modal('hide');
             clean_modal();
         }
+
 
         function process_order (tx) {
             /*
@@ -72,10 +123,13 @@ window.addEventListener('load', async () => {
              */
             $(window.id_modal_open).modal('hide');
             setInterval(()=>{
-                this.web3.eth.getTransactionReceipt(tx, function(e,h){
+                this.web3.eth.getTransactionReceipt(tx, function(e,h) {
                     if (h && h.blockNumber != null) location.reload();
                 });
-            },3000);
+            }, window.refresh_interval);
+
+            backend.txCreate(window.game,tx,window.tx_group);
+
             //$('#link-to-explorer').attr('href', window.explorer_url + tx);
             $('#link-to-explorer').attr('onclick', "window.parent.open('" + window.explorer_url + tx +  "', '_blank'); return false;");
             $('#modal-tx').modal('show');
@@ -84,7 +138,6 @@ window.addEventListener('load', async () => {
         function clean_modal() {
             window.id_modal_open = undefined;
         }
-
 
         function setDamage () {
             let status = 100 - window.damage;
@@ -206,6 +259,8 @@ window.addEventListener('load', async () => {
             window.cssgame.claimVictory((e,g)=>{
                 if (!e) {
                     process_order (h);
+                } else {
+                    cancel_order();
                 }
             });
         });
@@ -523,10 +578,18 @@ window.addEventListener('load', async () => {
                                         if (cannonInModal(window.target)) {                                                
                                             $('#fire-cannon-button').removeClass('disabled');
                                             $('#fire-cannon-button').click(function() {
+                                                // Priero se Cierra el Modal 
+                                                $(window.id_modal_open).modal('hide');
+                                                // Luego se abre el otro modal
+                                                window.id_modal_open = '#modal-waiting-confirm';
+                                                $(window.id_modal_open).modal('show');
                                                 cssgame.fireCannon(window.ship,window.other_ship, window.target,function(e,h) {
                                                     if (!e) {
                                                         process_order(h);
+                                                    } else {
+                                                        cancel_order();
                                                     }
+
                                                 });
                                             });
                                         }
@@ -535,9 +598,16 @@ window.addEventListener('load', async () => {
                                     if (cannonInModal(window.target)) {                                                
                                         $('#fire-cannon-button').removeClass('disabled');
                                         $('#fire-cannon-button').click(function() {
+                                            // Priero se Cierra el Modal 
+                                            $(window.id_modal_open).modal('hide');
+                                            // Luego se abre el otro modal
+                                            window.id_modal_open = '#modal-waiting-confirm';
+                                            $(window.id_modal_open).modal('show');
                                             cssgame.fireCannon(window.ship,window.other_ship, window.target,function(e,h) {
                                                 if (!e) {
                                                     process_order(h);
+                                                } else {
+                                                    cancel_order();
                                                 }
                                             });
                                         });
@@ -604,12 +674,16 @@ window.addEventListener('load', async () => {
 
                                                 $('#repare-ship-button').click(()=>{
                                                     if (window.to_fix != 0) {
-                                                        console.log(window.ship);
-                                                        console.log(window.other_ship);
-                                                        console.log(window.to_fix);
+                                                        // Priero se Cierra el Modal 
+                                                        $(window.id_modal_open).modal('hide');
+                                                        // Luego se abre el otro modal
+                                                        window.id_modal_open = '#modal-waiting-confirm';
+                                                        $(window.id_modal_open).modal('show');
                                                         cssgame.repairShip(window.ship,window.other_ship,window.to_fix,(e,h)=>{
                                                             if (!e)
                                                                 process_order(h);
+                                                            else
+                                                                cancel_order();
                                                         });
                                                     }
                                                 });
@@ -792,9 +866,17 @@ window.addEventListener('load', async () => {
                                         if (!window.in_port) {
                                             $('#planet-fleet-status').text("Ready");
                                             $("#button-attack-planet").click(function() {
+                                            // Priero se Cierra el Modal 
+                                            $(window.id_modal_open).modal('hide');
+                                            // Luego se abre el otro modal
+                                            window.id_modal_open = '#modal-waiting-confirm';
+
+                                            $(window.id_modal_open).modal('show');
                                                 cssgame.attackPort(window.ship,objectId,function(e,h){
                                                     if (!e) {
                                                         process_order(h);
+                                                    } else {
+                                                        cancel_order();
                                                     }
                                                 });
                                             });
@@ -819,11 +901,20 @@ window.addEventListener('load', async () => {
                                         if (!window.in_port) {
                                             $("#planet-ship-status").text("Ready");
                                             $("#button-defend-to").click(function() {
+                                                // Priero se Cierra el Modal 
+                                                $(window.id_modal_open).modal('hide');
+                                                // Luego se abre el otro modal
+                                                window.id_modal_open = '#modal-waiting-confirm';
+
+                                                $(window.id_modal_open).modal('show');
                                                 cssgame.landTo(window.ship,x,y,true,function(e,h){
                                                     if (!e) {
                                                         process_order(h);
+                                                    } else {
+                                                        cancel_order();
                                                     }
                                                 });
+
                                             });
                                         }
                                         else {
@@ -939,6 +1030,8 @@ window.addEventListener('load', async () => {
                     cssgame.repairShip(window.ship,window.ship,window.to_fix,(e,h)=>{
                         if (!e)
                             process_order(h);
+                        else
+                            cancel_order();
                     });
                 }
             });
@@ -1245,26 +1338,6 @@ window.addEventListener('load', async () => {
             $(id).text(x.toString()+','+y.toString());
         }
 
-        setInterval(function() {
-            window.cssgame.viewShipVars(window.ship,function(e,r) {
-                if(!e) {
-                    ret = window.cssgame.viewShipVarsResult(r);
-                    window.energyStock = ret.energyStock;
-                    window.grapheneStock = ret.grapheneStock;
-                    window.metalsStock = ret.metalStock;
-                    window.blocks_to_fire = ret.countdownToFireCannon;
-                    window.blocks_to_mode = ret.countdownToMode;
-                    window.blocks_to_move = ret.countdownToMove;
-                    window.blocks_to_fleet = ret.countdownToFleet;
-                    window.damage = ret.damage;
-                    setResourcesStock();
-                    setEnergyForChangeMode();
-                    setActionCountdownBlocks();
-                    setDamage();
-                }
-            });
-            refreshMap();
-        }, 5000);
 
         function mapArrayCmp(m) {
             let i;
@@ -1380,9 +1453,6 @@ window.addEventListener('load', async () => {
             $("#amount-"+id).text(amount);
         }
         
-            
-        
-        
         // initialize screen
         
         function init(){
@@ -1393,7 +1463,6 @@ window.addEventListener('load', async () => {
                 panelSlide("stats", 1000, "left", "-=50%");
             
         }
-        
         
         // call initializing routine
         init();

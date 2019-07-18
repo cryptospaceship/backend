@@ -241,7 +241,7 @@ def api_create_tx(request):
         return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
     
     try:    
-        Transaction.create(game, data['tx_hash'], ship.ship_id)
+        Transaction.create(game, data['tx_hash'], ship.ship_id, data['group'])
     except:
         user_message = "Error creating transaction. Please try again later."
         message = "error creating transaction"
@@ -259,11 +259,11 @@ def api_get_pending_transactions(request, game_id):
     ship     = player.get_ship_in_game(game)
     
     try:
-        action = request.GET['action']
+        group = request.GET['group']
     except:
-        action = ''
+        group = ''
     
-    txs = Transaction.get_pending_by_ship(game, ship.ship_id, action, True)
+    txs = Transaction.get_pending_by_ship(game, ship.ship_id, group, 'serialize')
     return HttpResponse(dumps(txs), content_type="application/json", status=http_REQUEST_OK)
     
     
@@ -272,8 +272,22 @@ def api_get_pending_transactions(request, game_id):
 def api_get_ship_stats(request, game_id):
     player   = Player.get_by_user(request.user)
     game     = Game.get_by_id(game_id)
-    ship     = player.get_ship_in_game(game)
+    #ship     = player.get_ship_in_game(game)
 
-    stats = Transaction.get_ship_stats(game, ship.ship_id, ship.at_block)
+    #stats = Transaction.get_ship_stats(game, ship.ship_id, ship.at_block)
+    stats = Transaction.get_ship_stats(game, player)
     
     return HttpResponse(dumps(stats), content_type="application/json", status=http_REQUEST_OK)
+
+
+@require_http_methods(['GET'])
+@login_required(login_url='/signin/')
+def api_get_tx_status(request):
+    tx = Transaction.get_by_hash(request.GET['hash'])
+    if tx is None:
+        message = "transaction with hash %s does not exist" % request.GET['hash']
+        body = {'status': 'error', 'message': message, "user_message": user_message}
+        return HttpResponse(dumps(body), content_type="application/json", status=http_BAD_REQUEST)
+    
+    body = {'status': tx.status, 'confirmed': tx.scanned}
+    return HttpResponse(dumps(body), content_type="application/json", status=http_REQUEST_OK)

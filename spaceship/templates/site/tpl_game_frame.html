@@ -90,7 +90,8 @@
             }
 
             // HARDCODING ******** REEMPLAZAR POR VARIABLE ********
-            window.backend = new Backend('http://dev.cryptospaceship.io:8000');
+            window.base_url = "{{ base_url }}"
+            window.backend = new Backend(window.base_url);
             
             window.check_in = setInterval(()=>{
 

@@ -831,8 +831,8 @@
                           </button>
                         </div>
                         <div class="modal-body" id="modal-body">
-                            <div class="modal-body-text">ORDER:</div>
-                            <div class="modal-body-text">Waiting for your approval</div>
+                            <div class="modal-body-text">ORDER: Waiting for your approval</div>
+                            <div class="modal-body-text"><p style="display:unset">Continue transaction with Metamask</p><img src="/static/images/button-metamask.svg" style="max-width: 40px"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -884,14 +884,23 @@
       </div>
             
 
-<!-- scripts -->
+<!-- scripts 
 <script src="/static/js/particles.min.js"></script>
 <script src="/static/js/app.js"></script>
 <script src="/static/js/cssgame.1.5.js"></script>
 <script src="/static/js/backend.js"></script>
 <script src="/static/js/cssinit.js"></script>
-<script src="/static/js/map.js"></script>
+<script src="/static/js/map.js"></script> -->
+{% for js in inject_js %}
+    <script src="{{ js }}"></script>
+{% endfor %}
+
 <script>
+
+    window.tx_pending = {{ transactions| js}};
+    window.tx_group = "{{ transaction_group }}";
+    window.refresh_interval = {{ refresh_interval }};
+
     window.planetOwner = {{ game_candidate }};
     window.reward = {{ game_reward }};
     window.gameAge = {{ last_block_number }} - {{ game_launch }};
@@ -973,5 +982,9 @@
     window.ENERGY_TO_CHANGE_MODE = 2000;
 
     window.gameAbi = {{ game_abi | js}};
+
+    window.last_scanned_block = 0;
+
+
 </script>
 {% endblock %}

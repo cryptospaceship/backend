@@ -174,7 +174,10 @@ def create_update_transaction(tx, net, game, function_name=''):
   
     if function is not None:
         if len(tx['input']) > 10:
-            ship_id = str(int(tx['input'][10:74], 16))
+            if function.ship_id:
+                ship_id = str(int(tx['input'][10:74], 16))
+            else:
+                ship_id = '0000'
         else:
             ship_id = '0000'
         transaction = Transaction.get(game, tx['hash'].hex())
@@ -202,8 +205,9 @@ def create_event_inbox(event, abi_event):
             meta['_to'] = [meta['_to']]
         for to in meta['_to']:
             if to != 0:
-                EventInbox.create_to(event, to)
-                logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, to))
+                if event.from_ship.ship_id != to:
+                    EventInbox.create_to(event, to)
+                    logging.info("create_event_inbox(): from_event_inbox created: %s - to: %s" % (event.event_type, to))
     else:
         ships_id = get_ships_in_game(event.game)
         if ships_id is not None:
@@ -325,7 +329,13 @@ def scan_transactions(net):
                 if receipt.status == 0:
                     tx.scan(receipt.blockNumber, receipt.gasUsed, receipt.status)
                     continue
-                function = GameAbiFunction.get_by_name(tx.action, game)
+                if tx.action == '':
+                    data = get_transaction(tx.hash, net)
+                    function = GameAbiFunction.get_by_hash(data['input'][0:10], game)
+                    tx.action = function.name
+                    tx.save()
+                else:
+                    function = GameAbiFunction.get_by_name(tx.action, game)
                 for abi_event in function.events.all():
                     event_created = create_update_event(tx, net, abi_event, receipt)
                     #if not event_created:
@@ -380,10 +390,14 @@ def get_ships_owner(net):
         ranking = Ranking.list(game)
         for r in ranking[0]:
             ship = get_ship(css, int(r.ship.ship_id))
+            print("hola")
+            print(ship['owner'].lower())
             if ship is not None:
                 player = Player.get_by_address(ship['owner'].lower())
-                logging.info("get_ships_owner(): update owner for ship %s: %s" % (r.ship.ship_id, player.user.username))
-                r.ship.set_player(player)
+                print(player.address)
+                if player is not None:
+                    logging.info("get_ships_owner(): update owner for ship %s: %s" % (r.ship.ship_id, player.user.username))
+                    r.ship.set_player(player)
             
 
    
@@ -394,6 +408,7 @@ def block_scanner_main():
                         level    = logging.INFO)
 
     while True:
+        logging.info("block_scanner_main(): scanning begins")
         net = Network.get_by_net_id(31)
         last_block = get_last_block(net)
         if last_block is not None:
@@ -419,7 +434,7 @@ def block_scanner_main():
                     if last_scanned_block % net.points_interval == 0:
                         get_points(net)
                         
-   
+        logging.info("block_scanner_main(): scanning ends, waiting %s seconds" % net.scanner_sleep)
         time.sleep(net.scanner_sleep)
 
 

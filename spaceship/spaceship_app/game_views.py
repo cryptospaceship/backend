@@ -13,6 +13,7 @@ from .models import Var
 from .models import Message
 from .models import Ranking
 from .models import Ship
+from .models import Transaction
 
 from json import loads
 from json import dumps
@@ -219,7 +220,10 @@ def play_resources_view(request, net_id, game_id, ship_id):
 
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
-
+    context['transactions']   = Transaction.get_pending_by_ship(game, ship_id, 'RE', 'list')
+    context['refresh_interval'] = game.network.refresh_interval
+    context['transaction_group'] = 'RE'
+    
     return render(request, template.file, context)
 
 
@@ -252,6 +256,9 @@ def play_map_view(request, net_id, game_id, ship_id):
 
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
+    context['transactions']   = Transaction.get_pending_by_ship(game, ship_id, 'MA', 'list')
+    context['refresh_interval'] = game.network.refresh_interval
+    context['transaction_group'] = 'MA'
 
     return render(request, template.file, context)
 
@@ -284,6 +291,9 @@ def play_buildings_view(request, net_id, game_id, ship_id):
 
     context['inject_js']      = template.get_js()
     context['inject_css']     = template.get_css()
+    context['transactions']   = Transaction.get_pending_by_ship(game, ship_id, 'BU', 'list')
+    context['refresh_interval'] = game.network.refresh_interval
+    context['transaction_group'] = 'BU'
 
     return render(request, template.file, context)
 
@@ -316,7 +326,6 @@ def play_messages_view(request, net_id, game_id, ship_id, box=''):
         context["message_type"] = "inbox"
         messages_list = Message.get_inbox_list(ship_id, game.network)
     elif box == "outbox":
-        print("outbox")
         context["message_type"] = "outbox"
         messages_list = Message.get_outbox_list(ship_id, game.network)
         
