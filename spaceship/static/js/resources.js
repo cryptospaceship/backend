@@ -29,7 +29,9 @@ window.addEventListener('load', async () => {
         if (window.tx_pending.length != 0) {
             /*
              * Mostrar alerta
-             */ 
+             */
+            $('#link-to-explorer').attr('onclick', "window.parent.open('" + window.explorer_url + window.tx_pending[0] +  "', '_blank'); return false;");
+            $('#modal-tx').modal('show');
             check_pending_tx(window.tx_pending[0]);
         }
 
