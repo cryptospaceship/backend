@@ -295,3 +295,9 @@ def support_view(request):
     context['inject_css'] = template.get_css()
     context['inject_js'] = template.get_js()
     return render(request, template.file, context)
+
+def play_form_view(request):
+    template = SiteTemplate.get('play_form')
+    context = {}
+    context['inject_css'] = template.get_css()
+    return render(request, template.file, context)

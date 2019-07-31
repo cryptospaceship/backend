@@ -31,6 +31,7 @@ from spaceship_app.site_views import unlock_metamask_view
 from spaceship_app.site_views import change_network_view
 from spaceship_app.site_views import game_frame_view
 from spaceship_app.site_views import support_view
+from spaceship_app.site_views import play_form_view
 
 # GAME VIEWS
 from spaceship_app.game_views import play_resources_view
@@ -66,6 +67,7 @@ urlpatterns = [
     path('support/'	          , support_view),
     path('unlock/'	          , unlock_metamask_view),
     path('network/'	          , change_network_view),
+    path('form/'              , play_form_view),
     path('ui/ships/'          , ui_view),
     re_path(r'^ui/(?P<net_id>.*)/ships', fleet_view),
     path('ui/<int:net_id>/ship/<int:ship_id>/', ship_view),
